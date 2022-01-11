@@ -1,15 +1,35 @@
-import React from 'react'
 import Result from './Result'
+import axios from 'axios'
+import React, { useState, useEffect } from 'react';
 
 function Results() {
+
+    const [result, setResult] = useState([]);
+
+    useEffect(() => {
+        // document.title = "Results occured"
+        axios.get('http://localhost:3000/api/results')
+            .then(function (response) {
+                // handle success
+                const data = response.data;
+                console.log("yo sabai ayo hai", data)
+                setResult(data)
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+    }, []);
+
+    var size = 7;
+    const showResult = result.slice(0, size)
+
     return (
         <div className='bg-pink-300 flex flex-1 items-center justify-start w-full h-40 m-2 overflow-x-scroll overflow-y-hidden scrollbar-hide'>
-            <Result />
-            <Result />
-            <Result />
-            <Result />
-            <Result />
-            <Result />
+            {
+                showResult.map((result, index) => (
+                    <Result result={result.fixtureResult} key={index} score1={result.score[0]} score2={result.score[1]} />
+                ))}
         </div>
     )
 }
