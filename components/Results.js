@@ -10,7 +10,6 @@ function Results() {
             <Result />
             <Result />
             <Result />
-            <Result />
         </div>
     )
 }
