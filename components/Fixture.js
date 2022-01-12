@@ -1,7 +1,7 @@
 import React from 'react'
 // import logo from '../assets/apf_logo.png'
 
-function Fixture({team1, team2, time}) {
+function Fixture({team1, team2, time, date}) {
     return (
         <div className='justify-start items-start w-full h-10 bg-gray-700 text-black my-2 overflow-hidden'>
             <div class="container mx-auto">
@@ -9,7 +9,7 @@ function Fixture({team1, team2, time}) {
                     <div
                         class="flex justify-center text-2xl col-span-2 border-1 rounded-xl p-1 bg-gray-100"
                     >
-                        {time}
+                        {date.split(' ')[1]} {date.split(' ')[2]}, {time} 
                     </div>
                     <div
                         class="flex justify-left text-2xl col-span-4 border-1 rounded-xl p-1 bg-gray-100"

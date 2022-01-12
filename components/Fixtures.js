@@ -31,7 +31,7 @@ function Fixtures() {
             <div className='sm:w-full md:2-full lg:w-2/3'>
                 {
                     showFixture.map((fixture, index) => (
-                        <Fixture team1={fixture.team1} key={index} team2={fixture.team2} time={fixture.time} />
+                        <Fixture team1={fixture.team1} key={index} team2={fixture.team2} time={fixture.time} date={fixture.date} />
                     ))}
             </div>
         </div>
