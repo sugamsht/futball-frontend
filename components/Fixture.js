@@ -1,7 +1,7 @@
 import React from 'react'
 // import logo from '../assets/apf_logo.png'
 
-function Fixture() {
+function Fixture({team1, team2, time}) {
     return (
         <div className='justify-start items-start w-full h-10 bg-gray-700 text-black my-2 overflow-hidden'>
             <div class="container mx-auto">
@@ -9,14 +9,14 @@ function Fixture() {
                     <div
                         class="flex justify-center text-2xl col-span-2 border-1 rounded-xl p-1 bg-gray-100"
                     >
-                        Time
+                        {time}
                     </div>
                     <div
-                        class="flex justify-center text-2xl col-span-4 border-1 rounded-xl p-1 bg-gray-100"
+                        class="flex justify-left text-2xl col-span-4 border-1 rounded-xl p-1 bg-gray-100"
                     >
                         <div className='grid grid-flow-col'>
                             <img className='w-9 h-9 rounded items-center mr-4' src='./apf_logo.png' />
-                            <p>Team 1 Club Name </p>
+                            <p>{team1}</p>
                         </div>
                     </div>
                     <div
@@ -25,11 +25,11 @@ function Fixture() {
                         -
                     </div>
                     <div
-                        class="flex justify-center text-2xl col-span-4 border-1 rounded-xl p-1 bg-gray-100"
+                        class="flex justify-left text-2xl col-span-4 border-1 rounded-xl p-1 bg-gray-100"
                     >
                         <div className='grid grid-flow-col'>
                             <img className='w-9 h-9 rounded items-center mr-4' src='./apf_logo.png' />
-                            <p>Team 2 Club Name </p>
+                            <p>{team2}</p>
                         </div>
                     </div>
                 </div>
