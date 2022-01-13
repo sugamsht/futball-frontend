@@ -1,13 +1,6 @@
 import React, { useEffect } from "react";
 
 function Gallery() {
-    useEffect(() => {
-        dynamicallyImportPackage();
-    }, []);
-
-    let dynamicallyImportPackage = async () => {
-        await import("../node_modules/tw-elements/dist/js/index.min.js");
-    };
 
     return (
         <>

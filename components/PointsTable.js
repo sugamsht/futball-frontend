@@ -11,7 +11,6 @@ function PointsTable() {
             .then(function (response) {
                 // handle success
                 const data = response.data;
-                console.log(data)
                 setStat(data)
             })
             .catch(function (error) {

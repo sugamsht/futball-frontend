@@ -12,7 +12,6 @@ function Fixtures() {
             .then(function (response) {
                 // handle success
                 const data = response.data;
-                console.log("yo sabai ayo hai", data)
                 setFixture(data)
             })
             .catch(function (error) {
@@ -22,7 +21,7 @@ function Fixtures() {
     }, []);
 
     var leng = fixture.length;
-    const showFixture = fixture.slice(leng-7, leng)
+    const showFixture = fixture.slice(leng - 7, leng)
 
     return (
         <div className='flex flex-col justify-start items-center m-2 w-screen h-[30rem] bg-green-500 overflow-y-scroll'>
