@@ -8,7 +8,7 @@ function Fixtures() {
 
     useEffect(() => {
         // document.title = "Results occured"
-        axios.get('http://localhost:3000/api/fixtures')
+        axios.get('https://nepalscores.herokuapp.com/api/fixtures')
             .then(function (response) {
                 // handle success
                 const data = response.data;

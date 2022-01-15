@@ -7,7 +7,7 @@ function PointsTable() {
 
     useEffect(() => {
         document.title = "Hawa Frontend"
-        axios.get('http://localhost:3000/api/teams')
+        axios.get('https://nepalscores.herokuapp.com/api/teams')
             .then(function (response) {
                 // handle success
                 const data = response.data;

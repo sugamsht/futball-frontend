@@ -8,7 +8,7 @@ function Results() {
 
     useEffect(() => {
         // document.title = "Results occured"
-        axios.get('http://localhost:3000/api/results')
+        axios.get('https://nepalscores.herokuapp.com/api/results')
             .then(function (response) {
                 // handle success
                 const data = response.data;
