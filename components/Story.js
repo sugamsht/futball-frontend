@@ -67,7 +67,7 @@ function Story({ storyIndex }) {
     };
 
     function startStory() {
-        setStory(true);
+        setStory(!story);
     }
 
     return (
@@ -80,13 +80,17 @@ function Story({ storyIndex }) {
                     onClick={startStory}
                     data-bs-toggle="modal" data-bs-target={'#centeredStory' + storyIndex}
                 />
-                <div className="modal fade fixed top-6 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id={'centeredStory' + storyIndex} tabIndex="-1" aria-labelledby={'centeredStory' + storyIndex} aria-modal="true" role="dialog">
+                <div className="modal fade fixed top-6 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+                    onClick={() => setStory(false)}
+                    id={'centeredStory' + storyIndex} tabIndex="-1" aria-labelledby={'centeredStory' + storyIndex} aria-modal="true" role="dialog">
                     <div className="modal-dialog relative w-auto pointer-events-none">
                         <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto rounded-md outline-none text-current">
                             <div className="modal-body relative p-4">
                                 <button type="button"
                                     className="btn-close box-content w-4 h-4 p-1 float-right text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                    data-bs-dismiss="modal" aria-label="Close"
+                                    onClick={startStory}
+                                ></button>
                                 <div className='m-0'>
                                     {story && <StoryComponent
                                         keyboardNavigation
