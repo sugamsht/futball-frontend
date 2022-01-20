@@ -7,10 +7,10 @@ function PointsTable() {
 
     useEffect(() => {
         document.title = "Hawa Frontend"
-        axios.get('https://nepalscores.herokuapp.com/api/teams')
+        axios.get('http://localhost:5000/api/teams')
             .then(function (response) {
                 // handle success
-                const data = response.data;
+                const data = response.data.data;
                 setStat(data)
             })
             .catch(function (error) {

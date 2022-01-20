@@ -8,10 +8,10 @@ function Fixtures() {
 
     useEffect(() => {
         // document.title = "Results occured"
-        axios.get('https://nepalscores.herokuapp.com/api/fixtures')
+        axios.get('http://localhost:5000/api/fixtures')
             .then(function (response) {
                 // handle success
-                const data = response.data;
+                const data = response.data.data;
                 setFixture(data)
             })
             .catch(function (error) {

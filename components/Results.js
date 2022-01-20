@@ -8,10 +8,10 @@ function Results() {
 
     useEffect(() => {
         // document.title = "Results occured"
-        axios.get('https://nepalscores.herokuapp.com/api/results')
+        axios.get('http://localhost:5000/api/results')
             .then(function (response) {
                 // handle success
-                const data = response.data;
+                const data = response.data.data;
                 setResult(data)
             })
             .catch(function (error) {
