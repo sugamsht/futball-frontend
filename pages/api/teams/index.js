@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     switch (method) {
         case 'GET':
             try {
-                const teams = await Teams.find({})
+                const teams = await Teams.find({}).sort([['points', -1], ['gd', -1]])
                 res.status(200).json({ success: true, data: teams })
             } catch (error) {
                 res.status(400).json({ success: false })
