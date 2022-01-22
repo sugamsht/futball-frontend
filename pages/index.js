@@ -10,16 +10,16 @@ import Stories from '../components/Stories'
 
 export default function Home() {
   return (
-    <div className="w-screen h-screen overflow-x-hidden">
+    <div className="w-screen h-screen overflow-x-hidden bg-gray-700">
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Menu />
-      <main>
+      <main className='mx-2 md:mx-10 lg:mx-20 2xl:mx-32'>
         < Results />
         <Stories />
-        <div className='grid grid-cols-6 gap-2'>
+        <div className='grid grid-cols-6 gap-2 w-full'>
           <Gallery />
           <PointsTable />
         </div>

@@ -17,7 +17,7 @@ function Stories() {
 
     // <script src="../lib/cDg-min.js"></script>
     return (
-        <div className='flex flex-1 items-center justify-start h-60 w-screen bg-red-400 m-2 overflow-x-scroll overflow-y-hidden scrollbar-hide '>
+        <div className='flex flex-1 items-center justify-start h-60 w-full bg-red-400 my-2 overflow-x-scroll overflow-y-hidden scrollbar-hide '>
             <Story storyIndex={0} />
             <Story storyIndex={1} />
             <Story storyIndex={2} />

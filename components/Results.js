@@ -22,10 +22,10 @@ function Results() {
 
     // var size = 7;
     var leng = result.length;
-    const showResult = result.slice(leng - 7, leng).reverse();
+    const showResult = result.slice(leng - 6, leng).reverse();
 
     return (
-        <div className='bg-pink-300 flex flex-1 items-center justify-start w-full h-40 m-2 overflow-x-scroll overflow-y-hidden scrollbar-hide'>
+        <div className='px-2 bg-pink-300 flex flex-1 items-center justify-start w-full h-40 my-2 overflow-x-scroll overflow-y-hidden scrollbar-hide'>
             {
                 showResult.map((result, index) => (
                     <Result result={result.fixtureResult} key={index} score1={result.score[0]} score2={result.score[1]} />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import StoryComponent from 'react-insta-stories';
+import Image from 'next/image';
 
 
 function Story({ storyIndex }) {
@@ -9,14 +10,11 @@ function Story({ storyIndex }) {
     const story1 = [
         {
             content: ({ action, isPaused }) => {
+                var src = "https://i.ibb.co/fY1DmQW/8aacdef9ba37db60c7a96271877cfbb5.jpg"
                 return (
                     <div>
                         <h1>Hey All 👋</h1>
-                        <img
-                            style={image}
-                            alt=""
-                            src="https://i.ibb.co/fY1DmQW/8aacdef9ba37db60c7a96271877cfbb5.jpg"
-                        ></img>
+                        <Image loader={() => src} src={src} layout='fill' />
                         <h4>Buttom text</h4>
                     </div>
                 );
@@ -26,9 +24,10 @@ function Story({ storyIndex }) {
     const story2 = [
         {
             content: ({ action, isPaused }) => {
+                var src = "https://i.ibb.co/fY1DmQW/8aacdef9ba37db60c7a96271877cfbb5.jpg";
                 return (
                     <div>
-                        <img style={image} src="https://i.ibb.co/MGbfDTH/Group-13.png" ></img>
+                        <Image loader={() => src} src={src} layout='fill' />
                     </div>
                 );
             }

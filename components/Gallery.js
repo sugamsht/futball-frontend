@@ -4,7 +4,7 @@ function Gallery() {
 
     return (
         <>
-            <div className="col-span-6 md:col-span-4 lg:col-span-4 h-[30rem] m-2 items-center justify-center bg-yellow-300">
+            <div className="col-span-6 md:col-span-4 lg:col-span-4 h-[30rem] my-2 items-center justify-center bg-yellow-300">
                 <div
                     id="carouselExampleCaptions"
                     className="carousel slide relative"
