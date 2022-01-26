@@ -45,33 +45,31 @@ const LeagueTable = ({ stat }) => {
         document.getElementById('data').innerHTML = temp;
     }
     return (
-        <>
-            <div className='hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'>
-                <div className="text-white h-full bg-gray-800 overflow-scroll scrollbar-hide">
-                    <h1 className="text-xs md:text-sm lg:text-2xl font-bold pt-2 xl:pt-3 text-center w-full">Nepal A Division Table</h1>
-                    <div className="py-2 xl:py-4">
-                        <div className="max-w-screen-xl px-2 mx-auto">
-                            <table className="w-full md:text-xs lg:text-sm xl:text-base">
-                                <thead>
-                                    <tr className="border-b border-gray-600">
-                                        <th className="text-left p-1 pb-2">&nbsp;</th>
-                                        <th className="text-left p-1 pb-2 pl-3"><abbr title="Teams in Competition">TEAM</abbr></th>
-                                        <th className="text-left p-1 pb-2"><abbr title="Games Played">PLD</abbr></th>
-                                        <th className="text-left p-1 pb-2"><abbr title="Games Won">WON</abbr></th>
-                                        <th className="text-left p-1 pb-2"><abbr title="Games Drawn">DRN</abbr></th>
-                                        <th className="text-left p-1 pb-2"><abbr title="Games Lost">LST</abbr></th>
-                                        <th className="md:hidden xl:table-cell text-left p-1 pb-2"><abbr title="Goal Difference">GD</abbr></th>
-                                        <th className="text-left p-1 pb-2"><abbr title="Points">PTS</abbr></th>
-                                    </tr>
-                                </thead>
-                                <tbody className='text-white h-full ' id="data">
-                                </tbody>
-                            </table>
-                        </div>
+        <div className='sm:flex-wrap md:block col-span-6 md:col-span-2 w-auto h-[30rem] my-2 bg-gray-700 '>
+            <div className="text-white h-full bg-gray-800 overflow-scroll scrollbar-hide">
+                <h1 className="text-xs md:text-sm lg:text-2xl font-bold pt-2 xl:pt-3 text-center w-full">Nepal A Division Table</h1>
+                <div className="py-2 xl:py-4">
+                    <div className="max-w-screen-xl px-2 mx-auto">
+                        <table className="w-full md:text-xs lg:text-sm xl:text-base">
+                            <thead>
+                                <tr className="border-b border-gray-600">
+                                    <th className="text-left p-1 pb-2">&nbsp;</th>
+                                    <th className="text-left p-1 pb-2 pl-3"><abbr title="Teams in Competition">TEAM</abbr></th>
+                                    <th className="text-left p-1 pb-2"><abbr title="Games Played">PLD</abbr></th>
+                                    <th className="text-left p-1 pb-2"><abbr title="Games Won">WON</abbr></th>
+                                    <th className="text-left p-1 pb-2"><abbr title="Games Drawn">DRN</abbr></th>
+                                    <th className="text-left p-1 pb-2"><abbr title="Games Lost">LST</abbr></th>
+                                    <th className="md:hidden xl:table-cell text-left p-1 pb-2"><abbr title="Goal Difference">GD</abbr></th>
+                                    <th className="text-left p-1 pb-2"><abbr title="Points">PTS</abbr></th>
+                                </tr>
+                            </thead>
+                            <tbody className='text-white h-full ' id="data">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

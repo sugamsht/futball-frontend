@@ -28,7 +28,7 @@ function Fixture({ team1, team2, time, date }) {
                         -
                     </div>
                     <div
-                        className="flex justify-center md:justify-start items-start md:items-center col-span-4 border-1 rounded-xl ml-2 lg:ml-[4rem]"
+                        className="flex justify-center md:justify-start items-start md:items-center col-span-4 border-1 rounded-xl ml-2 lg:ml-[2rem] 2xl:ml-[4rem]"
                     >
                         <img className='w-9 h-9 rounded items-center mr-2 lg:mr-4' src='./apf_logo.png' />
                         <div className='grid grid-flow-col'>

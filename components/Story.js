@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import StoryComponent from 'react-insta-stories';
-import Image from 'next/image';
 
 
 function Story({ storyIndex }) {
@@ -14,7 +13,7 @@ function Story({ storyIndex }) {
                 return (
                     <div>
                         <h1>Hey All 👋</h1>
-                        <Image loader={() => src} src={src} layout='fill' />
+                        <img src={src} />
                         <h4>Buttom text</h4>
                     </div>
                 );
@@ -27,7 +26,7 @@ function Story({ storyIndex }) {
                 var src = "https://i.ibb.co/fY1DmQW/8aacdef9ba37db60c7a96271877cfbb5.jpg";
                 return (
                     <div>
-                        <Image loader={() => src} src={src} layout='fill' />
+                        <img src={src} />
                     </div>
                 );
             }
@@ -79,28 +78,29 @@ function Story({ storyIndex }) {
                         background: "rgba(6, 2, 5, 0.4)",
                         display: story ? 'block' : 'none'
                     }}
+                    onClick={() => setStory(false)}
                 >
-                    <div className="modal-dialog relative w-auto pointer-events-none" >
-                        {story && <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto rounded-md outline-none text-current"
-                        >
-                            <div className="modal-body relative p-4" >
-                                <button type="button"
-                                    className="btn-close box-content w-4 h-4 p-1 float-right text-black border-none rounded-none opacity-90 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                                    data-bs-dismiss="modal" aria-label="Close"
-                                    onClick={() => setStory(false)}
-                                ></button>
-                                <div className='m-0'>
-                                    <StoryComponent
-                                        keyboardNavigation
-                                        defaultInterval={3000}
-                                        stories={array[storyIndex]}
-                                        width={'100%'}
-                                        height={'85vh'}
-                                        onStoryEnd={() => setStory(false)}
-                                    />
+                    <div className="modal-dialog relative w-screen pointer-events-none" >
+                        {story &&
+                            <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto rounded-md outline-none text-current">
+                                <div className="modal-body relative p-4" >
+                                    <button type="button"
+                                        className="btn-close box-content w-4 h-4 p-1 float-right text-black border-none rounded-none opacity-90 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                                        data-bs-dismiss="modal" aria-label="Close"
+                                        onClick={() => setStory(false)}
+                                    ></button>
+                                    <div className='m-0'>
+                                        <StoryComponent
+                                            keyboardNavigation
+                                            defaultInterval={3000}
+                                            stories={array[storyIndex]}
+                                            width={'100%'}
+                                            height={'85vh'}
+                                            onStoryEnd={() => setStory(false)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         }
                     </div>
                 </div>

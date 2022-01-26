@@ -21,7 +21,7 @@ export default function Home() {
         <Stories />
         <div className='grid grid-cols-6 gap-2 w-full'>
           <Gallery />
-          <PointsTable />
+          <PointsTable view={'hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'} />
         </div>
         <League />
         <Fixtures />
