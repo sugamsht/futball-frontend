@@ -85,7 +85,7 @@ function Story({ storyIndex }) {
                             <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto rounded-md outline-none text-current">
                                 <div className="modal-body relative p-4" >
                                     <button type="button"
-                                        className="btn-close box-content w-4 h-4 p-1 float-right text-black border-none rounded-none opacity-90 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                                        className="btn-close box-content w-4 h-4 p-1 float-right text-white border-none rounded-none opacity-90 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
                                         data-bs-dismiss="modal" aria-label="Close"
                                         onClick={() => setStory(false)}
                                     ></button>

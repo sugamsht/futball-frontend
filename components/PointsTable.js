@@ -1,34 +1,18 @@
-import axios from 'axios'
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-
-function PointsTable() {
-    const [stat, setStat] = useState([]);
+const PointsTable = ({ points }) => {
 
     useEffect(() => {
-        document.title = "Hawa Frontend"
-        axios.get('http://localhost:5000/api/teams')
-            .then(function (response) {
-                // handle success
-                const data = response.data.data;
-                setStat(data)
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            })
+        document.getElementById('data').innerHTML = temp;
     }, []);
 
-    return (
-        <LeagueTable stat={stat} />
-    )
-}
+    //sort stat
+    points.sort((a, b) => (a.points < b.points) ? 1 : -1)
 
-const LeagueTable = ({ stat }) => {
-    if (stat.length > 0) {
+    if (points?.length > 0) {
         var i = 1;
         var temp = "";
-        stat.forEach((itemData) => {
+        points.forEach((itemData) => {
             //index of itemData.team
 
             temp += "<tr>";
@@ -42,8 +26,9 @@ const LeagueTable = ({ stat }) => {
             temp += "<td class='text-center'>" + itemData.points + "</td>";
             i++;
         });
-        document.getElementById('data').innerHTML = temp;
+        // document.getElementById('data').innerHTML = temp;
     }
+
     return (
         <div className='sm:flex-wrap md:block col-span-6 md:col-span-2 w-auto h-[30rem] my-2 bg-gray-700 '>
             <div className="text-white h-full bg-gray-800 overflow-scroll scrollbar-hide">

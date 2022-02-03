@@ -11,8 +11,10 @@ function League() {
                         Fusce cursus ante eu ante cursus rutrum. Curabitur bibendum dapibus ligula, a vestibulum sapien dapibus sit amet. Ut eget sollicitudin nibh. Sed vel maximus odio.
                     </p>
                     <div className='grid place-items-center mt-2' >
-                        <img className='h-[30vh] w-[20vw] min-w-[12rem]' src='https://www.goalnepal.com/uploads/news/1545192691.png'
-                            alt="A division League Logo"></img>
+                        <img className='min-h-[10rem] w-[20vw] min-w-[12rem]'
+                            src='/Adiv_logo.png'
+                            alt="A division League Logo">
+                        </img>
                     </div>
                 </div>
                 <div>

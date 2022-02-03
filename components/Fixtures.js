@@ -1,24 +1,7 @@
 import Fixture from './Fixture'
-import axios from 'axios'
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-function Fixtures() {
-
-    const [fixture, setFixture] = useState([]);
-
-    useEffect(() => {
-        // document.title = "Results occured"
-        axios.get('http://localhost:5000/api/fixtures')
-            .then(function (response) {
-                // handle success
-                const data = response.data.data;
-                setFixture(data)
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            })
-    }, []);
+function Fixtures({ fixture }) {
 
     var leng = fixture.length;
     const showFixture = fixture.slice(leng - 7, leng)

@@ -8,7 +8,20 @@ import PointsTable from '../components/PointsTable'
 import Results from '../components/Results'
 import Stories from '../components/Stories'
 
-export default function Home() {
+export async function getServerSideProps() {
+
+  const res = await fetch('http://localhost:3000/api/tournaments')
+  const data = await res.json()
+
+  return {
+    props: {
+      apiData: data
+    },
+  }
+}
+
+export default function Home({ apiData }) {
+
   return (
     <div className="w-screen h-screen overflow-x-hidden bg-gray-700">
       <Head>
@@ -17,14 +30,14 @@ export default function Home() {
       </Head>
       <Menu />
       <main className='mx-2 md:mx-10 lg:mx-20 2xl:mx-32'>
-        < Results />
+        < Results result={apiData[0]?.resultList} />
         <Stories />
         <div className='grid grid-cols-6 gap-2 w-full'>
           <Gallery />
-          <PointsTable view={'hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'} />
+          <PointsTable view={'hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'} points={apiData[0]?.teamList} />
         </div>
         <League />
-        <Fixtures />
+        <Fixtures fixture={apiData[0]?.fixtureList} />
       </main>
       <Footer />
     </div>
