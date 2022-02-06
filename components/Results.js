@@ -9,7 +9,6 @@ function Results({ result }) {
 
     return (
         <div className='px-2 bg-pink-300 flex flex-1 items-center justify-start w-full h-40 my-2 overflow-x-scroll overflow-y-hidden scrollbar-hide'>
-            <Result score1={1} score2={0} result={'Nepal vs Mauritius'} />
             {
                 showResult.map((result, index) => (
                     <Result result={result.fixtureResult} key={index} score1={result.score[0]} score2={result.score[1]} />
