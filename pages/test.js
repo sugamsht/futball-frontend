@@ -1,10 +1,9 @@
 import React from 'react'
+import LiveScore from '../components/LiveScore'
 
 function test() {
     return (
-        <div>
-            <h1> This is for test</h1>
-        </div>
+        <LiveScore />
     )
 }
 

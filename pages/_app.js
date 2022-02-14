@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import '../components/LiveScore.scss'
 import { useEffect } from 'react'
 
 function MyApp({ Component, pageProps }) {
