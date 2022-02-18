@@ -15,7 +15,7 @@
 .live-score-card {
 
 .column {
-	padding: 32px;
+	padding: 35px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -39,7 +39,7 @@
 	box-shadow: 0 4px 4px 0 rgba(#303030, 0.15),
 		0 0 0 15px var(--color-bg-secondary);
 	img {
-		width: 50px;
+		width: 65px;
 	}
 }
 
@@ -106,7 +106,10 @@
 	margin-top: 8px;
 }
 
-.match-referee {
-	margin-top: 12px;
-}
+// .match-referee {
+// 	display: flex;
+// 	flex-direction: column;
+// 	margin-top: 12px;
+// 	align-items: center;
+// }
 
