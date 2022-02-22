@@ -67,7 +67,7 @@ export default function LiveScore() {
                                     72'
                                 </div>
                                 <div className="match-referee ml-4 mt-4 lg:flex lg:flex-col lg:items-center lg:ml-0 ">
-                                    Referee: <strong>Sugam Shrestha</strong>
+                                    Referee: <strong>{live[0].referee}</strong>
                                 </div>
                             </div>
                         </div>

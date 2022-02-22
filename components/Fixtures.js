@@ -9,12 +9,35 @@ function Fixtures({ fixture }) {
         return dateA - dateB
     });
 
+    var today = new Date();
+    console.log('first wala',today);
+    // var dd = String(today.getDate()).padStart(2, '0');
+    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    // var yyyy = today.getFullYear();
+
+    // today = mm + '/' + dd + '/' + yyyy;
+    // console.log('aja ko date hai',today);
+
     const [showFixture, setShowFixture] = React.useState([]);
 
     let leng = fixture.length;
-    useEffect(() => {
-        setShowFixture(fixture.slice(leng - 7, leng));
-    }, [fixture]);
+  
+    for (let i = 0; i < leng; i++) {
+        var datea= new Date(fixture[i].date);
+        if (datea >= today) {
+            // setShowFixture(fixture[i]);
+            console.log('yeha dekhi leko',fixture[i]);
+            useEffect(() => {
+                setShowFixture(fixture.slice(i, i+7));
+            }, [fixture]);
+            break;
+        }
+        // else{
+        //     console.log('no match');
+        //     // break;
+        // }
+    }
+
 
 
 
