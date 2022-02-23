@@ -1,5 +1,5 @@
 import Fixture from './Fixture'
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function Fixtures({ fixture }) {
     // console.log(fixture);
@@ -9,8 +9,9 @@ function Fixtures({ fixture }) {
         return dateA - dateB
     });
 
-    var today = new Date();
-    console.log('first wala',today);
+    var fullDay = new Date();
+    var today = new Date(fullDay.toDateString());
+    // console.log('first wala', today);
     // var dd = String(today.getDate()).padStart(2, '0');
     // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     // var yyyy = today.getFullYear();
@@ -18,18 +19,22 @@ function Fixtures({ fixture }) {
     // today = mm + '/' + dd + '/' + yyyy;
     // console.log('aja ko date hai',today);
 
-    const [showFixture, setShowFixture] = React.useState([]);
+    const [showFixture, setShowFixture] = useState([]);
+    const [theDay, setTheDay] = useState('');
 
     let leng = fixture.length;
-  
+    // console.log("yo chai total", leng)
+
     for (let i = 0; i < leng; i++) {
-        var datea= new Date(fixture[i].date);
+        var datea = new Date(fixture[i].date);
         if (datea >= today) {
             // setShowFixture(fixture[i]);
-            console.log('yeha dekhi leko',fixture[i]);
+            // console.log('yeha dekhi leko', fixture[i]);
+            // console.log('yo index ho', i);
             useEffect(() => {
-                setShowFixture(fixture.slice(i, i+7));
-            }, [fixture]);
+                setShowFixture(fixture.slice(i, i + 7));
+                setTheDay(i);
+            }, []);
             break;
         }
         // else{
@@ -45,18 +50,21 @@ function Fixtures({ fixture }) {
 
         // browser code
         window.addEventListener('load', function () {
-            var i = 0;
+            // var i = 83;
+            var i = theDay;
             document.getElementById('prev_button').addEventListener('click', function (e) {
-                i <= leng - 14 && (i = i + 7);
+                i >= 7 && (i = i - 7)
+                // i >= 7 ? (i = i - 7) : (i = 0); //this shows fixtures from start
                 console.log("Prev", i)
-                setShowFixture(fixture.slice(leng - (i + 7), leng - i));
+                setShowFixture(fixture.slice(i, i + 7));
+                console.log("yo ho ni ta aaune", fixture.slice(i, i + 7))
             }
             );
 
             document.getElementById('next_button').addEventListener('click', function (e) {
                 console.log("Next ", i)
-                i > 1 && (i = i - 7);
-                setShowFixture(fixture.slice(leng - (i + 7), leng - i));
+                i < leng - 7 && (i = i + 7);
+                setShowFixture(fixture.slice(i, i + 7));
             }
             );
 
