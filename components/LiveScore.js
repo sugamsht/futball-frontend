@@ -64,7 +64,8 @@ export default function LiveScore() {
                                     <span className="match-score-number">{live[0].score2}</span>
                                 </div>
                                 <div className="match-time-lapsed">
-                                    72'
+                                    {/* 72' */}
+                                    <span className="match-half-title">{live[0].timer}</span>
                                 </div>
                                 <div className="match-referee ml-4 mt-4 lg:flex lg:flex-col lg:items-center lg:ml-0 ">
                                     Referee: <strong>{live[0].referee}</strong>
