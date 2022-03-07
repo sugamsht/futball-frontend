@@ -8,7 +8,8 @@ export default function LiveScore() {
     const [live, setLive] = useState([]);
 
     useEffect(() => {
-        axios.get('https://nepalscores.herokuapp.com/api/scoreboard')
+        // axios.get('https://nepalscores.herokuapp.com/api/scoreboard')
+        axios.get('http://localhost:3000/api/scoreboard')
             .then(function (response) {
                 // handle success
                 const data = response.data.reverse();

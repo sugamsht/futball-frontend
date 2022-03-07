@@ -11,7 +11,8 @@ import Stories from '../components/Stories'
 
 export async function getServerSideProps() {
 
-  const res = await fetch('https://nepalscores.herokuapp.com/api/tournaments')
+  // const res = await fetch('https://nepalscores.herokuapp.com/api/tournaments')
+  const res = await fetch('http://localhost:3000/api/tournaments')
   const data = await res.json()
 
   return {
