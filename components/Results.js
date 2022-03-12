@@ -3,7 +3,7 @@ import React from 'react';
 
 function Results({ result }) {
 
-    const displayResults = 7;
+    const displayResults = 5;
     var leng = result.length;
     const showResult = result.slice(leng - displayResults, leng).reverse();
 

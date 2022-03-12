@@ -28,17 +28,17 @@ export default function LiveScore() {
 
     return (
         <>
-            <Head>
+            {/* <Head>
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons" rel="stylesheet" />
-            </Head>
+            </Head> */}
             <div className="sm:flex-wrap md:block col-span-7 lg:col-span-3 w-auto my-2 live-score-card overflow-hidden">
                 <div className="w-full h-full flex flex-col bg-white">
                     <div className="flex border-b-2 border-gray-200 p-4">
                         <hr />
                         <div className="flex items-center leading-4 bg-pink-100 text-red-700 mr-auto text-bold rounded py-2 px-3 match-status whitespace-nowrap">
                             • Live</div>
-                        <div className="flex text-bold match-tournament">
-                            <img className="w-14 ml-2 lg:ml-0 lg:mr-2 lg:w-10" src="https://www.goalnepal.com/uploads/news/1546859794.png" />{live[0].fixObject.tournament_title}</div>
+                        <div className="flex text-bold items-center match-tournament">
+                            <img className="w-14 h-10 lg:mx-2 lg:w-16 2xl:mx-0 2xl:h-auto" src="https://www.goalnepal.com/uploads/news/1546859794.png" />{live[0].fixObject.tournament_title}</div>
                         <div className="match-actions flex ml-auto">
                             {/* <button className="btn-icon"><i className="material-icons-outlined">grade</i></button>
                             <button className="btn-icon"><i className="material-icons-outlined">add_alert</i></button> */}
@@ -50,7 +50,9 @@ export default function LiveScore() {
                                 <div className="team-logo">
                                     <img src={live[0].fixObject.team1Object[0].logo} />
                                 </div>
-                                <h2 className="team-name">{live[0].fixObject.team1Object[0].name}</h2>
+                                <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">
+                                    {live[0].fixObject.team1Object[0].name}
+                                </h2>
                             </div>
                         </div>
                         <div className="column">
@@ -78,7 +80,7 @@ export default function LiveScore() {
                                 <div className="team-logo">
                                     <img src={live[0].fixObject.team2Object[0].logo} />
                                 </div>
-                                <h2 className="team-name ">{live[0].fixObject.team2Object[0].name}</h2>
+                                <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">{live[0].fixObject.team2Object[0].name}</h2>
                             </div>
                         </div>
                     </div>

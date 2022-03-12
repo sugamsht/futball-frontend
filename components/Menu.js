@@ -6,7 +6,6 @@ const navigation = [
     { name: 'Home', href: '#', current: true },
     { name: 'Leagues', href: '#', current: false },
     { name: 'Result', href: '#', current: false },
-    { name: 'Fixture', href: '#', current: false },
     { name: 'About Us', href: '#', current: false },
 ]
 
@@ -19,7 +18,7 @@ export default function menu() {
         <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 w-screen">
             {({ open }) => (
                 <>
-                    <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                    <div className="max-w-5xl 2xl:max-w-7xl  mx-auto px-2 sm:px-6 lg:px-8 ">
                         <div className="relative flex items-center justify-between h-16">
                             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                                 {/* Mobile menu button*/}

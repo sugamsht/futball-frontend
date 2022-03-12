@@ -13,6 +13,7 @@
 }
 
 .live-score-card {
+	
 
 .column {
 	padding: 35px;
@@ -43,12 +44,12 @@
 	}
 }
 
-.team-name {
-	text-align: center;
-	margin-top: 24px;
-	font-size: 20px;
-	font-weight: 600;
-}
+// .team-name {
+// 	text-align: center;
+// 	margin-top: 24px;
+// 	font-size: 20px;
+// 	font-weight: 600;
+// }
 
 
 }
@@ -68,6 +69,7 @@
 }
 
 .match-date, .match-referee {
+	white-space: nowrap;
 	font-size: 14px;
 	color: var(--color-text-secondary);
 	strong {

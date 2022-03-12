@@ -19,10 +19,10 @@ const PointsTable = ({ points }) => {
             temp += "<td class='mr-9 text-center'>" + i + "</td>";
             temp += "<td class='pl-3'>" + itemData.name + "</td>";
             temp += "<td class='text-center'>" + itemData.played + "</td>";
-            temp += "<td class='text-center'>" + itemData.win + "</td>";
-            temp += "<td class='text-center'>" + itemData.draw + "</td>";
-            temp += "<td class='text-center'>" + itemData.lost + "</td>";
-            temp += "<td class='md:hidden xl:table-cell text-center'>" + itemData.gd + "</td>";
+            temp += "<td class='md:hidden 2xl:table-cell text-center'>" + itemData.win + "</td>";
+            temp += "<td class='md:hidden 2xl:table-cell text-center'>" + itemData.draw + "</td>";
+            temp += "<td class='md:hidden 2xl:table-cell text-center'>" + itemData.lost + "</td>";
+            temp += "<td class='text-center'>" + itemData.gd + "</td>";
             temp += "<td class='text-center'>" + itemData.points + "</td>";
             i++;
         });
@@ -41,10 +41,10 @@ const PointsTable = ({ points }) => {
                                     <th className="text-left p-1 pb-2">&nbsp;</th>
                                     <th className="text-left p-1 pb-2 pl-3"><abbr title="Teams in Competition">TEAM</abbr></th>
                                     <th className="text-left p-1 pb-2"><abbr title="Games Played">PLD</abbr></th>
-                                    <th className="text-left p-1 pb-2"><abbr title="Games Won">WON</abbr></th>
-                                    <th className="text-left p-1 pb-2"><abbr title="Games Drawn">DRN</abbr></th>
-                                    <th className="text-left p-1 pb-2"><abbr title="Games Lost">LST</abbr></th>
-                                    <th className="md:hidden xl:table-cell text-left p-1 pb-2"><abbr title="Goal Difference">GD</abbr></th>
+                                    <th className="md:hidden 2xl:table-cell text-left p-1 pb-2"><abbr title="Games Won">WON</abbr></th>
+                                    <th className="md:hidden 2xl:table-cell text-left p-1 pb-2"><abbr title="Games Drawn">DRN</abbr></th>
+                                    <th className="md:hidden 2xl:table-cell text-left p-1 pb-2"><abbr title="Games Lost">LST</abbr></th>
+                                    <th className="text-left p-1 pb-2"><abbr title="Goal Difference">GD</abbr></th>
                                     <th className="text-left p-1 pb-2"><abbr title="Points">PTS</abbr></th>
                                 </tr>
                             </thead>

@@ -2,7 +2,7 @@ import React from 'react'
 
 function Footer() {
     return (
-        <footer className="border-t border-gray-200 bg-white">
+        <footer className="bg-[#121212]">
             <div
                 className="
           container
@@ -31,7 +31,7 @@ function Footer() {
                     >
                         Logo
                     </a>
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-white">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium
                         at sequi cum, impedit fuga in placeat illo eum minima possimus est
                         perferendis distinctio explicabo eos natus consequuntur blanditiis
@@ -40,59 +40,59 @@ function Footer() {
                 </div>
                 <div className="justify-between w-full mt-4 text-center lg:flex hover: cursor-pointer">
                     <div className="w-full px-4 lg:w-1/3 md:w-1/2">
-                        <h2 className="mb-2 font-bold tracking-widest text-gray-900">
+                        <h2 className="mb-2 font-bold tracking-widest text-white">
                             Useful Links
                         </h2>
                         <ul className="mb-8 space-y-2 text-sm list-none">
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Home</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Home</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">About Us</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">About Us</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Blogs</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Blogs</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Contact Us</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Contact Us</a>
                             </li>
                         </ul>
                     </div>
                     <div className="w-full px-4 lg:w-1/3 md:w-1/2">
-                        <h2 className="mb-2 font-bold tracking-widest text-gray-900">
+                        <h2 className="mb-2 font-bold tracking-widest text-white">
                             Useful Links
                         </h2>
                         <ul className="mb-8 space-y-2 text-sm list-none">
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Home</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Home</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">About Us</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">About Us</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Blogs</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Blogs</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Contact Us</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Contact Us</a>
                             </li>
                         </ul>
                     </div>
                     <div className="w-full px-4 lg:w-1/3 md:w-1/2">
-                        <h2 className="mb-2 font-bold tracking-widest text-gray-900">
+                        <h2 className="mb-2 font-bold tracking-widest text-white">
                             Useful Links
                         </h2>
                         <ul className="mb-8 space-y-2 text-sm list-none">
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Home</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Home</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">About Us</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">About Us</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Blogs</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Blogs</a>
                             </li>
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Contact Us</a>
+                                <a className="text-white hover:text-gray-200 hover:underline">Contact Us</a>
                             </li>
                         </ul>
                     </div>

@@ -14,9 +14,9 @@ function Result({ result, score1, score2 }) {
                 <div className="absolute inset-0 h-full w-full bg-[#2785D5]" ></div>
                 <div className="relative h-full w-full flex justify-center items-center">
                     <div className='text-center'>
-                        {postponed && <p className="font-bold text-xl text-black-500">Postponed due to Corona</p>}
+                        {postponed && <p className="text-sm md:text-lg 2xl:text-xl font-bold text-black-500">Postponed</p>}
 
-                        <h2 className="w-full h-full text-sm md:text-md lg:text-lg 2xl:text-xl font-semibold tracking-tight text-white ">
+                        <h2 className="w-full h-full text-sm md:text-base 2xl:text-xl font-bold tracking-tight text-white ">
                             {result.split(' vs ')[0]} <p className='text-yellow-200 inline'>{score1}</p> <br />
                             {result.split(' vs ')[1]} <p className='text-yellow-200 inline'>{score2}</p>
                         </h2>

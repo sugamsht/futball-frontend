@@ -31,7 +31,7 @@ export default function Home({ apiData }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Menu />
-      <main className='mx-2 md:mx-10 lg:mx-20 2xl:mx-32'>
+      <main className='mx-2 md:mx-10 lg:mx-40 2xl:mx-64'>
         < Results result={apiData[0]?.resultList} />
         <div className='grid grid-cols-7 gap-2 w-full'>
           <Stories />
