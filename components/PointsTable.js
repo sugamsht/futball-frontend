@@ -6,8 +6,29 @@ const PointsTable = ({ points }) => {
         document.getElementById('data').innerHTML = temp;
     }, []);
 
-    //sort stat
-    points.sort((a, b) => (a.points < b.points) ? 1 : -1)
+    //sort point and gd
+    // points.sort((a, b) => (a.points < b.points) ? 1 : -1)
+    // points.sort((a, b) => (a.gd < b.gd) ? 1 : -1)
+
+    points.sort((a, b) => {
+        if (a.points < b.points) {
+            return 1
+        } else if (a.points > b.points) {
+            return -1
+        }
+        //sort by gd
+        if (a.gd < b.gd) {
+            return 1
+        }
+        else if (a.gd > b.gd) {
+            return -1
+        }
+        else {
+            return 0
+        }
+    })
+
+
 
     if (points?.length > 0) {
         var i = 1;
