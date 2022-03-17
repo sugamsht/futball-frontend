@@ -1,30 +1,60 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import axios from 'axios';
+import { useQuery, useQueryClient } from "react-query"
 
+const fetchLiveScore = () => {
+    return axios.get('http://localhost:3000/api/scoreboard')
+}
 export default function LiveScore() {
 
-    const [loading, setLoading] = useState(true);
-    const [live, setLive] = useState([]);
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        // axios.get('https://nepalscores.herokuapp.com/api/scoreboard')
-        axios.get('http://localhost:3000/api/scoreboard')
-            .then(function (response) {
-                // handle success
-                const data = response.data.reverse();
-                setLive(data)
-                setLoading(false)
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            })
-    }, []);
+    // const [loading, setLoading] = useState(true);
+    // const [live, setLive] = useState([]);
 
-    if (loading) {
-        return <h2>Loading...</h2>
-    }
+    // useEffect(() => {
+    //     // axios.get('https://nepalscores.herokuapp.com/api/scoreboard')
+    //     axios.get('http://localhost:3000/api/scoreboard')
+    //         .then(function (response) {
+    //             // handle success
+    //             const data = response.data.reverse();
+    //             setLive(data)
+    //             setLoading(false)
+    //         })
+    //         .catch(function (error) {
+    //             // handle error
+    //             console.log(error);
+    //         })
+    // }, []);
+
+    // if (loading) {
+    //     return <h2>Loading...</h2>
+    // }
+
+    const { data, isLoading, isError, error } = useQuery('scoreboard', fetchLiveScore,
+        {
+            refetchInterval: 20000, //refetch every 20 seconds
+            refetchIntervalInBackground: false, //don't refetch in background
+            //check cached data and show it if exists then fetch in background (doesn't show loading)
+            initialData: () => {
+                const hero = queryClient.getQueryData('scoreboard')
+                console.log("yo cha cache ma", hero)
+                if (hero) {
+                    return {
+                        data: live
+                    }
+                }
+                return undefined
+            }
+        }
+    );
+
+    const live = data?.data[0]
+    console.log("yo aako data", live)
+
+    if (isLoading) { return <h2>Loading...</h2> }
+    if (isError) { return <h2>{error.message}</h2> }
 
     return (
         <>
@@ -38,7 +68,11 @@ export default function LiveScore() {
                         <div className="flex items-center leading-4 bg-pink-100 text-red-700 mr-auto text-bold rounded py-2 px-3 match-status whitespace-nowrap">
                             • Live</div>
                         <div className="flex text-bold items-center match-tournament">
-                            <img className="w-14 h-10 lg:mx-2 lg:w-16 2xl:mx-0 2xl:h-auto" src="https://www.goalnepal.com/uploads/news/1546859794.png" />{live[0].fixObject.tournament_title}</div>
+                            <img
+                                className="w-14 h-10 lg:mx-2 lg:w-16 2xl:mx-0 2xl:h-auto"
+                                src="./Adiv_logo.png" />
+                            {live?.fixObject.tournament_title}
+                        </div>
                         <div className="match-actions flex ml-auto">
                             {/* <button className="btn-icon"><i className="material-icons-outlined">grade</i></button>
                             <button className="btn-icon"><i className="material-icons-outlined">add_alert</i></button> */}
@@ -48,39 +82,39 @@ export default function LiveScore() {
                         <div className="column">
                             <div className="team team--home">
                                 <div className="team-logo">
-                                    <img src={live[0].fixObject.team1Object[0].logo} />
+                                    <img src={live.fixObject.team1Object[0].logo} />
                                 </div>
                                 <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">
-                                    {live[0].fixObject.team1Object[0].name}
+                                    {live.fixObject.team1Object[0].name}
                                 </h2>
                             </div>
                         </div>
                         <div className="column">
                             <div className="match-details">
                                 <div className="match-date">
-                                    <strong>{live[0].fixObject.date}</strong>
+                                    <strong>{live.fixObject.date}</strong>
                                     {/* 12 Aug at <strong>19:00</strong> */}
                                 </div>
                                 <div className="match-score">
-                                    <span className="match-score-number match-score-number--leading">{live[0].score1}</span>
+                                    <span className="match-score-number match-score-number--leading">{live.score1}</span>
                                     <span className="match-score-divider">:</span>
-                                    <span className="match-score-number">{live[0].score2}</span>
+                                    <span className="match-score-number">{live.score2}</span>
                                 </div>
                                 <div className="match-time-lapsed">
                                     {/* 72' */}
-                                    <span className="match-half-title">{live[0].timer}</span>
+                                    <span className="match-half-title">{live.timer}</span>
                                 </div>
                                 <div className="match-referee ml-4 mt-4 lg:flex lg:flex-col lg:items-center lg:ml-0 ">
-                                    Referee: <strong>{live[0].referee}</strong>
+                                    Referee: <strong>{live.referee}</strong>
                                 </div>
                             </div>
                         </div>
                         <div className="column">
                             <div className="team team--away">
                                 <div className="team-logo">
-                                    <img src={live[0].fixObject.team2Object[0].logo} />
+                                    <img src={live.fixObject.team2Object[0].logo} />
                                 </div>
-                                <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">{live[0].fixObject.team2Object[0].name}</h2>
+                                <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">{live.fixObject.team2Object[0].name}</h2>
                             </div>
                         </div>
                     </div>
