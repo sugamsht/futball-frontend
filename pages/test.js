@@ -1,5 +1,13 @@
 import React from 'react'
 import LiveScore from '../components/LiveScore'
+import axios from 'axios';
+import { useQuery } from "react-query"
+
+
+const fetchLiveScore = () => {
+    return axios.get('http://localhost:3000/api/scoreboard')
+}
+
 
 const fakeData = [
     {
@@ -30,12 +38,17 @@ const fakeData = [
 ]
 
 function LiveEvent() {
+    const { data, isLoading, error } = useQuery('liveScore', fetchLiveScore)
+    // console.log("yo aako cha comment", data?.data?.[0]?.event)
+    const event = data?.data?.[0]?.event
+    if (isLoading) return <p>Loading...</p>
+    if (error) return <p>{error.message}</p>
     return (
         <ul className="list-none">
-            {fakeData.map(event => {
+            {event.map(event => {
                 return (
-                    <li className="py-2" key={event.id}>
-                        {event.time}' &nbsp; {event.event}
+                    <li className="py-2" key={event}>
+                        {event}
                     </li>
                 )
             })}
