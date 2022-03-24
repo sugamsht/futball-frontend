@@ -2,7 +2,7 @@ import React from 'react'
 
 function Footer() {
     return (
-        <footer className="bg-[#121212]">
+        <footer className="bg-[#121212] bottom-0 w-full overflow-hidden">
             <div
                 className="
           container

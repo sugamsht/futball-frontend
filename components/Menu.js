@@ -1,12 +1,12 @@
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { Disclosure } from '@headlessui/react'
+import { MenuIcon, XIcon } from '@heroicons/react/outline'
+import Link from 'next/link'
 
 const navigation = [
-    { name: 'Home', href: '#', current: true },
+    { name: 'Home', href: '/', current: true },
     { name: 'Leagues', href: '#', current: false },
     { name: 'Result', href: '#', current: false },
-    { name: 'About Us', href: '#', current: false },
+    { name: 'About Us', href: '/about', current: false },
 ]
 
 function classNames(...classes) {
@@ -15,7 +15,7 @@ function classNames(...classes) {
 
 export default function menu() {
     return (
-        <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 w-screen">
+        <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 w-full overflow-hidden">
             {({ open }) => (
                 <>
                     <div className="max-w-5xl 2xl:max-w-7xl  mx-auto px-2 sm:px-6 lg:px-8 ">
@@ -33,33 +33,37 @@ export default function menu() {
                             </div>
                             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-end">
                                 <div className="flex-1 flex items-center justify-center sm:justify-start">
-                                    <div className="flex-shrink-0 flex items-center">
-                                        <img
-                                            className="block lg:hidden h-8 w-auto"
-                                            src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                                            alt="Workflow"
-                                        />
-                                        <img
-                                            className="hidden lg:block h-8 w-auto"
-                                            src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-                                            alt="Workflow"
-                                        />
-                                    </div>
+                                    <Link href="/">
+                                        <a className="mr-6 font-medium text-white">
+                                            <div className="flex-shrink-0 flex items-center">
+                                                <img
+                                                    className="block lg:hidden h-8 w-auto"
+                                                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+                                                    alt="Workflow"
+                                                />
+                                                <img
+                                                    className="hidden lg:block h-8 w-auto"
+                                                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+                                                    alt="Workflow"
+                                                />
+                                            </div>
+                                        </a>
+                                    </Link>
                                 </div>
                                 <div className="hidden sm:block sm:ml-6">
                                     <div className="flex space-x-4">
                                         {navigation.map((item) => (
-                                            <a
-                                                key={item.name}
-                                                href={item.href}
-                                                className={classNames(
-                                                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                                    'px-3 py-2 rounded-md text-sm font-medium'
-                                                )}
-                                                aria-current={item.current ? 'page' : undefined}
-                                            >
-                                                {item.name}
-                                            </a>
+                                            <Link href={item.href} key={item.name}>
+                                                <a
+                                                    className={classNames(
+                                                        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                        'px-3 py-2 rounded-md text-sm font-medium'
+                                                    )}
+                                                    aria-current={item.current ? 'page' : undefined}
+                                                >
+                                                    {item.name}
+                                                </a>
+                                            </Link>
                                         ))}
                                     </div>
                                 </div>

@@ -2,6 +2,9 @@ import React from 'react'
 import axios from 'axios';
 import { useQuery } from "react-query"
 
+import { useRouter } from 'next/router'
+
+
 
 const fetchLiveScore = () => {
     return axios.get('http://localhost:3000/api/scoreboard')
@@ -20,11 +23,16 @@ export default function LiveScore({ initialData }) {
     const live = data?.data?.[0]
     // console.log("yo client data", live)
 
+    const router = useRouter()
+    function handleLiveClick() {
+        router.push("/live")
+    }
+
     if (isLoading) { return <h2>Loading...</h2> }
     if (isError) { return <h2>{error.message}</h2> }
     return (
         <>
-            <div className="sm:flex-wrap md:block col-span-7 lg:col-span-3 w-auto my-2 live-score-card overflow-hidden">
+            <div className="sm:flex-wrap md:block col-span-7 lg:col-span-3 w-auto my-2 live-score-card overflow-hidden" onClick={handleLiveClick}>
                 <div className="w-full h-full flex flex-col bg-white">
                     <div className="flex border-b-2 border-gray-200 p-4">
                         <hr />

@@ -14,7 +14,6 @@ function Fixtures({ fixture }) {
     // var dd = String(today.getDate()).padStart(2, '0');
     // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     // var yyyy = today.getFullYear();
-
     // today = mm + '/' + dd + '/' + yyyy;
     // console.log('aja ko date hai',today);
 
@@ -39,7 +38,7 @@ function Fixtures({ fixture }) {
             if (datea >= today) {
                 // setShowFixture(fixture[i]);
                 // console.log('yeha dekhi leko', fixture[i]);
-                console.log('yo index ho', j);
+                // console.log('yo index ho', j);
                 setShowFixture(fixture.slice(j, j + 7));
                 setTheDay(j);
                 break;
@@ -52,41 +51,33 @@ function Fixtures({ fixture }) {
     }, []);
 
     if (typeof window !== "undefined") {
-
         // browser code
         window.addEventListener('load', function () {
-
             // var i = 83;
             var i = theDay;
-            console.log("khoi ta daya", theDay)
-
+            // console.log("khoi ta daya", theDay)
             document.getElementById('prev_button').addEventListener('click', function (e) {
                 i >= 7 && (i = i - 7)
                 // i >= 7 ? (i = i - 7) : (i = 0); //this shows fixtures from start
-                console.log("Prev", i)
+                // console.log("Prev", i)
                 setShowFixture(fixture.slice(i, i + 7));
-                console.log("yo ho ni ta aaune", fixture.slice(i, i + 7))
+                // console.log("yo ho ni ta aaune", fixture.slice(i, i + 7))
             }
             );
 
             document.getElementById('next_button').addEventListener('click', function (e) {
-
-
-                console.log("Next ", i);
+                // console.log("Next ", i);
                 i < leng - 7 && (i = i + 7);
                 setShowFixture(fixture.slice(i, i + 7));
-
                 // (showFixture.length == 0) ? console.log("yo ho fixturelength", showFixture.length) : console.log("Next ", i); i < leng - 7 && (i = i + 7);
                 // setShowFixture(fixture.slice(i, i + 7));
-
             }
             );
-
-
         });
     }
+
     return (
-        <div className='flex flex-col justify-center items-center my-2 w-full h-auto bg-green-500 overflow-y-scroll scrollbar-hide'>
+        <div className='flex flex-col justify-center items-center mt-2 w-full h-auto bg-green-500 overflow-y-scroll scrollbar-hide'>
             <h1 className='text-blue-600 font-extrabold text-4xl mt-5'>Fixtures</h1>
             {/* <h2 className='text-gray-600 font-bold text-2xl mt-5'>Match Week 9</h2> */}
             <div className='sm:w-full md:w-full px-[1vw] md:px-[5vw] lg:w-full 2xl:w-3/4 2xl:px-0 mb-4' >

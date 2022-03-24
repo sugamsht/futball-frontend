@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Fixtures from '../components/Fixtures'
 import Footer from '../components/Footer'
 import Gallery from '../components/Gallery'
+import Layout from '../components/layout'
 import League from '../components/League'
 import LiveScore from '../components/LiveScore'
 import Menu from '../components/Menu'
@@ -26,14 +27,8 @@ export async function getServerSideProps() {
 }
 
 export default function Home({ apiData, liveData }) {
-
   return (
-    <div className="w-screen h-screen overflow-x-hidden bg-gray-700">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Menu />
+    <div className="bg-gray-700 overflow-x-hidden">
       <main className='mx-2 md:mx-10 lg:mx-40 2xl:mx-64'>
         < Results result={apiData[0]?.resultList} />
         <div className='grid grid-cols-7 gap-2 w-full'>
@@ -47,7 +42,6 @@ export default function Home({ apiData, liveData }) {
         <League />
         <Fixtures fixture={apiData[0]?.fixtureList} />
       </main>
-      <Footer />
     </div>
   )
 }

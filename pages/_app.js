@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import '../components/LiveScore.scss'
 import { useEffect } from 'react'
+import Layout from '../components/layout'
 
 import { QueryClientProvider, QueryClient } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
@@ -17,8 +18,10 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={queryClient} >
-      <Component {...pageProps} />
-      <ReactQueryDevtools initialIsOpen={false} position='bottom-right' />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+      {/* <ReactQueryDevtools initialIsOpen={false} position='bottom-right' /> */}
     </QueryClientProvider>
   )
 }
