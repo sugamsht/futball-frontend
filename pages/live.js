@@ -5,39 +5,71 @@ import { useQuery } from "react-query"
 import styles from './live.module.scss'
 import Head from 'next/head';
 
+import { FiSquare } from 'react-icons/fi'
+import { FaRegDotCircle, FaRegHandPaper, FaUsers } from 'react-icons/fa'
+import { MdEmojiPeople } from 'react-icons/md'
+import { GiCheckeredFlag } from 'react-icons/gi'
+
 
 const fetchLiveScore = () => {
     return axios.get('http://localhost:3000/api/scoreboard')
 }
 
-
-const fakeData = [
+const fakeData1 = [
     {
-        "id": "1",
-        "time": "1",
-        "event": "Ball goes out of play for a Chelsea goal kick.",
+        "team": "1",
+        "position": "GK",
+        "shirt_number": "1",
+        "name": "Ederson",
     },
     {
-        "id": "2",
-        "time": "2",
-        "event": "Hakim Ziyech puts the ball in the net and the away team extend their lead. The score-line now reads 0-2.",
+        "team": "1",
+        "position": "DF",
+        "shirt_number": "2",
+        "name": "Dias",
     },
     {
-        "id": "3",
-        "time": "3",
-        "event": "The away team take the lead again.",
+        "team": "1",
+        "position": "ST",
+        "shirt_number": "3",
+        "name": "Aguero",
     },
     {
-        "id": "4",
-        "time": "4",
-        "event": "The score-line now reads 0-1.",
-    },
-    {
-        "id": "5",
-        "time": "5",
-        "event": "Hawa Hanyo last ma.",
+        "team": "1",
+        "position": "LW",
+        "shirt_number": "4",
+        "name": "Sane",
     },
 ]
+
+const fakeData2 = [
+    {
+        "team": "2",
+        "position": "GK",
+        "shirt_number": "1",
+        "name": "De Gea",
+    },
+    {
+        "team": "2",
+        "position": "DF",
+        "shirt_number": "6",
+        "name": "Maguire",
+    },
+    {
+        "team": "2",
+        "position": "ST",
+        "shirt_number": "7",
+        "name": "Ronaldo",
+    },
+    {
+        "team": "2",
+        "position": "LW",
+        "shirt_number": "8",
+        "name": "Pogba",
+    },
+]
+
+// const fakeData = [...fakeData1, ...fakeData2]
 
 function LiveEvent() {
     const { data, isLoading, isFetching, error } = useQuery('liveScore', fetchLiveScore,)
@@ -62,15 +94,15 @@ function LiveEvent() {
 function Statistics() {
     return (
         <div className="mx-1 md:mx-[7vw] pt-5 pb-10">
-            <div id="stat" className="grid grid-flow-row">
+            <div>
                 <section id={styles.body}>
                     <div className={styles.match_stats_row}>
                         <div>
                             <span className={styles.match_stat_num}>03</span>
                         </div>
                         <div>
-                            <span className={styles.match_stat_desc}>
-                                <i className="fa fa-dot-circle-o"></i>
+                            <span className="uppercase text-base flex flex-col items-center gap-1">
+                                <FaRegDotCircle className='text-2xl opacity-80' />
                                 <span>Shoot On Target</span>
                             </span>
                         </div>
@@ -83,8 +115,8 @@ function Statistics() {
                             <span className={styles.match_stat_num}>05</span>
                         </div>
                         <div>
-                            <span className={styles.match_stat_desc}>
-                                <i className="fa fa-square-o"></i>
+                            <span className="uppercase text-base flex flex-col items-center gap-1">
+                                <FiSquare className='text-2xl opacity-80' />
                                 <span>Shoot Off Target</span>
                             </span>
                         </div>
@@ -97,8 +129,22 @@ function Statistics() {
                             <span className={styles.match_stat_num}>03</span>
                         </div>
                         <div>
-                            <span className={styles.match_stat_desc}>
-                                <i className="fa fa-hand-paper-o"></i>
+                            <span className="uppercase text-base flex flex-col items-center gap-1">
+                                <GiCheckeredFlag className='text-2xl opacity-80' />
+                                <span>Offside</span>
+                            </span>
+                        </div>
+                        <div>
+                            <span className={styles.match_stat_num}>02</span>
+                        </div>
+                    </div>
+                    <div className={styles.match_stats_row}>
+                        <div>
+                            <span className={styles.match_stat_num}>05</span>
+                        </div>
+                        <div>
+                            <span className="uppercase text-base flex flex-col items-center gap-1">
+                                <FaRegHandPaper className='text-2xl opacity-80' />
                                 <span>Total Save</span>
                             </span>
                         </div>
@@ -108,11 +154,25 @@ function Statistics() {
                     </div>
                     <div className={styles.match_stats_row}>
                         <div>
+                            <span className={styles.match_stat_num}>10</span>
+                        </div>
+                        <div>
+                            <span className="uppercase text-base flex flex-col items-center gap-1">
+                                <MdEmojiPeople className='text-2xl opacity-80' />
+                                <span>Fouls</span>
+                            </span>
+                        </div>
+                        <div>
+                            <span className={styles.match_stat_num}>07</span>
+                        </div>
+                    </div>
+                    <div className={styles.match_stats_row}>
+                        <div>
                             <span className={styles.match_stat_num}>68%</span>
                         </div>
                         <div>
-                            <span className={styles.match_stat_desc}>
-                                <i className="fa fa-users"></i>
+                            <span className="uppercase text-base flex flex-col items-center gap-1">
+                                <FaUsers className='text-2xl opacity-80' />
                                 <span>Ball Possession</span>
                             </span>
                         </div>
@@ -127,12 +187,48 @@ function Statistics() {
     )
 }
 
+function Lineups() {
+    return (
+        <div className='flex bg-gray-400'>
+            <table className='w-1/2 items-center'>
+                <tr>
+                    <th className='border-2 border-collapse w-full items-center'>Team 1</th>
+                </tr>
+                {
+                    fakeData1.map((item, index) => {
+                        return (
+                            <tr key={index}>
+                                <td className='border-2 border-collapse w-full items-center'>
+                                    <span className='text-lg'>&emsp;{item.shirt_number}.&emsp;{item.name}</span>
+                                </td>
+                            </tr>
+                        )
+                    })
+                }
+            </table>
+            <table className='w-1/2 items-center'>
+                <tr>
+                    <th className='border-2 border-collapse w-full items-center'>Team 2</th>
+                </tr>
+                {
+                    fakeData2.map((item, index) => {
+                        return (
+                            <tr key={index}>
+                                <td className='border-2 border-collapse w-full items-center'>
+                                    <span className='text-lg'>&emsp;{item.shirt_number}.&emsp;{item.name}</span>
+                                </td>
+                            </tr>
+                        )
+                    })
+                }
+            </table>
+        </div>
+    )
+}
+
 function live() {
     return (
         <>
-            <Head>
-                <link href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet' />
-            </Head>
             <div className='mx-1 md:mx-[20vw] min-h-screen'>
                 <LiveScore />
                 <div>
@@ -195,7 +291,7 @@ function live() {
                             <Statistics />
                         </div>
                         <div className="tab-pane fade" id="tabs-messagesJustify" role="tabpanel" aria-labelledby="tabs-profile-tabJustify">
-                            Tab 3 Vye cha ka Lineup
+                            <Lineups />
                         </div>
                     </div>
                 </div>
