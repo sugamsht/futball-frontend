@@ -190,36 +190,40 @@ function Lineups() {
     return (
         <div className='flex bg-gray-400'>
             <table className='w-1/2 items-center'>
-                <tr>
-                    <th className='border-2 border-collapse w-full items-center'>Team 1</th>
-                </tr>
-                {
-                    fakeData1.map((item, index) => {
-                        return (
-                            <tr key={index}>
-                                <td className='border-2 border-collapse w-full items-center'>
-                                    <span className='text-lg'>&emsp;{item.shirt_number}.&emsp;{item.name}</span>
-                                </td>
-                            </tr>
-                        )
-                    })
-                }
+                <tbody>
+                    <tr>
+                        <th className='border-2 border-collapse w-full items-center'>Team 1</th>
+                    </tr>
+                    {
+                        fakeData1.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td className='border-2 border-collapse w-full items-center'>
+                                        <span className='text-lg'>&emsp;{item.shirt_number}.&emsp;{item.name}</span>
+                                    </td>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
             </table>
             <table className='w-1/2 items-center'>
-                <tr>
-                    <th className='border-2 border-collapse w-full items-center'>Team 2</th>
-                </tr>
-                {
-                    fakeData2.map((item, index) => {
-                        return (
-                            <tr key={index}>
-                                <td className='border-2 border-collapse w-full items-center'>
-                                    <span className='text-lg'>&emsp;{item.shirt_number}.&emsp;{item.name}</span>
-                                </td>
-                            </tr>
-                        )
-                    })
-                }
+                <tbody>
+                    <tr>
+                        <th className='border-2 border-collapse w-full items-center'>Team 2</th>
+                    </tr>
+                    {
+                        fakeData2.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td className='border-2 border-collapse w-full items-center'>
+                                        <span className='text-lg'>&emsp;{item.shirt_number}.&emsp;{item.name}</span>
+                                    </td>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
             </table>
         </div>
     )
