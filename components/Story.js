@@ -11,10 +11,8 @@ function Story({ storyIndex }) {
             content: ({ action, isPaused }) => {
                 var src = "https://i.ibb.co/fY1DmQW/8aacdef9ba37db60c7a96271877cfbb5.jpg"
                 return (
-                    <div>
-                        <h1>Hey All 👋</h1>
-                        <img src={src} />
-                        <h4>Buttom text</h4>
+                    <div className='flex items-center justify-start h-full w-full'>
+                        <iframe src='https://widgets.sociablekit.com/instagram-stories/iframe/151272' frameborder='0' width='100%' height='1000'></iframe>
                     </div>
                 );
             }
@@ -78,7 +76,7 @@ function Story({ storyIndex }) {
                         background: "rgba(6, 2, 5, 0.4)",
                         display: story ? 'block' : 'none'
                     }}
-                    onClick={() => setStory(false)}
+                    // onClick={() => setStory(false)}
                 >
                     <div className="modal-dialog relative w-screen pointer-events-none" >
                         {story &&
@@ -87,12 +85,12 @@ function Story({ storyIndex }) {
                                     <button type="button"
                                         className="btn-close box-content w-4 h-4 p-1 float-right text-white border-none rounded-none opacity-90 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
                                         data-bs-dismiss="modal" aria-label="Close"
-                                        onClick={() => setStory(false)}
+                                        // onClick={() => setStory(false)}
                                     ></button>
                                     <div className='m-0'>
                                         <StoryComponent
                                             keyboardNavigation
-                                            defaultInterval={3000}
+                                            defaultInterval={15000}
                                             stories={array[storyIndex]}
                                             width={'100%'}
                                             height={'85vh'}

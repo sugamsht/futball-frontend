@@ -9,23 +9,23 @@
     "node": ">=10.x"
   },
   "dependencies": {
-    "@headlessui/react": "^1.5.0",
-    "axios": "^0.26.1",
-    "mongoose": "^6.2.10",
+    "@headlessui/react": "^1.7.15",
+    "axios": "^1.4.0",
+    "mongoose": "^7.2.3",
     "next": "latest",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-icons": "^4.3.1",
-    "react-insta-stories": "^2.3.0",
-    "react-modal": "^3.14.4",
-    "react-query": "^3.34.19",
-    "sass": "^1.50.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.9.0",
+    "react-insta-stories": "^2.6.0",
+    "react-modal": "^3.16.1",
+    "react-query": "^3.39.3",
+    "sass": "^1.63.3",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tw-elements": "^1.0.0-alpha4"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.4",
-    "postcss": "^8.4.12",
-    "tailwindcss": "^3.0.23"
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2"
   }
 }
