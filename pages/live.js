@@ -12,63 +12,11 @@ import { GiCheckeredFlag } from 'react-icons/gi'
 
 const fetchLiveScore = () => {
     return axios.get('http://localhost:3000/api/scoreboard')
+        .catch(error => {
+            throw error; // Rethrow the error to be caught by react-query
+        });
 }
 
-const fakeData1 = [
-    {
-        "team": "1",
-        "position": "GK",
-        "shirt_number": "1",
-        "name": "Ederson",
-    },
-    {
-        "team": "1",
-        "position": "DF",
-        "shirt_number": "2",
-        "name": "Dias",
-    },
-    {
-        "team": "1",
-        "position": "ST",
-        "shirt_number": "3",
-        "name": "Aguero",
-    },
-    {
-        "team": "1",
-        "position": "LW",
-        "shirt_number": "4",
-        "name": "Sane",
-    },
-]
-
-const fakeData2 = [
-    {
-        "team": "2",
-        "position": "GK",
-        "shirt_number": "1",
-        "name": "De Gea",
-    },
-    {
-        "team": "2",
-        "position": "DF",
-        "shirt_number": "6",
-        "name": "Maguire",
-    },
-    {
-        "team": "2",
-        "position": "ST",
-        "shirt_number": "7",
-        "name": "Ronaldo",
-    },
-    {
-        "team": "2",
-        "position": "LW",
-        "shirt_number": "8",
-        "name": "Pogba",
-    },
-]
-
-// const fakeData = [...fakeData1, ...fakeData2]
 
 function LiveEvent() {
     const { data, isLoading, isFetching, error } = useQuery('liveScore', fetchLiveScore,)
@@ -79,162 +27,86 @@ function LiveEvent() {
     if (error) return <p>{error.message}</p>
     return (
         <ul className="list-none">
-            {event.map(event => {
-                return (
-                    <li className="py-2" key={event}>
-                        {event}
-                    </li>
-                )
-            })}
+            {event.map((eventItem, index) => (
+                <li className="py-2" key={index}>
+                    {eventItem}
+                </li>
+            ))}
         </ul>
     )
 }
+
+const StatisticRow = ({ icon, label, value }) => (
+    <div className={styles.match_stats_row}>
+        <div>
+            <span className={styles.match_stat_num}>{value}</span>
+        </div>
+        <div>
+            <span className="uppercase text-base flex flex-col items-center gap-1">
+                {icon({ className: 'text-2xl opacity-80' })}
+                <span>{label}</span>
+            </span>
+        </div>
+        <div>
+            <span className={styles.match_stat_num}>{value}</span>
+        </div>
+    </div>
+);
 
 function Statistics() {
     return (
         <div className="mx-1 md:mx-[7vw] pt-5 pb-10">
             <div>
                 <section id={styles.body}>
-                    <div className={styles.match_stats_row}>
-                        <div>
-                            <span className={styles.match_stat_num}>03</span>
-                        </div>
-                        <div>
-                            <span className="uppercase text-base flex flex-col items-center gap-1">
-                                <FaRegDotCircle className='text-2xl opacity-80' />
-                                <span>Shoot On Target</span>
-                            </span>
-                        </div>
-                        <div>
-                            <span className={styles.match_stat_num}>03</span>
-                        </div>
-                    </div>
-                    <div className={styles.match_stats_row}>
-                        <div>
-                            <span className={styles.match_stat_num}>05</span>
-                        </div>
-                        <div>
-                            <span className="uppercase text-base flex flex-col items-center gap-1">
-                                <FiSquare className='text-2xl opacity-80' />
-                                <span>Shoot Off Target</span>
-                            </span>
-                        </div>
-                        <div>
-                            <span className={styles.match_stat_num}>08</span>
-                        </div>
-                    </div>
-                    <div className={styles.match_stats_row}>
-                        <div>
-                            <span className={styles.match_stat_num}>03</span>
-                        </div>
-                        <div>
-                            <span className="uppercase text-base flex flex-col items-center gap-1">
-                                <GiCheckeredFlag className='text-2xl opacity-80' />
-                                <span>Offside</span>
-                            </span>
-                        </div>
-                        <div>
-                            <span className={styles.match_stat_num}>02</span>
-                        </div>
-                    </div>
-                    <div className={styles.match_stats_row}>
-                        <div>
-                            <span className={styles.match_stat_num}>05</span>
-                        </div>
-                        <div>
-                            <span className="uppercase text-base flex flex-col items-center gap-1">
-                                <FaRegHandPaper className='text-2xl opacity-80' />
-                                <span>Total Save</span>
-                            </span>
-                        </div>
-                        <div>
-                            <span className={styles.match_stat_num}>03</span>
-                        </div>
-                    </div>
-                    <div className={styles.match_stats_row}>
-                        <div>
-                            <span className={styles.match_stat_num}>10</span>
-                        </div>
-                        <div>
-                            <span className="uppercase text-base flex flex-col items-center gap-1">
-                                <MdEmojiPeople className='text-2xl opacity-80' />
-                                <span>Fouls</span>
-                            </span>
-                        </div>
-                        <div>
-                            <span className={styles.match_stat_num}>07</span>
-                        </div>
-                    </div>
-                    <div className={styles.match_stats_row}>
-                        <div>
-                            <span className={styles.match_stat_num}>68%</span>
-                        </div>
-                        <div>
-                            <span className="uppercase text-base flex flex-col items-center gap-1">
-                                <FaUsers className='text-2xl opacity-80' />
-                                <span>Ball Possession</span>
-                            </span>
-                        </div>
-                        <div>
-                            <span className={styles.match_stat_num}>32%</span>
-                        </div>
-                    </div>
+                    <StatisticRow icon={FaRegDotCircle} label="Shoot On Target" value="03" />
+                    <StatisticRow icon={FiSquare} label="Shoot Off Target" value="08" />
+                    <StatisticRow icon={GiCheckeredFlag} label="Offside" value="02" />
+                    <StatisticRow icon={FaRegHandPaper} label="Total Save" value="03" />
+                    <StatisticRow icon={MdEmojiPeople} label="Fouls" value="07" />
+                    <StatisticRow icon={FaUsers} label="Ball Possession" value="32%" />
                 </section>
             </div>
-
         </div>
-    )
+    );
 }
 
 function Lineups() {
     const { data, isLoading, isFetching, error } = useQuery('liveScore', fetchLiveScore);
+    const lineupData = data?.data?.[0];
+    const removeNullDot = (player) => player.replace(/null\./g, '').trim();
 
-    if (isLoading) return <p>Loading...</p>
-    if (isFetching) return <p>Updating...</p>
-    if (error) return <p>{error.message}</p>
+    if (isLoading) return <p>Loading...</p>;
+    if (isFetching) return <p>Updating...</p>;
+    if (error) return <p>{error.message}</p>;
+    if (!lineupData) return null;
 
-    // Assuming the API response has a structure similar to the provided response
-    const team1Object = data?.data?.[0]?.fixObject?.team1Object[0];
-    const team2Object = data?.data?.[0]?.fixObject?.team2Object[0];
+    const renderTable = (teamIndex) => (
+        <table className='w-1/2 items-center'>
+            <tbody>
+                <tr>
+                    <th className='border-2 border-collapse w-full items-center'>
+                        <div className='w-full text-center'>{lineupData.fixname.split(' vs ')[teamIndex]}</div>
+                    </th>
+                </tr>
+                {lineupData.lineup[teamIndex]?.split(',')?.map((player, index) => (
+                    <tr key={index}>
+                        <td className='border-2 border-collapse w-full items-center'>
+                            <span className='text-lg'>&emsp;{(removeNullDot(player)) || '  '}</span>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
 
-    console.log("team1Object ko player", team1Object.playerList)
     return (
         <div className='flex bg-gray-400'>
-            <table className='w-1/2 items-center'>
-                <tbody>
-                    <tr>
-                        <th className='border-2 border-collapse w-full items-center'>{team1Object.name}</th>
-                    </tr>
-                    {team1Object.playerList.map((player, index) => (
-                        <tr key={index}>
-                            <td className='border-2 border-collapse w-full items-center'>
-                                <span className='text-lg'>
-                                    &emsp;{player.jersey_no}.&emsp;{`${player.fname} ${player.lname}`}
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <table className='w-1/2 items-center'>
-                <tbody>
-                    <tr>
-                        <th className='border-2 border-collapse w-full items-center'>{team2Object.name}</th>
-                    </tr>
-                    {team2Object.playerList.map((player, index) => (
-                        <tr key={index}>
-                            <td className='border-2 border-collapse w-full items-center'>
-                                <span className='text-lg'>
-                                    &emsp;{player.jersey_no}.&emsp;{`${player.fname} ${player.lname}`}
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {renderTable(0)}
+            {renderTable(1)}
         </div>
-    )
+    );
 }
+
 
 function live() {
     return (
