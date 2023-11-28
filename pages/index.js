@@ -14,10 +14,14 @@ export async function getServerSideProps() {
     const res1 = await fetch("http://localhost:3000/api/scoreboard");
     const liveData = await res1.json();
 
+    const res2 = await fetch("http://localhost:3000/api/tables");
+    const tableData = await res2.json();
+
     return {
       props: {
         apiData: data,
         liveData,
+        tableData,
       },
     }
   } catch (error) {
@@ -26,12 +30,13 @@ export async function getServerSideProps() {
       props: {
         apiData: [],
         liveData: [],
+        tableData: [],
       },
     }
   }
 }
 
-export default function Home({ apiData, liveData }) {
+export default function Home({ apiData, liveData, tableData }) {
   // Extract most recent non-empty results from all tournaments
   const recentResults = apiData.reduce((results, tournament) => {
     if (tournament.resultList) {
@@ -42,7 +47,6 @@ export default function Home({ apiData, liveData }) {
     return results;
   }, []);
 
-  console.log("yo aako reuslt", recentResults);
   return (
     <div className="bg-gray-700 overflow-x-hidden">
       <main className='mx-2 md:mx-10 lg:mx-40 2xl:mx-64'>
@@ -55,7 +59,11 @@ export default function Home({ apiData, liveData }) {
 
         <div className='grid grid-cols-6 gap-2 w-full'>
           <Gallery />
-          <PointsTable view={'hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'} points={apiData && apiData[0]?.teamList} />
+          <PointsTable
+            view={'hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'}
+            points={tableData.message}
+            tournaments={apiData && apiData.map(tournament => tournament.title)}
+          />
         </div>
 
         <League />
