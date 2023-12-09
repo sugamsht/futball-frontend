@@ -2,7 +2,7 @@ import Fixture from './Fixture'
 import React, { useEffect, useState } from 'react';
 
 function Fixtures({ fixture }) {
-
+    if (!fixture) return null;
     fixture.sort(function (a, b) {
         var dateA = new Date(a.date), dateB = new Date(b.date)
         return dateA - dateB

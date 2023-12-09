@@ -5,29 +5,32 @@ const PointsTable = ({ points, tournaments }) => {
     const [tableData, setTableData] = useState('');
 
     useEffect(() => {
-        // Filter points based on the selected tournament
-        const filteredPoints = points.filter(team => team.tournament_title === selectedTournament);
+        // Check if points is truthy before proceeding
+        if (points) {
+            // Filter points based on the selected tournament
+            const filteredPoints = points.filter(team => team.tournament_title === selectedTournament);
+            // Sort the filtered points
+            const sortedData = [...filteredPoints].sort((a, b) => {
+                if (a.points < b.points) {
+                    return 1;
+                } else if (a.points > b.points) {
+                    return -1;
+                }
+                // Sort by gd
+                if (a.gd < b.gd) {
+                    return 1;
+                } else if (a.gd > b.gd) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
 
-        // Sort the filtered points
-        const sortedData = [...filteredPoints].sort((a, b) => {
-            if (a.points < b.points) {
-                return 1;
-            } else if (a.points > b.points) {
-                return -1;
-            }
-            // Sort by gd
-            if (a.gd < b.gd) {
-                return 1;
-            } else if (a.gd > b.gd) {
-                return -1;
-            } else {
-                return 0;
-            }
-        });
-
-        // Update the state with the sorted data
-        setTableData(generateTable(sortedData));
+            // Update the state with the sorted data
+            setTableData(generateTable(sortedData));
+        }
     }, [selectedTournament, points]);
+
 
     const generateTable = (points) => {
         if (points.length === 0) {

@@ -1,10 +1,10 @@
 import '../styles/globals.css'
 import '../components/LiveScore.scss'
 import { useEffect } from 'react'
-import Layout from '../components/layout'
+import Layout from '../components/Layout.js'
 
 import { QueryClientProvider, QueryClient } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+// import { ReactQueryDevtools } from 'react-query/devtools'
 
 const queryClient = new QueryClient()
 
