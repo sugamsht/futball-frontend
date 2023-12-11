@@ -1,16 +1,13 @@
 import React from 'react'
 import axios from 'axios';
 import { useQuery } from "react-query"
-
-// import { useRouter } from 'next/router'
 import Link from 'next/link';
 
 
-
-const fetchLiveScore = () => {
-    return axios.get('http://localhost:3000/api/scoreboard')
-}
-
+const fetchLiveScore = async () => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard`);
+    return response.data;
+};
 export default function LiveScore({ initialData }) {
 
     const { data, isLoading, isError, error } = useQuery('scoreboard', fetchLiveScore,
@@ -21,17 +18,10 @@ export default function LiveScore({ initialData }) {
         }
     );
 
-    // console.log("yo client data", live)
-
-    // const router = useRouter()
-    // function handleLiveClick() {
-    //     router.push("/live")
-    // }
-
     if (isLoading) { return <h2>Loading...</h2> }
     if (isError) { return <h2>{error.message}</h2> }
 
-    const live = data?.data?.[0]
+    const live = data?.[0]
 
     return (
         <>

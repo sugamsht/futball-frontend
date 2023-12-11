@@ -6,16 +6,23 @@ import PointsTable from '../components/PointsTable'
 import Results from '../components/Results'
 import Stories from '../components/Stories'
 
+async function fetchData(apiPath) {
+  try {
+    const res = await fetch(`${process.env.Backend_URL}/api/${apiPath}`);
+    return await res.json();
+  } catch (error) {
+    console.error(`Error fetching ${apiPath} data:`, error);
+    return [];
+  }
+}
+
 export async function getServerSideProps() {
   try {
-    const res = await fetch('http://localhost:3000/api/tournaments')
-    const data = await res.json()
-
-    const res1 = await fetch("http://localhost:3000/api/scoreboard");
-    const liveData = await res1.json();
-
-    const res2 = await fetch("http://localhost:3000/api/tables");
-    const tableData = await res2.json();
+    const [data, liveData, tableData] = await Promise.all([
+      fetchData('tournaments'),
+      fetchData('scoreboard'),
+      fetchData('tables'),
+    ]);
 
     return {
       props: {
@@ -23,7 +30,7 @@ export async function getServerSideProps() {
         liveData,
         tableData,
       },
-    }
+    };
   } catch (error) {
     console.error("Error fetching data:", error);
     return {
@@ -32,9 +39,10 @@ export async function getServerSideProps() {
         liveData: [],
         tableData: [],
       },
-    }
+    };
   }
 }
+
 
 export default function Home({ apiData, liveData, tableData }) {
   // Extract most recent non-empty results from all tournaments
@@ -46,6 +54,11 @@ export default function Home({ apiData, liveData, tableData }) {
     }
     return results;
   }, []);
+
+  const allFixtures = apiData
+    .flatMap((tournament) => tournament.fixtureList)
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 21);
 
   return (
     <div className="bg-gray-700 overflow-x-hidden">
@@ -67,7 +80,7 @@ export default function Home({ apiData, liveData, tableData }) {
         </div>
 
         <League />
-        <Fixtures fixture={apiData && apiData[0]?.fixtureList} />
+        <Fixtures fixture={allFixtures} />
       </main>
     </div>
   )

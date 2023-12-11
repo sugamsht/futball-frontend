@@ -10,12 +10,6 @@ function Fixtures({ fixture }) {
 
     var fullDay = new Date();
     var today = new Date(fullDay.toDateString());
-    // console.log('first wala', today);
-    // var dd = String(today.getDate()).padStart(2, '0');
-    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    // var yyyy = today.getFullYear();
-    // today = mm + '/' + dd + '/' + yyyy;
-    // console.log('aja ko date hai',today);
 
     const [showFixture, setShowFixture] = useState([]);
     const [theDay, setTheDay] = useState('');
@@ -36,15 +30,11 @@ function Fixtures({ fixture }) {
         for (let j = 0; j < leng; j++) {
             var datea = new Date(fixture[j].date);
             if (datea >= today) {
-                // setShowFixture(fixture[i]);
-                // console.log('yeha dekhi leko', fixture[i]);
-                // console.log('yo index ho', j);
                 setShowFixture(fixture.slice(j, j + 7));
                 setTheDay(j);
                 break;
             }
             else {
-                // setShowFixture(fixture.slice(leng - 7, leng));
                 setTheDay(leng);
             }
         }
@@ -53,24 +43,16 @@ function Fixtures({ fixture }) {
     if (typeof window !== "undefined") {
         // browser code
         window.addEventListener('load', function () {
-            // var i = 83;
             var i = theDay;
-            // console.log("khoi ta daya", theDay)
             document.getElementById('prev_button').addEventListener('click', function (e) {
                 i >= 7 && (i = i - 7)
-                // i >= 7 ? (i = i - 7) : (i = 0); //this shows fixtures from start
-                // console.log("Prev", i)
                 setShowFixture(fixture.slice(i, i + 7));
-                // console.log("yo ho ni ta aaune", fixture.slice(i, i + 7))
             }
             );
 
             document.getElementById('next_button').addEventListener('click', function (e) {
-                // console.log("Next ", i);
                 i < leng - 7 && (i = i + 7);
                 setShowFixture(fixture.slice(i, i + 7));
-                // (showFixture.length == 0) ? console.log("yo ho fixturelength", showFixture.length) : console.log("Next ", i); i < leng - 7 && (i = i + 7);
-                // setShowFixture(fixture.slice(i, i + 7));
             }
             );
         });
