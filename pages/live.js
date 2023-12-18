@@ -10,18 +10,19 @@ import { MdEmojiPeople } from 'react-icons/md'
 import { GiCheckeredFlag } from 'react-icons/gi'
 
 
-const fetchLiveScore = () => {
-    return axios.get('http://localhost:3000/api/scoreboard')
-        .catch(error => {
-            throw error; // Rethrow the error to be caught by react-query
-        });
+const fetchLiveScore = async () => {
+    try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard`);
+        return response.data;
+    } catch (error) {
+        throw error; // Rethrow the error to be caught by react-query
+    }
 }
-
 
 function LiveEvent() {
     const { data, isLoading, isFetching, error } = useQuery('liveScore', fetchLiveScore,)
     // console.log("yo aako cha comment", data?.data?.[0]?.event)
-    const event = data?.data?.[0]?.event.reverse();
+    const event = data?.[0]?.event.reverse();
     if (isLoading) return <p>Loading...</p>
     if (isFetching) return <p>Updating...</p>
     if (error) return <p>{error.message}</p>
@@ -72,7 +73,7 @@ function Statistics() {
 
 function Lineups() {
     const { data, isLoading, isFetching, error } = useQuery('liveScore', fetchLiveScore);
-    const lineupData = data?.data?.[0];
+    const lineupData = data?.[0];
     const removeNullDot = (player) => player.replace(/null\./g, '').trim();
 
     if (isLoading) return <p>Loading...</p>;

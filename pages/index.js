@@ -6,6 +6,8 @@ import PointsTable from '../components/PointsTable'
 import Results from '../components/Results'
 import Stories from '../components/Stories'
 
+import Link from 'next/link'
+
 async function fetchData(apiPath) {
   try {
     const res = await fetch(`${process.env.Backend_URL}/api/${apiPath}`);
@@ -66,8 +68,18 @@ export default function Home({ apiData, liveData, tableData }) {
         <Results results={recentResults} />
 
         <div className='grid grid-cols-7 gap-2 w-full'>
-          <Stories />
-          <LiveScore initialData={liveData} />
+          <div className="col-span-4">
+            <div className="flex h-full w-full">
+              <Stories />
+            </div>
+          </div>
+          <Link href="/live" passHref>
+            <div className="col-span-3">
+              <div className="flex h-full w-full">
+                <LiveScore initialData={liveData} />
+              </div>
+            </div>
+          </Link>
         </div>
 
         <div className='grid grid-cols-6 gap-2 w-full'>
