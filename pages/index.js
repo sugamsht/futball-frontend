@@ -67,17 +67,13 @@ export default function Home({ apiData, liveData, tableData }) {
       <main className='mx-2 md:mx-10 lg:mx-40 2xl:mx-64'>
         <Results results={recentResults} />
 
-        <div className='grid grid-cols-7 gap-2 w-full'>
-          <div className="col-span-4">
-            <div className="flex h-full w-full">
-              <Stories />
-            </div>
+        <div className='grid grid-cols-1 md:grid-cols-7 2xl:grid-cols-12 gap-2 w-full'>
+          <div className="col-span-4 md:col-span-4 2xl:col-span-8 flex h-full w-full">
+            <Stories />
           </div>
           <Link href="/live" passHref>
-            <div className="col-span-3">
-              <div className="flex h-full w-full">
-                <LiveScore initialData={liveData} />
-              </div>
+            <div className="col-span-3 md:col-span-3 2xl:col-span-4 flex h-full w-full">
+              <LiveScore initialData={liveData} />
             </div>
           </Link>
         </div>

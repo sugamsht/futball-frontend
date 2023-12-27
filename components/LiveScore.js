@@ -43,7 +43,7 @@ export default function LiveScore({ initialData }) {
                     <div className="column">
                         <div className="team team--home">
                             <div className="team-logo">
-                                <img src={live?.fixObject.team1Object[0].logo} />
+                                <img src={`./logo/${live?.fixObject.team1Object[0].logo}.png`} />
                             </div>
                             <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">
                                 {live?.fixObject.team1Object[0].name}
@@ -73,7 +73,7 @@ export default function LiveScore({ initialData }) {
                     <div className="column">
                         <div className="team team--away">
                             <div className="team-logo">
-                                <img src={live?.fixObject.team2Object[0].logo} />
+                                <img src={`./logo/${live?.fixObject.team2Object[0].logo}.png`} />
                             </div>
                             <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">{live?.fixObject.team2Object[0].name}</h2>
                         </div>

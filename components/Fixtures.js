@@ -59,9 +59,8 @@ function Fixtures({ fixture }) {
     }
 
     return (
-        <div className='flex flex-col justify-center items-center mt-2 w-full h-auto bg-green-500 overflow-y-scroll scrollbar-hide'>
+        <div className='flex flex-col justify-center items-center mt-2 w-full h-auto bg-green-500 overflow-y-scroll scrollbar-hide rounded-lg shadow-lg p-6'>
             <h1 className='text-blue-600 font-extrabold text-4xl mt-5'>Fixtures</h1>
-            {/* <h2 className='text-gray-600 font-bold text-2xl mt-5'>Match Week 9</h2> */}
             <div className='sm:w-full md:w-full px-[1vw] md:px-[5vw] lg:w-full 2xl:w-3/4 2xl:px-0 mb-4' >
                 {
                     (showFixture.length == 0) ? NoFixtures() :
@@ -70,9 +69,9 @@ function Fixtures({ fixture }) {
                         ))
                 }
             </div>
-            <div>
-                <button className='p-2 mx-2 mb-4 bg-white' id="prev_button">Previous</button>
-                <button className='p-2 mx-2 mb-4 bg-white' id="next_button">Next!</button>
+            <div className='sm:w-full md:w-full px-[1vw] md:px-[5vw] lg:w-full 2xl:w-3/4 2xl:px-0 mb-4 flex justify-center'>
+                <button className='p-4 mx-2 mb-4 bg-white rounded-lg shadow-lg hover:bg-gray-200 transition-colors duration-200' id="prev_button">Previous</button>
+                <button className='p-4 mx-2 mb-4 bg-white rounded-lg shadow-lg hover:bg-gray-200 transition-colors duration-200' id="next_button">Next!</button>
             </div>
         </div>
     )
