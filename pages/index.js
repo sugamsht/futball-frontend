@@ -71,11 +71,11 @@ export default function Home({ apiData, liveData, tableData }) {
           <div className="col-span-4 md:col-span-4 2xl:col-span-8 flex h-full w-full">
             <Stories />
           </div>
-          <Link href="/live" passHref>
-            <div className="col-span-3 md:col-span-3 2xl:col-span-4 flex h-full w-full">
+          <div className="col-span-3 md:col-span-3 2xl:col-span-4 flex h-full w-full">
+            <Link href="/live" passHref>
               <LiveScore initialData={liveData} />
-            </div>
-          </Link>
+            </Link>
+          </div>
         </div>
 
         <div className='grid grid-cols-6 gap-2 w-full'>

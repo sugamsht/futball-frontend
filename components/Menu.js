@@ -44,20 +44,20 @@ export default function Menu({ open }) { // Add open as a prop
                     </div>
                     <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-end">
                         <div className="flex-1 flex items-center justify-center sm:justify-start">
-                            <Link href="/">
-                                <a className="mr-6 font-medium text-white">
+                            <Link href="/" passHref>
+                                <div className="mr-6 font-medium text-white">
                                     <div className="flex-shrink-0 flex items-center">
                                         <img className="block lg:hidden h-8 w-auto" src="./logo.png" alt="Workflow" />
                                         <img className="hidden lg:block h-8 w-auto" src="./logo.png" alt="Workflow" />
                                     </div>
-                                </a>
+                                </div>
                             </Link>
                         </div>
                         <div className="hidden sm:block sm:ml-6">
                             <div className="flex space-x-4">
                                 {navigationWithCurrent.map((item) => (
-                                    <Link href={item.href} key={item.name}>
-                                        <a
+                                    <Link href={item.href} key={item.name} passHref>
+                                        <div
                                             className={classNames(
                                                 item.current
                                                     ? 'bg-gray-900 text-white'
@@ -66,7 +66,7 @@ export default function Menu({ open }) { // Add open as a prop
                                             )}
                                         >
                                             {item.name}
-                                        </a>
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
@@ -78,8 +78,8 @@ export default function Menu({ open }) { // Add open as a prop
             <Disclosure.Panel className="sm:hidden">
                 <div className="px-2 pt-2 pb-3 space-y-1">
                     {navigationWithCurrent.map((item) => (
-                        <Link href={item.href} key={item.name}>
-                            <a
+                        <Link href={item.href} key={item.name} passHref>
+                            <div
                                 className={classNames(
                                     item.current
                                         ? 'bg-gray-900 text-white'
@@ -88,7 +88,7 @@ export default function Menu({ open }) { // Add open as a prop
                                 )}
                             >
                                 {item.name}
-                            </a>
+                            </div>
                         </Link>
                     ))}
                 </div>

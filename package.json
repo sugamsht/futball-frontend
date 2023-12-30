@@ -11,14 +11,16 @@
   "dependencies": {
     "@headlessui/react": "^1.7.15",
     "axios": "^1.4.0",
-    "next": "latest",
+    "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.9.0",
     "react-insta-stories": "^2.6.0",
     "react-modal": "^3.16.1",
     "react-query": "^3.39.3",
+    "react-slick": "^0.29.0",
     "sass": "^1.63.3",
+    "slick-carousel": "^1.8.1",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tw-elements": "^1.0.0-alpha4"
   },
