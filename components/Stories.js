@@ -1,39 +1,75 @@
-import React from 'react'
-import Story from './Story'
-import Head from 'next/head'
+import React, { useState, useEffect } from 'react';
+import Story from './Story';
 
 function Stories() {
+    const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+    const [isStoryOpen, setIsStoryOpen] = useState(false);
 
-    // if (typeof window !== 'undefined') {
-    //     document.getElementsByClassName('chimai').onClick = () => { console.log("Chimai") };
-    // }
+    const handleStoryClick = (index) => {
+        setCurrentStoryIndex(index);
+        setIsStoryOpen(true);
+    };
 
-    // const story2 = [
-    //     {
-    //         url: 'https://images.unsplash.com/photo-1546608235-3310a2494cdf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=638&q=80',
-    //     },
-    // ];
+    const handleClose = () => {
+        setIsStoryOpen(false);
+    };
 
-    // const story1 = [
-    //     {
-    //         url: 'https://images.unsplash.com/photo-1570498839593-e565b39455fc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80',
-    //     },
-    // ];
+    const handleNextStory = () => {
+        setCurrentStoryIndex((prevIndex) => (prevIndex + 1) % 4);
+    };
 
-    // <script src="../lib/cDg-min.js"></script>
+    const handlePrevStory = () => {
+        setCurrentStoryIndex((prevIndex) => (prevIndex - 1 + 4) % 4);
+    };
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'ArrowRight') {
+                handleNextStory();
+            } else if (event.key === 'ArrowLeft') {
+                handlePrevStory();
+            } else if (event.key === 'Escape') {
+                handleClose();
+            }
+        };
+
+        if (isStoryOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+        } else {
+            window.removeEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isStoryOpen]);
+
     return (
-        <>
-                        <Head> 
-                        <script src='https://widgets.sociablekit.com/instagram-stories/widget.js' async defer></script>
-    </Head>
-        <div className='flex flex-1 col-span-7 lg:col-span-4 items-center justify-start h-70 w-auto bg-red-400 my-2 overflow-x-scroll overflow-y-hidden scrollbar-hide '>
-            <Story storyIndex={0} />
-            <Story storyIndex={1} />
-            <Story storyIndex={2} />
-            <Story storyIndex={3} />
+        <div className='relative flex flex-1 col-span-7 lg:col-span-4 items-center justify-start h-70 w-auto bg-red-400 my-2 overflow-x-scroll overflow-y-hidden scrollbar-hide'>
+            <div className="flex">
+                {[0, 1, 2, 3].map((index) => (
+                    <div key={index} className="relative w-32 lg:w-40 h-52 overflow-hidden rounded-2xl bg-gray-200 mx-2">
+                        <img
+                            src="./sheru.jpg"
+                            alt={`Story Thumbnail ${index + 1}`}
+                            className="absolute inset-0 w-full h-full object-cover hover:opacity-75 transition duration-150 ease-in-out"
+                            onClick={() => handleStoryClick(index)}
+                        />
+                    </div>
+                ))}
+            </div>
+            {isStoryOpen && (
+                <div
+                    className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center z-50"
+                >
+                    <Story
+                        storyIndex={currentStoryIndex}
+                        onClose={handleClose}
+                    />
+                </div>
+            )}
         </div>
-        </>
-    )
+    );
 }
 
-export default Stories
+export default Stories;
