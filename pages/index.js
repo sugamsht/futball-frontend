@@ -10,7 +10,7 @@ import Link from 'next/link'
 
 async function fetchData(apiPath) {
   try {
-    const res = await fetch(`${process.env.Backend_URL}/api/${apiPath}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/${apiPath}`);
     return await res.json();
   } catch (error) {
     console.error(`Error fetching ${apiPath} data:`, error);
