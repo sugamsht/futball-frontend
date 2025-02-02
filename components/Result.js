@@ -1,30 +1,39 @@
 import React from 'react';
 
 function Result({ tournamentTitle, result, score1, score2 }) {
-    var postponed = false;
-    if (score1 < 0 || score2 < 0) {
-        postponed = true;
-        score1 = '...';
-        score2 = '...';
-    }
+    const postponed = score1 < 0 || score2 < 0;
+    const [team1, team2] = result?.split(' vs ') || ['', ''];
 
     return (
-        <div className="flex items-center justify-start w-full h-full m-2">
-            <div className="relative w-28 lg:w-full h-36 overflow-hidden rounded-3xl">
-                <div className="absolute inset-0 h-full w-full bg-[#2785D5]"></div>
-                <div className="relative h-full w-full flex justify-center items-center">
-                    <div className='text-center'>
-                        {postponed && <p className="text-sm md:text-lg 2xl:text-xl font-bold text-black-500">Postponed</p>}
-
-                        {tournamentTitle && (
-                            <p className="text-xs md:text-sm 2xl:text-lg font-bold text-green-400">{tournamentTitle}</p>
-                        )}
-
-                        <h2 className="w-full h-full text-sm md:text-base 2xl:text-xl font-bold tracking-tight text-white ">
-                            {result.split(' vs ')[0]} <p className='text-yellow-200 inline'>{score1}</p> <br />
-                            {result.split(' vs ')[1]} <p className='text-yellow-200 inline'>{score2}</p>
-                        </h2>
-                    </div>
+        <div className="relative group flex-shrink-0 w-56 md:w-64 lg:w-72 h-32 md:h-36 cursor-pointer transition-all duration-300 hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-600/90 rounded-2xl shadow-lg" />
+            <div className="absolute inset-0.5 bg-gray-900/30 rounded-xl backdrop-blur-sm border border-white/10 p-3 md:p-4 lg:p-6">
+                <div className="h-full flex flex-col justify-between space-y-2 md:space-y-3">
+                    {postponed ? (
+                        <div className="text-center flex items-center justify-center h-full">
+                            <p className="text-base md:text-lg font-bold bg-gradient-to-r from-red-400 to-pink-400 text-transparent bg-clip-text">
+                                Postponed
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            {tournamentTitle && (
+                                <p className="text-xs md:text-sm font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 text-transparent bg-clip-text">
+                                    {tournamentTitle}
+                                </p>
+                            )}
+                            <div className="space-y-2 md:space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm md:text-base font-medium text-white truncate">{team1}</span>
+                                    <span className="text-lg md:text-xl font-bold text-yellow-400 ml-2 md:ml-3">{score1}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm md:text-base font-medium text-white truncate">{team2}</span>
+                                    <span className="text-lg md:text-xl font-bold text-yellow-400 ml-2 md:ml-3">{score2}</span>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

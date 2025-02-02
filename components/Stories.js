@@ -45,27 +45,71 @@ function Stories() {
     }, [isStoryOpen]);
 
     return (
-        <div className='relative flex flex-1 col-span-7 lg:col-span-4 items-center justify-start h-70 w-auto bg-red-400 my-2 overflow-x-scroll overflow-y-hidden scrollbar-hide'>
-            <div className="flex">
+        <div className='relative w-full'>
+            <div className='flex space-x-4 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800'>
                 {[0, 1, 2, 3].map((index) => (
-                    <div key={index} className="relative w-32 lg:w-40 h-52 overflow-hidden rounded-2xl bg-gray-200 mx-2">
-                        <img
-                            src="./sheru.jpg"
-                            alt={`Story Thumbnail ${index + 1}`}
-                            className="absolute inset-0 w-full h-full object-cover hover:opacity-75 transition duration-150 ease-in-out"
-                            onClick={() => handleStoryClick(index)}
-                        />
+                    <div
+                        key={index}
+                        className="relative group flex-shrink-0 w-40 h-56 cursor-pointer transition-all duration-300 hover:scale-105"
+                        onClick={() => handleStoryClick(index)}
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0.5 bg-gray-800 rounded-xl overflow-hidden">
+                            <img
+                                src="./sheru.jpg"
+                                alt={`Story Thumbnail ${index + 1}`}
+                                className="w-full h-full object-cover transform transition duration-300 group-hover:scale-105"
+                            />
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-gray-900/90 to-transparent">
+                            <h3 className="text-sm font-semibold text-white truncate">
+                                Story Title {index + 1}
+                            </h3>
+                            <p className="text-xs text-gray-400 truncate">
+                                Updated 2h ago
+                            </p>
+                        </div>
                     </div>
                 ))}
             </div>
+
             {isStoryOpen && (
-                <div
-                    className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center z-50"
-                >
-                    <Story
-                        storyIndex={currentStoryIndex}
-                        onClose={handleClose}
-                    />
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center">
+                    <div className="relative w-full max-w-2xl aspect-[9/16] bg-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                        <button
+                            onClick={handleClose}
+                            className="absolute top-4 right-4 z-50 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
+                        >
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        {/* Removed progress indicators section */}
+
+                        <button
+                            onClick={handlePrevStory}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
+                        >
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+
+                        <button
+                            onClick={handleNextStory}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
+                        >
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+
+                        <Story
+                            storyIndex={currentStoryIndex}
+                            onClose={handleClose}
+                        />
+                    </div>
                 </div>
             )}
         </div>

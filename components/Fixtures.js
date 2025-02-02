@@ -16,12 +16,11 @@ function Fixtures({ fixture }) {
 
     let leng = fixture.length;
 
-
-    //NoFixtures
+    // NoFixtures
     const NoFixtures = () => {
         return (
-            <div>
-                <h1 className='flex justify-center text-xl items-center mt-5'>No Fixtures today</h1>
+            <div className="flex justify-center items-center mt-5">
+                <h1 className="text-xl font-semibold text-gray-300">No Fixtures today</h1>
             </div>
         )
     }
@@ -47,35 +46,32 @@ function Fixtures({ fixture }) {
             document.getElementById('prev_button').addEventListener('click', function (e) {
                 i >= 7 && (i = i - 7)
                 setShowFixture(fixture.slice(i, i + 7));
-            }
-            );
+            });
 
             document.getElementById('next_button').addEventListener('click', function (e) {
                 i < leng - 7 && (i = i + 7);
                 setShowFixture(fixture.slice(i, i + 7));
-            }
-            );
+            });
         });
     }
 
     return (
-        <div className='flex flex-col justify-center items-center mt-2 w-full h-auto bg-green-500 overflow-y-scroll scrollbar-hide rounded-lg shadow-lg p-6'>
-            <h1 className='text-blue-600 font-extrabold text-4xl mt-5'>Fixtures</h1>
-            <div className='sm:w-full md:w-full px-[1vw] md:px-[5vw] lg:w-full 2xl:w-3/4 2xl:px-0 mb-4' >
+        <div className="flex flex-col justify-center items-center mt-2 w-full h-auto bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl p-6">
+            <h1 className="text-emerald-400 font-extrabold text-3xl md:text-4xl lg:text-5xl mt-5">Fixtures</h1>
+            <div className="w-full px-4 md:px-10 lg:px-20 xl:px-32 2xl:px-40 mb-4">
                 {
-                    (showFixture.length == 0) ? NoFixtures() :
+                    (showFixture.length === 0) ? NoFixtures() :
                         showFixture.map((fixture, index) => (
                             <Fixture team1={fixture.team1} key={index} team2={fixture.team2} time={fixture.time} date={fixture.date} />
                         ))
                 }
             </div>
-            <div className='sm:w-full md:w-full px-[1vw] md:px-[5vw] lg:w-full 2xl:w-3/4 2xl:px-0 mb-4 flex justify-center'>
-                <button className='p-4 mx-2 mb-4 bg-white rounded-lg shadow-lg hover:bg-gray-200 transition-colors duration-200' id="prev_button">Previous</button>
-                <button className='p-4 mx-2 mb-4 bg-white rounded-lg shadow-lg hover:bg-gray-200 transition-colors duration-200' id="next_button">Next!</button>
+            <div className="w-full flex justify-center">
+                <button className="p-4 mx-2 mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-600 transition-colors duration-200" id="prev_button">Previous</button>
+                <button className="p-4 mx-2 mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-600 transition-colors duration-200" id="next_button">Next</button>
             </div>
         </div>
     )
-
 }
 
-export default Fixtures
+export default Fixtures;

@@ -63,33 +63,80 @@ export default function Home({ apiData, liveData, tableData }) {
     .slice(0, 21);
 
   return (
-    <div className="bg-gray-700 overflow-x-hidden">
-      <main className='mx-2 md:mx-10 lg:mx-40 2xl:mx-64'>
-        <Results results={recentResults} />
+    <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
+      <main className='mx-2 md:mx-6 lg:mx-12 xl:mx-24 2xl:mx-36'>
+        <section className='py-6'>
+          <Results results={recentResults} />
+        </section>
 
-        <div className='grid grid-cols-1 md:grid-cols-7 2xl:grid-cols-12 gap-2 w-full'>
-          <div className="col-span-4 md:col-span-4 2xl:col-span-8 flex h-full w-full">
-            <Stories />
+        <div className='grid grid-cols-1 md:grid-cols-7 xl:grid-cols-12 gap-4 w-full mb-8 items-stretch'>
+          {/* Stories Section */}
+          <div className="col-span-4 md:col-span-4 xl:col-span-8 h-full w-full">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-6 shadow-2xl h-full">
+              <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 text-2xl font-bold mb-4">
+                Top Stories
+              </h2>
+              <div className="h-[calc(100%-3rem)] overflow-y-auto">
+                <Stories />
+              </div>
+            </div>
           </div>
-          <div className="col-span-3 md:col-span-3 2xl:col-span-4 flex h-full w-full">
+
+          {/* LiveScore Section */}
+          <div className="col-span-3 md:col-span-3 xl:col-span-4 h-full w-full">
             <Link href="/live" passHref>
-              <LiveScore initialData={liveData} />
+              <div className="transform transition-all hover:scale-[1.02] cursor-pointer h-full">
+                <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-6 shadow-2xl hover:shadow-blue-500/20 h-full">
+                  <LiveScore initialData={liveData} />
+                </div>
+              </div>
             </Link>
           </div>
         </div>
 
-        <div className='grid grid-cols-6 gap-2 w-full'>
-          <Gallery />
-          <PointsTable
-            view={'hidden md:block col-span-2 w-auto h-[30rem] my-2 bg-gray-700 items-center justify-center float-right'}
-            points={tableData.message}
-            tournaments={apiData && apiData.map(tournament => tournament.title)}
-          />
+        {/* Gallery & Points Table Section */}
+        <div className='grid grid-cols-1 md:grid-cols-6 gap-4 w-full mb-8'>
+          <div className="md:col-span-4">
+            <div className="bg-gray-800 rounded-2xl p-6 shadow-2xl">
+              <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 text-2xl font-bold mb-4">
+                Match Gallery
+              </h2>
+              <Gallery />
+            </div>
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="bg-gray-800 rounded-2xl p-6 shadow-2xl">
+              <PointsTable
+                view={'w-full h-full overflow-hidden'}
+                points={tableData.message}
+                tournaments={apiData && apiData.map(tournament => tournament.title)}
+              />
+            </div>
+          </div>
         </div>
 
-        <League />
-        <Fixtures fixture={allFixtures} />
+        {/* League Section */}
+        <section className='mb-8'>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-6 shadow-2xl">
+            <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 text-2xl font-bold mb-4">
+              Leagues Overview
+            </h2>
+            <League />
+          </div>
+        </section>
+
+        {/* Fixtures Section */}
+        <section className='mb-12'>
+          <div className="bg-gray-800 rounded-2xl p-6 shadow-2xl">
+            <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 text-2xl font-bold mb-4">
+              Upcoming Fixtures
+            </h2>
+            <Fixtures fixture={allFixtures} />
+          </div>
+        </section>
       </main>
     </div>
   )
+
 }
