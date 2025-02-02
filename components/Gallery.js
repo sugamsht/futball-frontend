@@ -1,105 +1,81 @@
-import React, { useEffect } from "react";
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function Gallery() {
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        arrows: true,
+        appendDots: dots => (
+            <div className="slick-dots-container pb-4">
+                <ul className="flex justify-center space-x-2">{dots}</ul>
+            </div>
+        ),
+        customPaging: i => (
+            <div className="w-2.5 h-2.5 bg-gray-600 rounded-full transition-all duration-300 hover:scale-125" />
+        ),
+        prevArrow: <PrevArrow />,
+        nextArrow: <NextArrow />,
+    };
 
     return (
-        <>
-            <div className="col-span-6 md:col-span-4 lg:col-span-4 h-[30rem] my-2 items-center justify-center bg-yellow-300">
-                <div
-                    id="carouselExampleCaptions"
-                    className="carousel slide relative"
-                    data-bs-ride="carousel"
-                >
-                    <div className="carousel-indicators absolute right-0 bottom-0 left-0 flex justify-center p-0 mb-2 ">
-                        <button
-                            type="button"
-                            data-bs-target="#carouselExampleCaptions"
-                            data-bs-slide-to="0"
-                            className="active"
-                            aria-current="true"
-                            aria-label="Slide 1"
-                        ></button>
-                        <button
-                            type="button"
-                            data-bs-target="#carouselExampleCaptions"
-                            data-bs-slide-to="1"
-                            aria-label="Slide 2"
-                        ></button>
-                        <button
-                            type="button"
-                            data-bs-target="#carouselExampleCaptions"
-                            data-bs-slide-to="2"
-                            aria-label="Slide 3"
-                        ></button>
-                    </div>
-                    <div className="carousel-inner relative w-full overflow-hidden ">
-                        <div className="carousel-item active relative float-left w-full">
+        <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl overflow-hidden p-6">
+            <Slider {...settings}>
+                {[1, 2, 3].map((item) => (
+                    <div key={item} className="relative group">
+                        <div className="aspect-w-16 aspect-h-9 overflow-hidden rounded-2xl border border-white/10">
                             <img
-                                src="https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg"
-                                className="block w-full h-[30rem]"
-                                alt="..."
+                                src={`https://mdbootstrap.com/img/Photos/Slides/img%20(${item === 1 ? 15 : item === 2 ? 22 : 23}).jpg`}
+                                className="w-full h-full object-cover transform transition duration-500 group-hover:scale-105"
+                                alt={`Slide ${item}`}
                             />
-                            <div className="carousel-caption hidden md:block absolute text-center">
-                                <h5 className="text-xl">First slide label</h5>
-                                <p>
-                                    Some representative placeholder content for the first slide.
-                                </p>
-                            </div>
                         </div>
-                        <div className="carousel-item relative float-left w-full">
-                            <img
-                                src="https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg"
-                                className="block w-full h-[30rem]"
-                                alt="..."
-                            />
-                            <div className="carousel-caption hidden md:block absolute text-center">
-                                <h5 className="text-xl">Second slide label</h5>
-                                <p>
-                                    Some representative placeholder content for the second slide.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="carousel-item relative float-left w-full">
-                            <img
-                                src="https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg"
-                                className="block w-full h-[30rem]"
-                                alt="..."
-                            />
-                            <div className="carousel-caption hidden md:block absolute text-center">
-                                <h5 className="text-xl">Third slide label</h5>
-                                <p>
-                                    Some representative placeholder content for the third slide.
-                                </p>
-                            </div>
+                        <div className="absolute bottom-6 left-6 right-6 text-center backdrop-blur-sm bg-gray-900/50 p-4 rounded-xl space-y-2">
+                            <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 text-transparent bg-clip-text">
+                                Match Highlight {item}
+                            </h3>
+                            <p className="text-gray-300 text-sm hidden md:block">
+                                Exciting moments from recent matches
+                            </p>
                         </div>
                     </div>
-                    <button
-                        className="carousel-control-prev absolute top-0 bottom-0 flex items-center justify-center p-0 text-center border-0 hover:outline-none hover:no-underline focus:outline-none focus:no-underline left-0"
-                        type="button"
-                        data-bs-target="#carouselExampleCaptions"
-                        data-bs-slide="prev"
-                    >
-                        <span
-                            className="carousel-control-prev-icon inline-block bg-no-repeat"
-                            aria-hidden="true"
-                        ></span>
-                        <span className="visually-hidden">Previous</span>
-                    </button>
-                    <button
-                        className="carousel-control-next absolute top-0 bottom-0 flex items-center justify-center p-0 text-center border-0 hover:outline-none hover:no-underline focus:outline-none focus:no-underline right-0"
-                        type="button"
-                        data-bs-target="#carouselExampleCaptions"
-                        data-bs-slide="next"
-                    >
-                        <span
-                            className="carousel-control-next-icon inline-block bg-no-repeat"
-                            aria-hidden="true"
-                        ></span>
-                        <span className="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-        </>
+                ))}
+            </Slider>
+        </div>
+    );
+}
+
+function PrevArrow(props) {
+    const { onClick } = props;
+    return (
+        <button
+            onClick={onClick}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all shadow-xl hover:scale-110"
+        >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+    );
+}
+
+function NextArrow(props) {
+    const { onClick } = props;
+    return (
+        <button
+            onClick={onClick}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all shadow-xl hover:scale-110"
+        >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
     );
 }
 

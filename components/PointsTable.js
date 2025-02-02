@@ -5,18 +5,14 @@ const PointsTable = ({ points, tournaments }) => {
     const [tableData, setTableData] = useState('');
 
     useEffect(() => {
-        // Check if points is truthy before proceeding
         if (points) {
-            // Filter points based on the selected tournament
             const filteredPoints = points.filter(team => team.tournament_title === selectedTournament);
-            // Sort the filtered points
             const sortedData = [...filteredPoints].sort((a, b) => {
                 if (a.points < b.points) {
                     return 1;
                 } else if (a.points > b.points) {
                     return -1;
                 }
-                // Sort by gd
                 if (a.gd < b.gd) {
                     return 1;
                 } else if (a.gd > b.gd) {
@@ -26,75 +22,101 @@ const PointsTable = ({ points, tournaments }) => {
                 }
             });
 
-            // Update the state with the sorted data
             setTableData(generateTable(sortedData));
         }
     }, [selectedTournament, points]);
-
 
     const generateTable = (points) => {
         if (points.length === 0) {
             return (
                 <tr>
-                    <td colSpan="8" className="text-center">No data available for the selected tournament</td>
+                    <td colSpan="8" className="py-6 text-center text-gray-400">
+                        No data available for the selected tournament
+                    </td>
                 </tr>
             );
         }
 
         return points.map((itemData, index) => (
-            <tr key={index}>
-                <td className='mr-9 text-center'>{index + 1}</td>
-                <td className='pl-3'>{itemData.team_name}</td>
-                <td className='text-center'>{itemData.played}</td>
-                <td className='md:hidden 2xl:table-cell text-center'>{itemData.win}</td>
-                <td className='md:hidden 2xl:table-cell text-center'>{itemData.draw}</td>
-                <td className='md:hidden 2xl:table-cell text-center'>{itemData.lost}</td>
-                <td className='text-center'>{itemData.gd}</td>
-                <td className='text-center'>{itemData.points}</td>
+            <tr key={index} className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors">
+                <td className="py-1 md:py-2 text-center font-medium text-emerald-400 text-xs md:text-sm">
+                    {index + 1}
+                </td>
+                <td className="pl-2 md:pl-4 py-1 md:py-2 flex items-center space-x-2">
+                    <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-700/50 overflow-hidden border border-white/10">
+                        <img src="./Nepal_Super_League_logo.png" alt="Team Logo" className="w-full h-full object-cover" />
+                    </div>
+                    <span className="font-medium text-gray-100 text-xs md:text-sm truncate">
+                        {itemData.team_name}
+                    </span>
+                </td>
+                <td className="text-center py-1 md:py-2 text-gray-300 text-xs md:text-sm">{itemData.played}</td>
+                <td className="hidden md:table-cell text-center py-1 md:py-2 text-gray-300 text-xs md:text-sm">
+                    {itemData.win}
+                </td>
+                <td className="hidden md:table-cell text-center py-1 md:py-2 text-gray-300 text-xs md:text-sm">
+                    {itemData.draw}
+                </td>
+                <td className="hidden md:table-cell text-center py-1 md:py-2 text-gray-300 text-xs md:text-sm">
+                    {itemData.lost}
+                </td>
+                <td className="hidden md:table-cell text-center py-1 md:py-2 font-medium text-cyan-400 text-xs md:text-sm">{itemData.gd}</td>
+                <td className="text-center py-1 md:py-2 font-semibold text-purple-400 text-xs md:text-sm">
+                    {itemData.points}
+                </td>
             </tr>
         ));
     };
 
-    // Filter tournaments with corresponding points
     const tournamentsWithPoints = tournaments.filter(tournament =>
         points.some(team => team.tournament_title === tournament)
     );
 
     return (
-        <div className='sm:flex-wrap md:block col-span-6 md:col-span-2 w-auto h-[30rem] my-2 bg-gray-700 '>
-            <div className="text-white h-full bg-gray-800 overflow-scroll scrollbar-hide">
-                <div className="py-2 xl:py-4">
-                    {/* Add the dropdown menu to select the tournament */}
+        <div className='w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl overflow-hidden'>
+            <div className="p-4 md:p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 text-sm md:text-xl font-bold truncate">
+                        League Standings
+                    </h2>
                     {tournamentsWithPoints.length > 0 && (
                         <select
-                            className="text-white bg-gray-800 p-1 border-none outline-none"
+                            className="bg-gray-700/50 backdrop-blur-sm text-gray-100 px-2 py-1 md:px-4 md:py-2 rounded-lg 
+                                     border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 text-xs md:text-sm"
                             value={selectedTournament}
                             onChange={(e) => setSelectedTournament(e.target.value)}
                         >
                             {tournamentsWithPoints.map((tournament, index) => (
-                                <option key={index} value={tournament}>
+                                <option
+                                    key={index}
+                                    value={tournament}
+                                    className="bg-gray-800 text-gray-100 text-sm"
+                                >
                                     {tournament}
                                 </option>
                             ))}
                         </select>
                     )}
-                    <div className="max-w-screen-xl px-2 mx-auto">
-                        <table className="w-full md:text-xs lg:text-sm xl:text-base">
-                            <thead>
-                                <tr className="border-b border-gray-600">
-                                    <th className="text-left p-1 pb-2">&nbsp;</th>
-                                    <th className="text-left p-1 pb-2 pl-3"><abbr title="Teams in Competition">TEAM</abbr></th>
-                                    <th className="text-left p-1 pb-2"><abbr title="Games Played">PLD</abbr></th>
-                                    <th className="md:hidden 2xl:table-cell text-left p-1 pb-2"><abbr title="Games Won">WON</abbr></th>
-                                    <th className="md:hidden 2xl:table-cell text-left p-1 pb-2"><abbr title="Games Drawn">DRN</abbr></th>
-                                    <th className="md:hidden 2xl:table-cell text-left p-1 pb-2"><abbr title="Games Lost">LST</abbr></th>
-                                    <th className="text-left p-1 pb-2"><abbr title="Goal Difference">GD</abbr></th>
-                                    <th className="text-left p-1 pb-2"><abbr title="Points">PTS</abbr></th>
-                                </tr>
-                            </thead>
-                            <tbody className='text-white h-full'>{tableData}</tbody>
-                        </table>
-                    </div>
+                </div>
+
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 rounded-lg">
+                    <table className="w-full min-w-[400px] md:min-w-full">
+                        <thead className="bg-gray-700/50 backdrop-blur-sm">
+                            <tr>
+                                <th className="px-2 md:px-4 py-1 md:py-2 text-left text-xs md:text-sm font-semibold text-cyan-400">POS</th>
+                                <th className="pl-2 md:pl-1 py-1 md:py-2 text-left text-xs md:text-sm font-semibold text-cyan-400">TEAM</th>
+                                <th className="px-2 md:px-2 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">PLD</th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">WON</th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">DRN</th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">LST</th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">GD</th>
+                                <th className="px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-700/50">
+                            {tableData}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

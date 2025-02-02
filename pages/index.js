@@ -86,7 +86,7 @@ export default function Home({ apiData, liveData, tableData }) {
           <div className="col-span-3 md:col-span-3 xl:col-span-4 h-full w-full">
             <Link href="/live" passHref>
               <div className="transform transition-all hover:scale-[1.02] cursor-pointer h-full">
-                <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-6 shadow-2xl hover:shadow-blue-500/20 h-full">
+                <div className="bg-gradient-to-br from-blue-800 to-purple-900 rounded-2xl p-4 shadow-2xl hover:shadow-blue-500/20 h-full">
                   <LiveScore initialData={liveData} />
                 </div>
               </div>
@@ -95,20 +95,19 @@ export default function Home({ apiData, liveData, tableData }) {
         </div>
 
         {/* Gallery & Points Table Section */}
-        <div className='grid grid-cols-1 md:grid-cols-6 gap-4 w-full mb-8'>
-          <div className="md:col-span-4">
-            <div className="bg-gray-800 rounded-2xl p-6 shadow-2xl">
-              <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 text-2xl font-bold mb-4">
+        <div className='grid grid-cols-1 xl:grid-cols-7 gap-2 w-full mb-8'>
+          <div className="xl:col-span-4">
+            <div className="bg-gray-800 rounded-2xl p-4 md:p-4 shadow-2xl h-full">
+              <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 text-xl md:text-2xl font-bold mb-4">
                 Match Gallery
               </h2>
               <Gallery />
             </div>
           </div>
 
-          <div className="md:col-span-2">
-            <div className="bg-gray-800 rounded-2xl p-6 shadow-2xl">
+          <div className="xl:col-span-3">
+            <div className="bg-gray-800 rounded-2xl p-4 md:p-6 shadow-2xl h-full">
               <PointsTable
-                view={'w-full h-full overflow-hidden'}
                 points={tableData.message}
                 tournaments={apiData && apiData.map(tournament => tournament.title)}
               />
