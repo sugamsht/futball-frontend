@@ -127,7 +127,7 @@ export default function Home({ apiData, liveData, tableData }) {
         </section>
 
         {/* Fixtures Section */}
-        <section className='mb-12'>
+        <section className='pb-8'>
           <div className="bg-gray-800 rounded-2xl p-6 shadow-2xl">
             <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 text-2xl font-bold mb-4">
               Upcoming Fixtures

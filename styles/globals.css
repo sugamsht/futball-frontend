@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.slick-dots li.slick-active div {
+    background: linear-gradient(to right, #9333ea, #3b82f6) !important;
+    transform: scale(1.2);
+}

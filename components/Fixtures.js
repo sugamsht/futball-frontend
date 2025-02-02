@@ -19,8 +19,10 @@ function Fixtures({ fixture }) {
     // NoFixtures
     const NoFixtures = () => {
         return (
-            <div className="flex justify-center items-center mt-5">
-                <h1 className="text-xl font-semibold text-gray-300">No Fixtures today</h1>
+            <div className="flex justify-center items-center py-8">
+                <h1 className="text-xl font-semibold bg-gradient-to-r from-red-400 to-pink-400 text-transparent bg-clip-text">
+                    No Upcoming Fixtures
+                </h1>
             </div>
         )
     }
@@ -56,19 +58,41 @@ function Fixtures({ fixture }) {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center mt-2 w-full h-auto bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl p-6">
-            <h1 className="text-emerald-400 font-extrabold text-3xl md:text-4xl lg:text-5xl mt-5">Fixtures</h1>
-            <div className="w-full px-4 md:px-10 lg:px-20 xl:px-32 2xl:px-40 mb-4">
-                {
-                    (showFixture.length === 0) ? NoFixtures() :
-                        showFixture.map((fixture, index) => (
-                            <Fixture team1={fixture.team1} key={index} team2={fixture.team2} time={fixture.time} date={fixture.date} />
-                        ))
+        <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-6">
+            <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 text-3xl md:text-4xl font-bold text-center mb-8">
+                Upcoming Fixtures
+            </h1>
+
+            <div className="px-2 md:px-6 lg:px-12 xl:px-16 2xl:px-24 mb-6 space-y-4">
+                {showFixture.length === 0 ?
+                    <NoFixtures /> :
+                    showFixture.map((fixture, index) => (
+                        <Fixture
+                            key={index}
+                            team1={fixture.team1}
+                            team2={fixture.team2}
+                            time={fixture.time}
+                            date={fixture.date}
+                        />
+                    ))
                 }
             </div>
-            <div className="w-full flex justify-center">
-                <button className="p-4 mx-2 mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-600 transition-colors duration-200" id="prev_button">Previous</button>
-                <button className="p-4 mx-2 mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-600 transition-colors duration-200" id="next_button">Next</button>
+
+            <div className="flex justify-center space-x-4">
+                <button
+                    className="px-6 py-3 bg-gray-700/50 hover:bg-gray-600/80 rounded-xl backdrop-blur-sm transition-all 
+                             text-white font-semibold shadow-lg hover:scale-105"
+                    id="prev_button"
+                >
+                    Previous
+                </button>
+                <button
+                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 
+                             text-white font-semibold rounded-xl shadow-lg transition-all hover:scale-105"
+                    id="next_button"
+                >
+                    Next
+                </button>
             </div>
         </div>
     )

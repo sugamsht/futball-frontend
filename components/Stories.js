@@ -46,7 +46,7 @@ function Stories() {
 
     return (
         <div className='relative w-full'>
-            <div className='flex space-x-4 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800'>
+            <div className='flex space-x-4 pb-4 overflow-x-auto'>
                 {[0, 1, 2, 3].map((index) => (
                     <div
                         key={index}
@@ -85,11 +85,9 @@ function Stories() {
                             </svg>
                         </button>
 
-                        {/* Removed progress indicators section */}
-
                         <button
                             onClick={handlePrevStory}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
+                            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
                         >
                             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -98,7 +96,7 @@ function Stories() {
 
                         <button
                             onClick={handleNextStory}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50 p-2 bg-gray-800/50 hover:bg-gray-700/80 rounded-full backdrop-blur-sm transition-all"
                         >
                             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -108,6 +106,9 @@ function Stories() {
                         <Story
                             storyIndex={currentStoryIndex}
                             onClose={handleClose}
+                            handleNextStory={handleNextStory}
+                            handlePrevStory={handlePrevStory}
+                            setCurrentStoryIndex={setCurrentStoryIndex}
                         />
                     </div>
                 </div>
