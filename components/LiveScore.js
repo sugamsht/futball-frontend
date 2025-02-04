@@ -10,70 +10,126 @@ const fetchLiveScore = async () => {
 export default function LiveScore({ initialData }) {
     const { data, isLoading, isError, error } = useQuery('scoreboard', fetchLiveScore, {
         initialData,
-        refetchInterval: 20000, // refetch every 20 seconds
+        refetchInterval: 30000, // refetch every 30 seconds
         refetchOnWindowFocus: false, // don't refetch when the window is in focus
     });
 
-    if (isLoading) { return <h2>Loading...</h2>; }
-    if (isError) { return <h2>{error.message}</h2>; }
+    if (isLoading) {
+        return (
+            <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 text-center">
+                <div className="text-cyan-400 animate-pulse">
+                    Loading live scores...
+                </div>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 text-center text-red-400">
+                Error loading scores: {error.message}
+            </div>
+        );
+    }
 
     const live = data?.[0];
 
     return (
-        <div className="sm:flex-wrap md:block col-span-7 lg:col-span-3 w-auto my-2 live-score-card overflow-hidden cursor-pointer">
-            <div className="w-full h-full flex flex-col bg-white">
-                <div className="flex border-b-2 border-gray-200 p-4">
-                    <hr />
-                    <div className="flex items-center leading-4 bg-pink-100 text-red-700 mr-auto text-bold rounded py-2 px-3 match-status whitespace-nowrap">
-                        • Live
+        <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl overflow-hidden hover:transform hover:scale-[1.01] transition-all duration-300">
+            <div className="p-6 space-y-6">
+                {/* Match Status Header */}
+                <div className="flex items-center justify-between bg-gray-700/30 backdrop-blur-sm rounded-xl p-4 border border-cyan-400/20">
+                    <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                        <span className="text-red-400 font-semibold">LIVE</span>
                     </div>
-                    <div className="flex text-bold items-center match-tournament">
+                    <div className="flex items-center space-x-3">
                         <img
-                            className="w-14 h-10 lg:mx-2 lg:w-16 2xl:mx-0 2xl:h-auto"
-                            src="./Adiv_logo.png"
+                            src={`./logo/${live?.fixObject?.tournament_title.trim().toLowerCase().replace(/\s+/g, '')}.png`}
+                            onError={(e) => {
+                                e.target.src = '/logo.png';
+                            }}
                             alt="Tournament Logo"
+                            className="w-8 h-8 object-contain"
                         />
-                        {live?.fixObject?.tournament_title}
+                        <span className="text-gray-300 font-medium">
+                            {live?.fixObject?.tournament_title}
+                        </span>
                     </div>
-                    <div className="match-actions flex ml-auto"></div>
                 </div>
-                <div className="match-content flex relative">
-                    <div className="column">
-                        <div className="team team--home">
-                            <div className="team-logo">
-                                <img src={`./logo/${live?.fixObject?.team1Object?.[0]?.logo}.png`} alt="Team 1 Logo" />
-                            </div>
-                            <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">
-                                {live?.fixObject?.team1Object?.[0]?.name}
-                            </h2>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className="match-details">
-                            <div className="match-date">
-                                <strong>{live?.fixObject?.date}</strong>
-                            </div>
-                            <div className="match-score">
-                                <span className="match-score-number match-score-number--leading">{live?.score1}</span>
-                                <span className="match-score-divider">:</span>
-                                <span className="match-score-number">{live?.score2}</span>
-                            </div>
-                            <div className="match-time-lapsed">
-                                <span className="match-half-title">{live?.timer}</span>
-                            </div>
-                            <div className="match-referee ml-4 mt-4 lg:flex lg:flex-col lg:items-center lg:ml-0">
-                                Referee: <strong>{live?.referee}</strong>
+
+                {/* Teams and Score */}
+                <div className="grid grid-cols-3 gap-6 items-center">
+                    {/* Home Team */}
+                    <div className="flex flex-col items-center space-y-4">
+                        <div className="relative group w-20 h-20">
+                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-purple-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="relative bg-gray-700 rounded-xl p-2">
+                                <img
+                                    src={`./logo/${live?.fixObject?.team1Object?.[0]?.logo}`}
+                                    alt="Home Team"
+                                    className="w-16 h-16 object-contain"
+                                    onError={(e) => {
+                                        e.target.src = '/logo.png';
+                                    }}
+                                />
                             </div>
                         </div>
+                        <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                            {live?.fixObject?.team1Object?.[0]?.name}
+                        </h2>
                     </div>
-                    <div className="column">
-                        <div className="team team--away">
-                            <div className="team-logo">
-                                <img src={`./logo/${live?.fixObject?.team2Object?.[0]?.logo}.png`} alt="Team 2 Logo" />
+
+                    {/* Score and Time */}
+                    <div className="text-center space-y-3">
+                        <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                            <span>{live?.score1}</span>
+                            <span className="mx-2 text-gray-400">:</span>
+                            <span>{live?.score2}</span>
+                        </div>
+                        <div className="text-sm text-cyan-400 font-medium">
+                            {live?.timer}'
+                        </div>
+                        <div className="text-xs text-gray-400">
+                            {live?.fixObject?.date}
+                        </div>
+                    </div>
+
+                    {/* Away Team */}
+                    <div className="flex flex-col items-center space-y-4">
+                        <div className="relative group w-20 h-20">
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-cyan-400/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="relative bg-gray-700 rounded-xl p-2">
+                                <img
+                                    src={`./logo/${live?.fixObject?.team2Object?.[0]?.logo}`}
+                                    alt="Away Team"
+                                    className="w-16 h-16 object-contain"
+                                    onError={(e) => {
+                                        e.target.src = '/logo.png';
+                                    }}
+                                />
                             </div>
-                            <h2 className="team-name text-center mt-6 font-bold text-lg 2xl:text-xl">
-                                {live?.fixObject?.team2Object?.[0]?.name}
-                            </h2>
+                        </div>
+                        <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                            {live?.fixObject?.team2Object?.[0]?.name}
+                        </h2>
+                    </div>
+                </div>
+
+                {/* Match Details */}
+                <div className="bg-gray-700/30 backdrop-blur-sm rounded-xl p-4 border border-cyan-400/20">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center space-x-2">
+                            <span className="text-gray-400">Referee:</span>
+                            <span className="text-cyan-400 font-medium">
+                                {live?.referee || 'TBD'}
+                            </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <span className="text-gray-400">Venue:</span>
+                            <span className="text-purple-400 font-medium">
+                                {live?.fixObject?.stadium || 'TBD'}
+                            </span>
                         </div>
                     </div>
                 </div>
