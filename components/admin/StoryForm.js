@@ -1,12 +1,13 @@
+// StoryForm.js
 import { useState, useEffect } from 'react';
 
 const StoryForm = ({ editData, onSubmit }) => {
     const [formData, setFormData] = useState({
         title: '',
         content: '',
-        image: ''
+        images: []
     });
-
+    const [newImage, setNewImage] = useState('');
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     useEffect(() => {
@@ -14,10 +15,27 @@ const StoryForm = ({ editData, onSubmit }) => {
             setFormData({
                 title: editData.title || '',
                 content: editData.content || '',
-                image: editData.image || ''
+                images: editData.images || []
             });
         }
     }, [editData]);
+
+    const handleAddImage = () => {
+        if (newImage.trim()) {
+            setFormData(prev => ({
+                ...prev,
+                images: [...prev.images, newImage.trim()]
+            }));
+            setNewImage('');
+        }
+    };
+
+    const handleRemoveImage = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -32,13 +50,18 @@ const StoryForm = ({ editData, onSubmit }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({
+                ...formData,
+                // Ensure images array is properly sent
+                images: formData.images.filter(url => url.trim() !== '')
+            })
         })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
                     onSubmit();
-                    setFormData({ title: '', content: '', image: '' });
+                    setFormData({ title: '', content: '', images: [] });
+                    setNewImage('');
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -52,21 +75,56 @@ const StoryForm = ({ editData, onSubmit }) => {
                 className="w-full p-2 bg-gray-700 text-white rounded"
                 value={formData.title}
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
+                required
             />
+
             <textarea
                 placeholder="Story Content"
                 className="w-full p-2 bg-gray-700 text-white rounded"
                 value={formData.content}
                 onChange={e => setFormData({ ...formData, content: e.target.value })}
                 rows="4"
+                required
             />
-            <input
-                type="text"
-                placeholder="Image URL"
-                className="w-full p-2 bg-gray-700 text-white rounded"
-                value={formData.image}
-                onChange={e => setFormData({ ...formData, image: e.target.value })}
-            />
+
+            <div className="space-y-2">
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        placeholder="Image URL"
+                        className="flex-1 p-2 bg-gray-700 text-white rounded"
+                        value={newImage}
+                        onChange={e => setNewImage(e.target.value)}
+                    />
+                    <button
+                        type="button"
+                        onClick={handleAddImage}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                    >
+                        Add Image
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {formData.images.map((url, index) => (
+                        <div key={index} className="relative group">
+                            <img
+                                src={url}
+                                alt={`Story image ${index + 1}`}
+                                className="w-full h-24 object-cover rounded"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveImage(index)}
+                                className="absolute top-1 right-1 p-1 bg-red-600/90 text-white rounded-full backdrop-blur-sm hover:bg-red-700 transition"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             <button
                 type="submit"
                 className="bg-emerald-500 text-white px-6 py-2 rounded hover:bg-emerald-600 transition"

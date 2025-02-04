@@ -5,7 +5,6 @@ const LeagueForm = ({ editData, onSubmit }) => {
         title: '',
         description: '',
         logo: '',
-        stadium: ''
     });
 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -16,7 +15,6 @@ const LeagueForm = ({ editData, onSubmit }) => {
                 title: editData.title || '',
                 description: editData.description || '',
                 logo: editData.logo || '',
-                stadium: editData.stadium || ''
             });
         }
     }, [editData]);
@@ -40,7 +38,7 @@ const LeagueForm = ({ editData, onSubmit }) => {
             .then(data => {
                 if (data.success) {
                     onSubmit();
-                    setFormData({ title: '', description: '', logo: '', stadium: '' });
+                    setFormData({ title: '', description: '', logo: '' });
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -68,13 +66,6 @@ const LeagueForm = ({ editData, onSubmit }) => {
                 className="w-full p-2 bg-gray-700 text-white rounded"
                 value={formData.logo}
                 onChange={e => setFormData({ ...formData, logo: e.target.value })}
-            />
-            <input
-                type="text"
-                placeholder="Stadium"
-                className="w-full p-2 bg-gray-700 text-white rounded"
-                value={formData.stadium}
-                onChange={e => setFormData({ ...formData, stadium: e.target.value })}
             />
             <button
                 type="submit"

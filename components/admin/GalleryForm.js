@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const GalleryForm = ({ editData, onSubmit }) => {
     const [formData, setFormData] = useState({
+        title: '',
         imageUrl: '',
         caption: ''
     });
@@ -11,6 +12,7 @@ const GalleryForm = ({ editData, onSubmit }) => {
     useEffect(() => {
         if (editData) {
             setFormData({
+                title: editData.title || '',
                 imageUrl: editData.imageUrl || '',
                 caption: editData.caption || ''
             });
@@ -36,7 +38,7 @@ const GalleryForm = ({ editData, onSubmit }) => {
             .then(data => {
                 if (data.success) {
                     onSubmit();
-                    setFormData({ imageUrl: '', caption: '' });
+                    setFormData({ title: '', imageUrl: '', caption: '' });
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -44,6 +46,13 @@ const GalleryForm = ({ editData, onSubmit }) => {
 
     return (
         <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-2xl space-y-4">
+            <input
+                type="text"
+                placeholder="Title"
+                className="w-full p-2 bg-gray-700 text-white rounded"
+                value={formData.title}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
+            />
             <input
                 type="text"
                 placeholder="Image URL"
