@@ -5,6 +5,7 @@ import StoryForm from '../../components/admin/StoryForm';
 import GalleryForm from '../../components/admin/GalleryForm';
 import LeagueForm from '../../components/admin/LeagueForm';
 import LiveForm from '../../components/admin/LiveForm';
+import MainForm from '../../components/admin/MainForm';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('stories');
@@ -62,12 +63,12 @@ const AdminDashboard = () => {
     // DashboardCard remains unchanged
     const DashboardCard = ({ title, tab, gradient, description }) => (
         <div
-            className={`bg-gradient-to-r ${gradient} p-6 rounded-2xl shadow-xl cursor-pointer transition-all ${activeTab === tab ? 'ring-2 ring-white scale-105' : 'opacity-90 hover:scale-105'
+            className={`bg-gradient-to-r ${gradient} p-4 rounded-xl shadow-xl cursor-pointer transition-all ${activeTab === tab ? 'ring-2 ring-white scale-105' : 'opacity-90 hover:scale-105'
                 }`}
             onClick={() => setActiveTab(tab)}
         >
             <div className="flex flex-col justify-between h-full">
-                <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
+                <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
                 <p className="text-gray-200 text-sm">{description}</p>
             </div>
         </div>
@@ -81,7 +82,13 @@ const AdminDashboard = () => {
                 </h1>
 
                 {/* Dashboard Cards Navigation */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+                    <DashboardCard
+                        title="Main"
+                        tab="main"
+                        gradient="from-green-600 to-emerald-600"
+                        description="Manage core football data"
+                    />
                     <DashboardCard
                         title="Stories"
                         tab="stories"
@@ -229,12 +236,19 @@ const AdminDashboard = () => {
                         </>
                     )}
 
+                    {activeTab === 'main' && (
+                        <div className="space-y-8">
+                            <MainForm />
+                        </div>
+                    )}
+
                     {/* Live Score Management */}
                     {activeTab === 'live' && (
                         <>
                             <LiveForm />
                         </>
                     )}
+
                 </div>
             </div>
         </div>
