@@ -1,8 +1,10 @@
+// admin/index.js
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import StoryForm from '../../components/admin/StoryForm';
 import GalleryForm from '../../components/admin/GalleryForm';
 import LeagueForm from '../../components/admin/LeagueForm';
+import LiveForm from '../../components/admin/LiveForm';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('stories');
@@ -12,7 +14,7 @@ const AdminDashboard = () => {
     const [editingItem, setEditingItem] = useState(null);
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-    // Fetch initial data
+    // Fetch initial data for stories, gallery, and leagues
     useEffect(() => {
         fetchData();
     }, []);
@@ -57,6 +59,7 @@ const AdminDashboard = () => {
         fetchData(); // Refresh data after submission
     };
 
+    // DashboardCard remains unchanged
     const DashboardCard = ({ title, tab, gradient, description }) => (
         <div
             className={`bg-gradient-to-r ${gradient} p-6 rounded-2xl shadow-xl cursor-pointer transition-all ${activeTab === tab ? 'ring-2 ring-white scale-105' : 'opacity-90 hover:scale-105'
@@ -78,7 +81,7 @@ const AdminDashboard = () => {
                 </h1>
 
                 {/* Dashboard Cards Navigation */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <DashboardCard
                         title="Stories"
                         tab="stories"
@@ -96,6 +99,12 @@ const AdminDashboard = () => {
                         tab="leagues"
                         gradient="from-orange-600 to-amber-600"
                         description="Update league information"
+                    />
+                    <DashboardCard
+                        title="Live"
+                        tab="live"
+                        gradient="from-indigo-600 to-violet-600"
+                        description="Manage live score interactions"
                     />
                 </div>
 
@@ -217,6 +226,13 @@ const AdminDashboard = () => {
                                     </tbody>
                                 </table>
                             </div>
+                        </>
+                    )}
+
+                    {/* Live Score Management */}
+                    {activeTab === 'live' && (
+                        <>
+                            <LiveForm />
                         </>
                     )}
                 </div>

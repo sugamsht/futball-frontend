@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useQuery } from "react-query";
 
@@ -13,6 +13,14 @@ export default function LiveScore({ initialData }) {
         refetchInterval: 30000, // refetch every 30 seconds
         refetchOnWindowFocus: false, // don't refetch when the window is in focus
     });
+
+    const [liveData, setLiveData] = useState(initialData);
+
+    useEffect(() => {
+        if (data) {
+            setLiveData(data);
+        }
+    }, [data]);
 
     if (isLoading) {
         return (
@@ -32,7 +40,7 @@ export default function LiveScore({ initialData }) {
         );
     }
 
-    const live = data?.[0];
+    const live = liveData?.[0];
 
     return (
         <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl overflow-hidden hover:transform hover:scale-[1.01] transition-all duration-300">
