@@ -47,6 +47,7 @@ const config = {
   players: {
     endpoint: '/players',
     fields: [
+      { name: 'team_name', label: 'Team Name', type: 'text' },
       { name: 'fname', label: 'First Name', type: 'text' },
       { name: 'lname', label: 'Last Name', type: 'text' },
       { name: 'dob', label: 'Date of Birth', type: 'date' },
@@ -242,6 +243,11 @@ export default function Dashboard() {
                               const value2 = Array.isArray(item[base]) ? item[base][1] : '';
                               return `${value1} / ${value2}`;
                             }
+                          }
+                          if (activeTab === 'players' && field.name === 'team_name') {
+                            return item.tournament && item.tournament.length > 0
+                              ? item.tournament[0].team_name
+                              : '';
                           }
                           return item[field.name] ? item[field.name].toString() : '';
                         })()}

@@ -1,4 +1,3 @@
-// components/admin/MainForm.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -10,7 +9,6 @@ const tabs = [
     { key: 'team', label: 'Team' },
     { key: 'result', label: 'Result' },
     { key: 'editFixture', label: 'Edit Fixture' },
-    { key: 'editResult', label: 'Edit Results' },
     { key: 'tournament', label: 'Tournament' },
 ];
 
@@ -91,17 +89,6 @@ const MainForm = () => {
     const [editFixtureTime, setEditFixtureTime] = useState("");
     const [editStadium, setEditStadium] = useState("Dasthrath Stadium");
 
-    // Edit Result state
-    const [editResultFixture, setEditResultFixture] = useState("");
-    const [editOffsides1, setEditOffsides1] = useState("");
-    const [editOffsides2, setEditOffsides2] = useState("");
-    const [editFouls1, setEditFouls1] = useState("");
-    const [editFouls2, setEditFouls2] = useState("");
-    const [editCorners1, setEditCorners1] = useState("");
-    const [editCorners2, setEditCorners2] = useState("");
-    const [editShots1, setEditShots1] = useState("");
-    const [editShots2, setEditShots2] = useState("");
-
     // Tournament Form state
     const [newTournamentTitle, setNewTournamentTitle] = useState("");
     const [newTournamentStadium, setNewTournamentStadium] = useState("");
@@ -119,7 +106,7 @@ const MainForm = () => {
     };
 
     return (
-        <div className="p-4 space-y-8">
+        <div className="p-4 text-white space-y-8">
             {/* Common Tournament Dropdown */}
             <div>
                 <label className="block mb-2 text-lg font-bold">Tournament</label>
@@ -288,39 +275,6 @@ const MainForm = () => {
                         time: editFixtureTime,
                         stadium: editStadium,
                     })} className="px-4 py-2 bg-green-500 rounded hover:bg-green-600">Submit Edit Fixture</button>
-                </FormCard>
-            )}
-
-            {/* Edit Results Tab */}
-            {activeTab === "editResult" && (
-                <FormCard title="Edit Results">
-                    <Select value={editResultFixture} onChange={(e) => setEditResultFixture(e.target.value)}>
-                        <option value="">Select Fixture</option>
-                        {fixtures.map(fixture => <option key={fixture._id} value={fixture.fixname[0]}>{fixture.fixname[0]}</option>)}
-                    </Select>
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input type="number" placeholder="Offsides Team1" value={editOffsides1} onChange={(e) => setEditOffsides1(e.target.value)} />
-                        <Input type="number" placeholder="Offsides Team2" value={editOffsides2} onChange={(e) => setEditOffsides2(e.target.value)} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input type="number" placeholder="Fouls Team1" value={editFouls1} onChange={(e) => setEditFouls1(e.target.value)} />
-                        <Input type="number" placeholder="Fouls Team2" value={editFouls2} onChange={(e) => setEditFouls2(e.target.value)} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input type="number" placeholder="Corners Team1" value={editCorners1} onChange={(e) => setEditCorners1(e.target.value)} />
-                        <Input type="number" placeholder="Corners Team2" value={editCorners2} onChange={(e) => setEditCorners2(e.target.value)} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <Input type="number" placeholder="Shots Team1" value={editShots1} onChange={(e) => setEditShots1(e.target.value)} />
-                        <Input type="number" placeholder="Shots Team2" value={editShots2} onChange={(e) => setEditShots2(e.target.value)} />
-                    </div>
-                    <button onClick={(e) => handleSubmit(e, "/api/editResults/", {
-                        fixtureResult: editResultFixture,
-                        offsides: [editOffsides1, editOffsides2],
-                        fouls: [editFouls1, editFouls2],
-                        corners: [editCorners1, editCorners2],
-                        shots: [editShots1, editShots2],
-                    })} className="px-4 py-2 bg-green-500 rounded hover:bg-green-600">Submit Edit Results</button>
                 </FormCard>
             )}
 
