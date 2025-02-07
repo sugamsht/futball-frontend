@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:3000/api'; // Update with your backend URL if needed
+const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
 
-// Updated configuration for the results tab. Notice we now define separate fields
-// for fouls, offsides, corners, and shots.
+// Configuration for Fixtures, Results, Teams, Players, and Scoreboard
 const config = {
   fixtures: {
     endpoint: '/fixtures',
@@ -20,7 +19,6 @@ const config = {
   },
   results: {
     endpoint: '/results',
-    // Using same endpoint for update if available
     fields: [
       { name: 'tournament_title', label: 'Tournament Title', type: 'text' },
       { name: 'fixtureResult', label: 'Fixture Result', type: 'text' },
@@ -69,7 +67,7 @@ const config = {
   }
 };
 
-export default function test() {
+export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('fixtures');
   const [data, setData] = useState([]);
   const [formData, setFormData] = useState({});
@@ -87,7 +85,6 @@ export default function test() {
   const fetchData = async () => {
     try {
       const res = await axios.get(baseUrl + config[activeTab].endpoint);
-      // Assuming response data in format: { success: true, data: [...] } or just array
       const items = res.data.data || res.data || [];
       setData(items);
     } catch (error) {
@@ -101,10 +98,9 @@ export default function test() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit the form (add or edit)
+  // Prepare payload for submission, merging separate inputs for array fields (results tab)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Prepare payload. For results, merge the separate inputs into arrays.
     let payload = { ...formData };
     if (activeTab === 'results') {
       payload.score = [Number(formData.score1), Number(formData.score2)];
@@ -144,7 +140,7 @@ export default function test() {
     }
   };
 
-  // Update the edit handler to prepopulate two separate inputs for each array field.
+  // Prepopulate form data when editing, handling arrays for results
   const handleEdit = (item) => {
     setEditingId(item._id);
     if (activeTab === 'results') {
@@ -178,10 +174,10 @@ export default function test() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-900 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg">
-        <div className="p-6 text-2xl font-bold text-blue-600 border-b">
+      <aside className="w-64 bg-gray-800 shadow-lg">
+        <div className="p-6 text-2xl font-bold text-white border-b border-gray-600">
           Dashboard
         </div>
         <nav className="mt-4">
@@ -189,7 +185,10 @@ export default function test() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`w-full text-left px-6 py-3 hover:bg-blue-50 transition ${activeTab === tab ? 'bg-blue-100 font-semibold' : ''
+              className={`w-full text-left px-6 py-3 transition 
+          ${activeTab === tab
+                  ? 'bg-gray-600 font-bold text-white border-l-4 border-blue-500'
+                  : 'hover:bg-gray-700 text-gray-300'
                 }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -200,9 +199,11 @@ export default function test() {
 
       {/* Main Content */}
       <main className="flex-1 p-6">
-        <h1 className="text-3xl font-bold mb-4 capitalize">{activeTab} Management</h1>
+        <h1 className="text-3xl font-bold mb-4 capitalize text-gray-100">
+          {activeTab} Management
+        </h1>
         {message && (
-          <div className="mb-4 p-3 bg-green-200 text-green-800 rounded">
+          <div className="mb-4 p-3 bg-green-800 text-green-300 rounded">
             {message}
           </div>
         )}
@@ -210,27 +211,26 @@ export default function test() {
         {/* Data Table */}
         <div className="overflow-x-auto mb-8">
           {data.length > 0 ? (
-            <table className="min-w-full bg-white shadow rounded-lg">
+            <table className="min-w-full bg-gray-800 shadow rounded-lg">
               <thead>
                 <tr>
                   {config[activeTab].fields.map((field) => (
                     <th
                       key={field.name}
-                      className="px-4 py-2 border-b text-left text-gray-600"
+                      className="px-4 py-2 border-b text-left text-gray-300"
                     >
                       {field.label}
                     </th>
                   ))}
-                  <th className="px-4 py-2 border-b">Actions</th>
+                  <th className="px-4 py-2 border-b text-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50">
+                  <tr key={item._id} className="hover:bg-gray-700">
                     {config[activeTab].fields.map((field) => (
-                      <td key={field.name} className="px-4 py-2 border-b">
+                      <td key={field.name} className="px-4 py-2 border-b text-gray-300">
                         {(() => {
-                          // For results, if field represents a split input, show the combined value.
                           if (activeTab === 'results') {
                             if (
                               ['score1', 'fouls1', 'offsides1', 'corners1', 'shots1'].includes(
@@ -250,13 +250,13 @@ export default function test() {
                     <td className="px-4 py-2 border-b">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="text-blue-600 hover:underline mr-2"
+                        className="text-blue-400 hover:underline mr-2"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(item._id)}
-                        className="text-red-600 hover:underline"
+                        className="text-red-400 hover:underline"
                       >
                         Delete
                       </button>
@@ -266,19 +266,19 @@ export default function test() {
               </tbody>
             </table>
           ) : (
-            <p className="text-gray-600">No records found.</p>
+            <p className="text-gray-400">No records found.</p>
           )}
         </div>
 
         {/* Form */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-100">
             {editingId ? 'Edit' : 'Add New'} {activeTab.slice(0, -1)}
           </h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {config[activeTab].fields.map((field) => (
               <div key={field.name} className="flex flex-col">
-                <label className="mb-1 font-medium text-gray-700">
+                <label className="mb-1 font-medium text-gray-300">
                   {field.label}
                 </label>
                 <input
@@ -290,7 +290,7 @@ export default function test() {
                       : formData[field.name] || ''
                   }
                   onChange={handleChange}
-                  className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             ))}
@@ -308,7 +308,7 @@ export default function test() {
                     setEditingId(null);
                     setFormData({});
                   }}
-                  className="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400 transition"
+                  className="bg-gray-600 text-gray-200 px-6 py-2 rounded hover:bg-gray-500 transition"
                 >
                   Cancel
                 </button>
