@@ -1,5 +1,4 @@
 import Result from './Result';
-import React from 'react';
 
 function Results({ results }) {
     const displayResults = 5;
@@ -16,6 +15,7 @@ function Results({ results }) {
                 {showResults.map((result, index) => (
                     <Result
                         key={index}
+                        id={result._id} // Pass the result ID
                         result={result?.fixtureResult}
                         score1={result?.score[0]}
                         score2={result?.score[1]}

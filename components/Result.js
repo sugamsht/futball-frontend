@@ -1,11 +1,19 @@
-import React from 'react';
+import { useRouter } from 'next/router';
 
-function Result({ tournamentTitle, result, score1, score2 }) {
+function Result({ tournamentTitle, result, score1, score2, id }) {
+    const router = useRouter();
     const postponed = score1 < 0 || score2 < 0;
     const [team1, team2] = result?.split(' vs ') || ['', ''];
 
+    const handleClick = () => {
+        router.push(`/results/${id}`); // Navigate to the dynamic route
+    };
+
     return (
-        <div className="relative group flex-shrink-0 w-56 md:w-64 lg:w-72 h-32 md:h-36 cursor-pointer transition-all duration-300 hover:scale-105">
+        <div
+            onClick={handleClick} // Add click handler
+            className="relative group flex-shrink-0 w-56 md:w-64 lg:w-72 h-32 md:h-36 cursor-pointer transition-all duration-300 hover:scale-105"
+        >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-600/90 rounded-2xl shadow-lg" />
             <div className="absolute inset-0.5 bg-gray-900/30 rounded-xl backdrop-blur-sm border border-white/10 p-3 md:p-4 lg:p-6">
                 <div className="h-full flex flex-col justify-between space-y-2 md:space-y-3">
