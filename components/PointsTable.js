@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const PointsTable = ({ points, tournaments }) => {
     const [selectedTournament, setSelectedTournament] = useState(tournaments[tournaments.length - 1]);
@@ -39,9 +40,11 @@ const PointsTable = ({ points, tournaments }) => {
                             className="w-full h-full object-cover"
                         />
                     </div>
-                    <span className="font-medium text-gray-100 text-xs md:text-sm truncate">
-                        {itemData.team_name}
-                    </span>
+                    <Link href={`/teams/${encodeURIComponent(itemData.team_name)}`}>
+                        <div className="font-medium text-gray-100 text-xs md:text-sm truncate">
+                            {itemData.team_name}
+                        </div>
+                    </Link>
                 </td>
                 <td className="text-center py-1 md:py-2 text-gray-300 text-xs md:text-sm">
                     {itemData.played}
@@ -70,7 +73,7 @@ const PointsTable = ({ points, tournaments }) => {
     );
 
     return (
-        <div className='w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl overflow-hidden'>
+        <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl overflow-hidden">
             <div className="p-0 md:p-6">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 text-sm md:text-xl font-bold truncate">
@@ -78,8 +81,7 @@ const PointsTable = ({ points, tournaments }) => {
                     </h2>
                     {tournamentsWithPoints.length > 0 && (
                         <select
-                            className="bg-gray-700/50 backdrop-blur-sm text-gray-100 px-2 py-1 md:px-4 md:py-2 rounded-lg 
-                                     border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 text-xs md:text-sm"
+                            className="bg-gray-700/50 backdrop-blur-sm text-gray-100 px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 text-xs md:text-sm"
                             value={selectedTournament}
                             onChange={(e) => setSelectedTournament(e.target.value)}
                         >
@@ -100,14 +102,30 @@ const PointsTable = ({ points, tournaments }) => {
                     <table className="w-full min-w-[400px] md:min-w-full">
                         <thead className="bg-gray-700/50 backdrop-blur-sm">
                             <tr>
-                                <th className="px-2 md:px-4 py-1 md:py-2 text-left text-xs md:text-sm font-semibold text-cyan-400">POS</th>
-                                <th className="pl-2 md:pl-1 py-1 md:py-2 text-left text-xs md:text-sm font-semibold text-cyan-400">TEAM</th>
-                                <th className="px-2 md:px-2 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">PLD</th>
-                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">WON</th>
-                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">DRN</th>
-                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">LST</th>
-                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">GD</th>
-                                <th className="px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">PTS</th>
+                                <th className="px-2 md:px-4 py-1 md:py-2 text-left text-xs md:text-sm font-semibold text-cyan-400">
+                                    POS
+                                </th>
+                                <th className="pl-2 md:pl-1 py-1 md:py-2 text-left text-xs md:text-sm font-semibold text-cyan-400">
+                                    TEAM
+                                </th>
+                                <th className="px-2 md:px-2 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">
+                                    PLD
+                                </th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">
+                                    WON
+                                </th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">
+                                    DRN
+                                </th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">
+                                    LST
+                                </th>
+                                <th className="hidden md:table-cell px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">
+                                    GD
+                                </th>
+                                <th className="px-2 md:px-4 py-1 md:py-2 text-center text-xs md:text-sm font-semibold text-cyan-400">
+                                    PTS
+                                </th>
                             </tr>
                         </thead>
                         <tbody>{renderTableRows()}</tbody>

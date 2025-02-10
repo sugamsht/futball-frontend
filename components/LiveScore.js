@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useQuery } from "react-query";
+import Link from 'next/link'; // added import
 
 const fetchLiveScore = async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard`);
@@ -84,7 +85,9 @@ export default function LiveScore({ initialData }) {
                             </div>
                         </div>
                         <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                            {live?.fixObject?.team1Object?.[0]?.name}
+                            <Link href={`/teams/${encodeURIComponent(live?.fixObject?.team1Object?.[0]?.name)}`}>
+                                {live?.fixObject?.team1Object?.[0]?.name}
+                            </Link>
                         </h2>
                     </div>
 
@@ -119,7 +122,9 @@ export default function LiveScore({ initialData }) {
                             </div>
                         </div>
                         <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                            {live?.fixObject?.team2Object?.[0]?.name}
+                            <Link href={`/teams/${encodeURIComponent(live?.fixObject?.team2Object?.[0]?.name)}`}>
+                                {live?.fixObject?.team2Object?.[0]?.name}
+                            </Link>
                         </h2>
                     </div>
                 </div>

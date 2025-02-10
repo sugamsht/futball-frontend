@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { FiArrowLeft, FiClock, FiCalendar, FiMapPin, FiUsers, FiActivity } from 'react-icons/fi';
 
 const ResultDetails = ({ result, fixture, team1, team2 }) => {
@@ -51,7 +52,11 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                                 className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 hover:scale-105 transition-transform"
                                 onError={(e) => { e.target.src = 'logo.png'; }}
                             />
-                            <h3 className="text-2xl md:text-3xl font-bold text-white">{team1?.name}</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white">
+                                <Link href={`/teams/${encodeURIComponent(team1?.name)}`}>
+                                    {team1?.name}
+                                </Link>
+                            </h3>
                             <p className="text-gray-400 mt-2">
                                 <FiMapPin className="inline-block mr-2" />
                                 {team1?.location || 'Unknown Location'}
@@ -77,7 +82,11 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                                 className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 hover:scale-105 transition-transform"
                                 onError={(e) => { e.target.src = 'logo.png'; }}
                             />
-                            <h3 className="text-2xl md:text-3xl font-bold text-white">{team2?.name}</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white">
+                                <Link href={`/teams/${encodeURIComponent(team2?.name)}`}>
+                                    {team2?.name}
+                                </Link>
+                            </h3>
                             <p className="text-gray-400 mt-2">
                                 <FiMapPin className="inline-block mr-2" />
                                 {team2?.location || 'Unknown Location'}
