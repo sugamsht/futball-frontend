@@ -4,8 +4,15 @@ import { FiArrowLeft, FiClock, FiCalendar, FiMapPin, FiUsers, FiActivity } from 
 
 const ResultDetails = ({ result, fixture, team1, team2 }) => {
     const router = useRouter();
-    const isPostponed = result.score[0] < 0 || result.score[1] < 0;
     const matchTime = `${fixture.date} • ${fixture.time}`;
+
+    // Dynamically select Player of the Match
+    const allPlayers = [...(team1?.playerList || []), ...(team2?.playerList || [])];
+    const playerOfTheMatch = allPlayers.reduce((bestPlayer, player) => {
+        const playerStats = player.tournament[0];
+        const bestStats = bestPlayer.tournament[0];
+        return (playerStats.goals_scored + playerStats.assists) > (bestStats.goals_scored + bestStats.assists) ? player : bestPlayer;
+    }, allPlayers[0]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 md:p-8">
@@ -20,7 +27,7 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                 </button>
 
                 {/* Main Match Card */}
-                <div className="bg-gradient-to-r from-blue-600/90 to-purple-600/90 rounded-2xl p-8 backdrop-blur-sm border border-white/10 shadow-2xl">
+                <div className="bg-gradient-to-r from-blue-600/90 to-purple-600/90 rounded-2xl p-8 backdrop-blur-sm border border-white/10 shadow-2xl hover:shadow-3xl transition-shadow">
                     {/* Tournament Title */}
                     <div className="text-center mb-8">
                         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 text-transparent bg-clip-text">
@@ -39,45 +46,41 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                         {/* Team 1 */}
                         <div className="flex-1 text-center">
                             <img
-                                src={`/logo/${team1.logo}`}
-                                alt={team1.name}
+                                src={`/logo/${team1?.logo || 'logo.png'}`}
+                                alt={team1?.name}
                                 className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 hover:scale-105 transition-transform"
+                                onError={(e) => { e.target.src = 'logo.png'; }}
                             />
-                            <h3 className="text-2xl md:text-3xl font-bold text-white">{team1.name}</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white">{team1?.name}</h3>
                             <p className="text-gray-400 mt-2">
                                 <FiMapPin className="inline-block mr-2" />
-                                {team1.location}
+                                {team1?.location || 'Unknown Location'}
                             </p>
                         </div>
 
                         {/* Score Center */}
                         <div className="flex flex-col items-center">
-                            {isPostponed ? (
-                                <div className="text-4xl font-bold text-red-400">POSTPONED</div>
-                            ) : (
-                                <>
-                                    <div className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 text-transparent bg-clip-text">
-                                        {result.score[0]} - {result.score[1]}
-                                    </div>
-                                    <div className="mt-4 px-6 py-2 bg-gray-800/50 rounded-full flex items-center gap-2">
-                                        <FiActivity className="text-purple-400" />
-                                        <span className="text-sm text-gray-300">Full Time</span>
-                                    </div>
-                                </>
-                            )}
+                            <div className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 text-transparent bg-clip-text">
+                                {result.score[0]} - {result.score[1]}
+                            </div>
+                            <div className="mt-4 px-6 py-2 bg-gray-800/50 rounded-full flex items-center gap-2">
+                                <FiActivity className="text-purple-400" />
+                                <span className="text-sm text-gray-300">Full Time</span>
+                            </div>
                         </div>
 
                         {/* Team 2 */}
                         <div className="flex-1 text-center">
                             <img
-                                src={`/logo/${team2.logo}`}
-                                alt={team2.name}
+                                src={`/logo/${team2?.logo || 'logo.png'}`}
+                                alt={team2?.name}
                                 className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 hover:scale-105 transition-transform"
+                                onError={(e) => { e.target.src = 'logo.png'; }}
                             />
-                            <h3 className="text-2xl md:text-3xl font-bold text-white">{team2.name}</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white">{team2?.name}</h3>
                             <p className="text-gray-400 mt-2">
                                 <FiMapPin className="inline-block mr-2" />
-                                {team2.location}
+                                {team2?.location || 'Unknown Location'}
                             </p>
                         </div>
                     </div>
@@ -117,13 +120,13 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                         </h2>
                         <div className="space-y-6">
                             <ManagerCard
-                                manager={team1.manager}
-                                team={team1.name}
+                                manager={team1?.manager || 'Unknown Manager'}
+                                team={team1?.name}
                                 color="from-purple-400/20 to-purple-600/20"
                             />
                             <ManagerCard
-                                manager={team2.manager}
-                                team={team2.name}
+                                manager={team2?.manager || 'Unknown Manager'}
+                                team={team2?.name}
                                 color="from-blue-400/20 to-cyan-600/20"
                             />
                         </div>
@@ -142,11 +145,15 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white">Bharat Khawas</h3>
-                                    <p className="text-gray-400">Forward • {team1.name}</p>
+                                    <h3 className="text-xl font-bold text-white">
+                                        {playerOfTheMatch?.fname} {playerOfTheMatch?.lname}
+                                    </h3>
+                                    <p className="text-gray-400">
+                                        {playerOfTheMatch?.position} • {playerOfTheMatch?.tournament[0]?.team_name}
+                                    </p>
                                     <div className="flex gap-4 mt-2">
-                                        <StatBadge title="Goals" value="2" />
-                                        <StatBadge title="Assists" value="1" />
+                                        <StatBadge title="Goals" value={playerOfTheMatch?.tournament[0]?.goals_scored} />
+                                        <StatBadge title="Assists" value={playerOfTheMatch?.tournament[0]?.assists} />
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +171,7 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
     );
 };
 
-// Helper Components
+// Helper Components (unchanged)
 const StatItem = ({ title, team1, team2 }) => (
     <div className="flex justify-between items-center p-3 bg-gray-700/10 rounded-lg hover:bg-gray-700/20 transition-colors">
         <span className="text-gray-400">{title}</span>
@@ -211,10 +218,10 @@ const StatBadge = ({ title, value }) => (
 const TeamLineup = ({ team, color }) => (
     <div className={`bg-gray-800/50 p-6 rounded-2xl border border-${color}-400/20 backdrop-blur-sm`}>
         <h2 className={`text-2xl font-bold mb-6 bg-gradient-to-r from-${color}-400 to-${color}-600 text-transparent bg-clip-text`}>
-            {team.name} Lineup
+            {team?.name} Lineup
         </h2>
         <div className="grid gap-4">
-            {team.playerList.map((player) => (
+            {team?.playerList?.map((player) => (
                 <div key={player._id} className="flex items-center justify-between p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors group">
                     <div className="flex items-center gap-4">
                         <div className={`w-8 h-8 rounded-full bg-${color}-400/10 flex items-center justify-center`}>
