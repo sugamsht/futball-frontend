@@ -274,6 +274,38 @@ const LiveForm = () => {
         }
     };
 
+    const handleResults = async () => {
+        if (!selectedFixture) {
+            alert('Please select a fixture first.');
+            return;
+        }
+
+        const payload = {
+            fixtureResult: selectedFixture.fixname[0],
+            tournament_title: tournamentTitle,
+            score: [scoreboard.score1, scoreboard.score2],
+            referee: referee,
+            fouls: [],
+            offsides: [],
+            corners: [],
+            shots: [],
+            lineup: {
+                team1: selectedLineup.team1.map(player => `${player.tournament[0].jersey_no}. ${player.fname} ${player.lname}`),
+                team2: selectedLineup.team2.map(player => `${player.tournament[0].jersey_no}. ${player.fname} ${player.lname}`),
+            },
+        };
+
+        try {
+            await axios.post(`${backendUrl}/api/results`, payload);
+            alert("Result submitted successfully.");
+            // Optionally, redirect to the results page:
+            // router.push(`/results/${newResultId}`); // newResultId could come from the response if needed.
+        } catch (err) {
+            console.error("Error submitting result:", err);
+            alert("Error submitting result. Please try again.");
+        }
+    };
+
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-800 rounded-xl shadow-lg text-white space-y-8">
@@ -498,6 +530,7 @@ const LiveForm = () => {
                         className="p-2 bg-gray-700 border border-gray-600 rounded w-full"
                     />
                     <button
+                        onClick={handleResults}
                         id="gotoresults"
                         className="px-4 py-2 bg-purple-500 rounded hover:bg-purple-600 transition"
                     >
