@@ -69,6 +69,7 @@ function Fixtures({ fixture }) {
                     showFixture.map((fixture, index) => (
                         <Fixture
                             key={index}
+                            id={fixture._id}
                             team1={fixture.team1}
                             team2={fixture.team2}
                             time={fixture.time}

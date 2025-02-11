@@ -5,8 +5,8 @@ import LiveScore from '../components/LiveScore'
 import PointsTable from '../components/PointsTable'
 import Results from '../components/Results'
 import Stories from '../components/Stories'
+import { useRouter } from 'next/router';
 
-import Link from 'next/link'
 
 async function fetchData(apiPath) {
   try {
@@ -62,6 +62,8 @@ export default function Home({ apiData, liveData, tableData }) {
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 21);
 
+  const router = useRouter();
+
   return (
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
       <main className='mx-2 md:mx-6 lg:mx-12 xl:mx-24 2xl:mx-36'>
@@ -82,16 +84,19 @@ export default function Home({ apiData, liveData, tableData }) {
             </div>
           </div>
 
-          {/* LiveScore Section */}
-          <div className="col-span-3 md:col-span-3 xl:col-span-4 h-full w-full">
-            <Link href="/live" passHref>
-              <div className="transform transition-all hover:scale-[1.02] cursor-pointer h-full">
-                <div className="bg-gradient-to-br from-blue-800 to-purple-900 rounded-2xl p-4 shadow-2xl hover:shadow-blue-500/20 h-full">
-                  <LiveScore initialData={liveData} />
-                </div>
+
+          <div className="col-span-3 md:col-span-3 xl:col-span-4 h-full">
+            <button
+              className="w-full transform transition-all hover:scale-[1.02] cursor-pointer h-full focus:outline-none"
+              onClick={() => router.push('/live')}
+            >
+              <div className="bg-gradient-to-br from-blue-800 to-purple-900 rounded-2xl p-4 shadow-2xl hover:shadow-blue-500/20 h-full">
+                <LiveScore initialData={liveData} />
               </div>
-            </Link>
+            </button>
           </div>
+
+
         </div>
 
         {/* Gallery & Points Table Section */}
