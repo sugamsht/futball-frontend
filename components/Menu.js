@@ -47,8 +47,8 @@ export default function Menu({ open }) { // Add open as a prop
                             <Link href="/" passHref>
                                 <div className="mr-6 font-medium text-white">
                                     <div className="flex-shrink-0 flex items-center">
-                                        <img className="block lg:hidden h-8 w-auto" src="./logo.png" alt="NepalScores" />
-                                        <img className="hidden lg:block h-8 w-auto" src="./logo.png" alt="NepalScores" />
+                                        <img className="block lg:hidden h-8 w-auto" src="/logo.png" alt="NepalScores" />
+                                        <img className="hidden lg:block h-8 w-auto" src="/logo.png" alt="NepalScores" />
                                     </div>
                                 </div>
                             </Link>

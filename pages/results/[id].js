@@ -237,9 +237,11 @@ const TeamLineup = ({ team, color }) => (
                             <span className={`text-${color}-400 font-medium`}>{player.tournament[0].jersey_no}</span>
                         </div>
                         <div>
-                            <h3 className="font-medium text-white group-hover:text-${color}-300 transition-colors">
-                                {player.fname} {player.lname}
-                            </h3>
+                            <Link href={`/players/${player._id}`} passHref>
+                                <div className="font-medium text-white group-hover:text-${color}-300 transition-colors">
+                                    {player.fname} {player.lname}
+                                </div>
+                            </Link>
                             <p className="text-sm text-gray-400">{player.position}</p>
                         </div>
                     </div>
