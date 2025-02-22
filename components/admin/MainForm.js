@@ -8,7 +8,6 @@ const tabs = [
     { key: 'player', label: 'Player' },
     { key: 'team', label: 'Team' },
     { key: 'result', label: 'Result' },
-    { key: 'editFixture', label: 'Edit Fixture' },
     { key: 'tournament', label: 'Tournament' },
 ];
 
@@ -33,6 +32,7 @@ const Select = ({ value, onChange, children }) => (
 
 const MainForm = () => {
     // Common state
+    // Now tournamentTitle holds the tournament id
     const [tournamentTitle, setTournamentTitle] = useState("");
     const [tournamentNames, setTournamentNames] = useState([]);
     const [teams, setTeams] = useState([]);
@@ -41,10 +41,25 @@ const MainForm = () => {
 
     // Fetch common data on mount
     useEffect(() => {
-        axios.get(`${backendUrl}/api/teams`).then(res => setTeams(res.data)).catch(console.error);
-        axios.get(`${backendUrl}/api/fixtures`).then(res => setFixtures(res.data)).catch(console.error);
-        axios.get(`${backendUrl}/api/tournamentnames`)
-            .then(res => { if (res.data.success) setTournamentNames(res.data.data); })
+        axios.get(`${backendUrl}/api/teams`)
+            .then(res => {
+                const teamsArray = res.data && res.data.data ? res.data.data : res.data;
+                setTeams(teamsArray);
+            })
+            .catch(console.error);
+
+        axios.get(`${backendUrl}/api/fixtures`)
+            .then(res => {
+                const fixturesArray = res.data && res.data.data ? res.data.data : res.data;
+                setFixtures(fixturesArray);
+            })
+            .catch(console.error);
+
+        axios.get(`${backendUrl}/api/tournaments`)
+            .then(res => {
+                const tournamentsArray = res.data && res.data.data ? res.data.data : res.data;
+                setTournamentNames(tournamentsArray);
+            })
             .catch(console.error);
     }, []);
 
@@ -81,23 +96,23 @@ const MainForm = () => {
     const [resultCorners2, setResultCorners2] = useState("");
     const [resultShots1, setResultShots1] = useState("");
     const [resultShots2, setResultShots2] = useState("");
+    const [resultShotsOnTarget1, setResultShotsOnTarget1] = useState("");
+    const [resultShotsOnTarget2, setResultShotsOnTarget2] = useState("");
 
-    // Edit Fixture state
-    const [editFixture, setEditFixture] = useState("");
-    const [editPostponed, setEditPostponed] = useState(false);
-    const [editFixtureDate, setEditFixtureDate] = useState("");
-    const [editFixtureTime, setEditFixtureTime] = useState("");
-    const [editStadium, setEditStadium] = useState("Dasthrath Stadium");
 
     // Tournament Form state
     const [newTournamentTitle, setNewTournamentTitle] = useState("");
     const [newTournamentStadium, setNewTournamentStadium] = useState("");
 
     // Generic submit handler
-    const handleSubmit = async (e, endpoint, payload) => {
+    const handleSubmit = async (e, endpoint, payload, method = "post") => {
         e.preventDefault();
         try {
-            await axios.post(`${backendUrl}${endpoint}`, payload);
+            if (method === "put") {
+                await axios.put(`${backendUrl}${endpoint}`, payload);
+            } else {
+                await axios.post(`${backendUrl}${endpoint}`, payload);
+            }
             alert("Submitted successfully.");
         } catch (err) {
             console.error(err);
@@ -112,7 +127,10 @@ const MainForm = () => {
                 <label className="block mb-2 text-lg font-bold">Tournament</label>
                 <Select value={tournamentTitle} onChange={(e) => setTournamentTitle(e.target.value)}>
                     <option value="">Select Tournament</option>
-                    {tournamentNames.map(t => <option key={t._id} value={t.title}>{t.title}</option>)}
+                    {tournamentNames.map(t => (
+                        // option value holds the tournament id
+                        <option key={t._id} value={t._id}>{t.title}</option>
+                    ))}
                 </Select>
             </div>
 
@@ -132,11 +150,21 @@ const MainForm = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <Select value={fixtureTeam1} onChange={(e) => setFixtureTeam1(e.target.value)}>
                             <option value="">Select Team 1</option>
-                            {teams.map(team => <option key={team._id} value={team.name}>{team.name}</option>)}
+                            {teams.map(team => (
+                                // Changed value from team.name to team._id
+                                <option key={team._id} value={team._id}>
+                                    {team.name}
+                                </option>
+                            ))}
                         </Select>
                         <Select value={fixtureTeam2} onChange={(e) => setFixtureTeam2(e.target.value)}>
                             <option value="">Select Team 2</option>
-                            {teams.map(team => <option key={team._id} value={team.name}>{team.name}</option>)}
+                            {teams.map(team => (
+                                // Changed value from team.name to team._id
+                                <option key={team._id} value={team._id}>
+                                    {team.name}
+                                </option>
+                            ))}
                         </Select>
                     </div>
                     <Select value={stadium} onChange={(e) => setStadium(e.target.value)}>
@@ -149,11 +177,12 @@ const MainForm = () => {
                         <Input type="time" value={fixtureTime} onChange={(e) => setFixtureTime(e.target.value)} />
                     </div>
                     <button onClick={(e) => handleSubmit(e, "/api/fixtures", {
-                        tournament_title: tournamentTitle,
-                        team1: fixtureTeam1,
-                        team2: fixtureTeam2,
+                        // send the tournament id as "tournament"
+                        tournament: tournamentTitle,
+                        homeTeam: fixtureTeam1,
+                        awayTeam: fixtureTeam2,
                         stadium,
-                        date: fixtureDate,
+                        matchDate: new Date(fixtureDate),
                         time: fixtureTime,
                     })} className="px-4 py-2 bg-green-500 rounded hover:bg-green-600">Submit Fixture</button>
                 </FormCard>
@@ -164,7 +193,11 @@ const MainForm = () => {
                 <FormCard title="Player Detail">
                     <Select value={playerTeam} onChange={(e) => setPlayerTeam(e.target.value)}>
                         <option value="">Select Team</option>
-                        {teams.map(team => <option key={team._id} value={team.name}>{team.name}</option>)}
+                        {teams.map(team => (
+                            <option key={team._id} value={team.name}>
+                                {team.name}
+                            </option>
+                        ))}
                     </Select>
                     <div className="grid grid-cols-2 gap-4">
                         <Input placeholder="First Name" value={playerFname} onChange={(e) => setPlayerFname(e.target.value)} />
@@ -200,7 +233,8 @@ const MainForm = () => {
                     <Input placeholder="Logo URL" value={teamLogo} onChange={(e) => setTeamLogo(e.target.value)} />
                     <Input placeholder="Manager" value={teamManager} onChange={(e) => setTeamManager(e.target.value)} />
                     <button onClick={(e) => handleSubmit(e, "/api/teams", {
-                        tournament_title: tournamentTitle,
+                        // Look up tournament title from tournamentNames using tournamentTitle id selection
+                        tournament_title: tournamentNames.find(t => t._id === tournamentTitle)?.title,
                         name: teamName,
                         location: teamLocation,
                         logo: teamLogo,
@@ -214,7 +248,13 @@ const MainForm = () => {
                 <FormCard title="Result">
                     <Select value={resultFixture} onChange={(e) => setResultFixture(e.target.value)}>
                         <option value="">Select Fixture</option>
-                        {fixtures.map(fixture => <option key={fixture._id} value={fixture.fixname[0]}>{fixture.fixname[0]}</option>)}
+                        {fixtures
+                            .filter(fixture => fixture.status === "Completed")
+                            .map(fixture => (
+                                <option key={fixture._id} value={fixture._id}>
+                                    {fixture.homeTeam?.name} vs {fixture.awayTeam?.name}
+                                </option>
+                            ))}
                     </Select>
                     <div className="grid grid-cols-2 gap-4">
                         <Input type="number" placeholder="Score Team1" value={resultScore1} onChange={(e) => setResultScore1(e.target.value)} />
@@ -236,45 +276,36 @@ const MainForm = () => {
                         <Input type="number" placeholder="Shots Team1" value={resultShots1} onChange={(e) => setResultShots1(e.target.value)} />
                         <Input type="number" placeholder="Shots Team2" value={resultShots2} onChange={(e) => setResultShots2(e.target.value)} />
                     </div>
-                    <button onClick={(e) => handleSubmit(e, "/api/results", {
-                        tournament_title: tournamentTitle,
-                        fixtureResult: resultFixture,
-                        score: [resultScore1, resultScore2],
-                        offsides: [resultOffsides1, resultOffsides2],
-                        fouls: [resultFouls1, resultFouls2],
-                        corners: [resultCorners1, resultCorners2],
-                        shots: [resultShots1, resultShots2],
-                    })} className="px-4 py-2 bg-green-500 rounded hover:bg-green-600">Submit Result</button>
-                </FormCard>
-            )}
-
-            {/* Edit Fixture Tab */}
-            {activeTab === "editFixture" && (
-                <FormCard title="Edit Fixture">
-                    <Select value={editFixture} onChange={(e) => setEditFixture(e.target.value)}>
-                        <option value="">Select Fixture</option>
-                        {fixtures.map(fixture => <option key={fixture._id} value={fixture.fixname[0]}>{fixture.fixname[0]}</option>)}
-                    </Select>
-                    <label className="flex items-center space-x-2">
-                        <span>Postponed?</span>
-                        <input type="checkbox" checked={editPostponed} onChange={(e) => setEditPostponed(e.target.checked)} />
-                    </label>
                     <div className="grid grid-cols-2 gap-4">
-                        <Input type="date" value={editFixtureDate} onChange={(e) => setEditFixtureDate(e.target.value)} />
-                        <Input type="time" value={editFixtureTime} onChange={(e) => setEditFixtureTime(e.target.value)} />
+                        <Input type="number" placeholder="Shots on Target Team1" value={resultShotsOnTarget1} onChange={(e) => setResultShotsOnTarget1(e.target.value)} />
+                        <Input type="number" placeholder="Shots on Target Team2" value={resultShotsOnTarget2} onChange={(e) => setResultShotsOnTarget2(e.target.value)} />
                     </div>
-                    <Select value={editStadium} onChange={(e) => setEditStadium(e.target.value)}>
-                        <option value="Dasthrath Stadium">Dasthrath Stadium</option>
-                        <option value="Pokhara Stadium">Pokhara Stadium</option>
-                        <option value="ANFA Stadium">ANFA Stadium</option>
-                    </Select>
-                    <button onClick={(e) => handleSubmit(e, "/api/editFixtures/", {
-                        fixname: editFixture,
-                        postponed: editPostponed,
-                        date: editFixtureDate,
-                        time: editFixtureTime,
-                        stadium: editStadium,
-                    })} className="px-4 py-2 bg-green-500 rounded hover:bg-green-600">Submit Edit Fixture</button>
+                    <button
+                        onClick={(e) =>
+                            handleSubmit(e, `/api/fixtures/${resultFixture}`, {
+                                score: { home: resultScore1, away: resultScore2 },
+                                stats: {
+                                    home: {
+                                        offsides: resultOffsides1,
+                                        fouls: resultFouls1,
+                                        corners: resultCorners1,
+                                        shots: resultShots1,
+                                        shots_on_target: resultShotsOnTarget1,
+                                    },
+                                    away: {
+                                        offsides: resultOffsides2,
+                                        fouls: resultFouls2,
+                                        corners: resultCorners2,
+                                        shots: resultShots2,
+                                        shots_on_target: resultShotsOnTarget2,
+                                    },
+                                },
+                            }, "put")
+                        }
+                        className="px-4 py-2 bg-green-500 rounded hover:bg-green-600"
+                    >
+                        Submit Result
+                    </button>
                 </FormCard>
             )}
 
