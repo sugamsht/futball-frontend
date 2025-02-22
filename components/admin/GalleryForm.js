@@ -22,8 +22,8 @@ const GalleryForm = ({ editData, onSubmit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const url = editData
-            ? `${backendUrl}/api/admin/gallery/${editData._id}`
-            : `${backendUrl}/api/admin/gallery`;
+            ? `${backendUrl}/api/gallery/${editData._id}`
+            : `${backendUrl}/api/gallery`;
 
         const method = editData ? 'PUT' : 'POST';
 

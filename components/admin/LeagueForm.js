@@ -22,8 +22,8 @@ const LeagueForm = ({ editData, onSubmit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const url = editData
-            ? `${backendUrl}/api/admin/leagues/${editData._id}`
-            : `${backendUrl}/api/admin/leagues`;
+            ? `${backendUrl}/api/leagues/${editData._id}`
+            : `${backendUrl}/api/leagues`;
 
         const method = editData ? 'PUT' : 'POST';
 

@@ -1,17 +1,16 @@
 import { useRouter } from 'next/router';
 
-function Result({ tournamentTitle, result, score1, score2, id }) {
+function Result({ tournamentTitle, homeTeamName, awayTeamName, score1, score2, id }) {
     const router = useRouter();
     const postponed = score1 < 0 || score2 < 0;
-    const [team1, team2] = result?.split(' vs ') || ['', ''];
 
     const handleClick = () => {
-        router.push(`/results/${id}`); // Navigate to the dynamic route
+        router.push(`/results/${id}`);
     };
 
     return (
         <div
-            onClick={handleClick} // Add click handler
+            onClick={handleClick}
             className="relative group flex-shrink-0 w-56 md:w-64 lg:w-72 h-32 md:h-36 cursor-pointer transition-all duration-300 hover:scale-105"
         >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-600/90 rounded-2xl shadow-lg" />
@@ -32,11 +31,11 @@ function Result({ tournamentTitle, result, score1, score2, id }) {
                             )}
                             <div className="space-y-2 md:space-y-3">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-sm md:text-base font-medium text-white truncate">{team1}</span>
+                                    <span className="text-sm md:text-base font-medium text-white truncate">{homeTeamName}</span>
                                     <span className="text-lg md:text-xl font-bold text-yellow-400 ml-2 md:ml-3">{score1}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-sm md:text-base font-medium text-white truncate">{team2}</span>
+                                    <span className="text-sm md:text-base font-medium text-white truncate">{awayTeamName}</span>
                                     <span className="text-lg md:text-xl font-bold text-yellow-400 ml-2 md:ml-3">{score2}</span>
                                 </div>
                             </div>

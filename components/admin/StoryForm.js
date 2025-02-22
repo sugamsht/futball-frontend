@@ -40,8 +40,8 @@ const StoryForm = ({ editData, onSubmit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const url = editData
-            ? `${backendUrl}/api/admin/stories/${editData._id}`
-            : `${backendUrl}/api/admin/stories`;
+            ? `${backendUrl}/api/stories/${editData._id}`
+            : `${backendUrl}/api/stories`;
 
         const method = editData ? 'PUT' : 'POST';
 

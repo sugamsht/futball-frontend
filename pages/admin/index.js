@@ -23,9 +23,9 @@ const AdminDashboard = () => {
     const fetchData = async () => {
         try {
             const [storiesRes, galleryRes, leaguesRes] = await Promise.all([
-                axios.get(`${backendUrl}/api/admin/stories`),
-                axios.get(`${backendUrl}/api/admin/gallery`),
-                axios.get(`${backendUrl}/api/admin/leagues`)
+                axios.get(`${backendUrl}/api/stories`),
+                axios.get(`${backendUrl}/api/gallery`),
+                axios.get(`${backendUrl}/api/leagues`)
             ]);
             setStories(storiesRes.data.data);
             setGalleryItems(galleryRes.data.data);
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     const handleDelete = async (endpoint, id) => {
         if (window.confirm('Are you sure you want to delete this item?')) {
             try {
-                await axios.delete(`${backendUrl}/api/admin/${endpoint}/${id}`);
+                await axios.delete(`${backendUrl}/api/${endpoint}/${id}`);
                 fetchData(); // Refresh data after deletion
                 alert('Item deleted successfully');
             } catch (error) {

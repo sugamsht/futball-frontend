@@ -1,9 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { FiArrowLeft, FiStar, FiCalendar, FiUsers } from 'react-icons/fi';
+import { FiArrowLeft, FiStar, FiCalendar, FiUsers, FiMapPin } from 'react-icons/fi';
 import { FaTshirt, FaTrophy } from 'react-icons/fa';
 
-const PlayerPage = ({ player, team, recentMatches }) => {
+const PlayerPage = ({ player, team, recentMatches, upcomingFixtures }) => {
     const router = useRouter();
     // Using the first tournament stats; adjust lookup as needed.
     const stats = player.tournament[0];
@@ -12,13 +12,6 @@ const PlayerPage = ({ player, team, recentMatches }) => {
         'MF': 'from-blue-400 to-cyan-400',
         'DF': 'from-green-400 to-emerald-400',
         'GK': 'from-purple-400 to-pink-400'
-    };
-
-    // Calculate age from DOB
-    const calculateAge = (dob) => {
-        const birthDate = new Date(dob);
-        const difference = Date.now() - birthDate.getTime();
-        return Math.floor(difference / (1000 * 60 * 60 * 24 * 365.25));
     };
 
     return (
@@ -59,7 +52,7 @@ const PlayerPage = ({ player, team, recentMatches }) => {
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-300">
                                     <FiCalendar className="text-blue-400" />
-                                    <span>{calculateAge(player.dob)} years</span>
+                                    <span>{player.age} years</span>
                                 </div>
                             </div>
                             <div className="mt-4 flex items-center gap-4 justify-center md:justify-start">
@@ -120,13 +113,15 @@ const PlayerPage = ({ player, team, recentMatches }) => {
                 </div>
 
                 {/* Recent Matches */}
-                <div className="bg-gray-800/50 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                <div className="bg-gray-800/50 p-6 rounded-2xl border border-white/10 backdrop-blur-sm mb-12">
                     <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-yellow-400 to-orange-400 text-transparent bg-clip-text">
                         Recent Appearances
                     </h2>
                     <div className="space-y-4">
                         {recentMatches.map((match, index) => {
-                            const [team1, team2] = match.fixtureResult.split(" vs ");
+                            const teamNames = Object.keys(match.teams);
+                            const team1 = teamNames[0];
+                            const team2 = teamNames[1];
                             return (
                                 <div key={index} className="p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors">
                                     <div className="flex justify-between items-center mb-2">
@@ -134,19 +129,31 @@ const PlayerPage = ({ player, team, recentMatches }) => {
                                             {new Date(match.date).toLocaleDateString()}
                                         </span>
                                         <span className="text-sm text-gray-400">
-                                            {match.tournament_title}
+                                            {match.tournament}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-white flex-1 text-center">{team1}</span>
                                         <span className="text-xl font-bold text-yellow-400 mx-4">
-                                            {match.score[0]} - {match.score[1]}
+                                            {match.teams[team1]} - {match.teams[team2]}
                                         </span>
                                         <span className="text-white flex-1 text-center">{team2}</span>
                                     </div>
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+
+                {/* Upcoming Fixtures */}
+                <div className="bg-gray-800/50 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 text-transparent bg-clip-text">
+                        Upcoming Fixtures
+                    </h2>
+                    <div className="space-y-4">
+                        {upcomingFixtures.map((fixture, index) => (
+                            <FixtureItem key={index} fixture={fixture} teamId={team._id} />
+                        ))}
                     </div>
                 </div>
             </div>
@@ -181,28 +188,69 @@ const StatItem = ({ title, value, unit }) => (
     </div>
 );
 
+const FixtureItem = ({ fixture, teamId }) => {
+    const isHome = fixture.homeTeam._id === teamId;
+    const opponent = isHome ? fixture.awayTeam.name : fixture.homeTeam.name;
+
+    return (
+        <div className="p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors">
+            <div className="flex justify-between items-center text-gray-400 text-sm">
+                <span>{new Date(fixture.matchDate).toLocaleDateString()}</span>
+                <span>{fixture.time}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+                <span className="text-white">{isHome ? 'Home' : 'Away'}</span>
+                <span className="text-purple-400 mx-2">vs</span>
+                <span className="text-white">{opponent}</span>
+            </div>
+            <div className="mt-2 flex justify-between items-center text-gray-400 text-sm">
+                <span>
+                    <FiMapPin className="inline-block mr-1" />
+                    {fixture.stadium}
+                </span>
+                <span className="capitalize">{fixture.status}</span>
+            </div>
+        </div>
+    );
+};
+
 export async function getServerSideProps(context) {
     const { id } = context.params;
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+    // Fetch player data; note that getById returns the document directly.
     const playerRes = await fetch(`${backendUrl}/api/players/${id}`);
     const player = await playerRes.json();
 
-    // Fetch team data using tournament team name
-    const teamRes = await fetch(`${backendUrl}/api/teams/search/${player.data.tournament[0].team_name}`);
-    const teamData = await teamRes.json();
-    const team = teamData.data[0] || {};
+    // Use the first tournament performance for team lookup.
+    const playerTournamentStat = player.tournament && player.tournament[0];
 
-    // Fetch recent matches for the team
-    console.log("yo muzi team", team);
-    const matchesRes = await fetch(`${backendUrl}/api/results/search?team=${team.name}`);
-    const recentMatches = await matchesRes.json();
+    // Fetch team data using the team name from tournament stats.
+    const teamRes = await fetch(`${backendUrl}/api/teams?q=${playerTournamentStat?.team_name}`);
+    const teamData = await teamRes.json();
+    const team = (teamData.data && teamData.data[0]) ? teamData.data[0] : {};
+
+    // Use team.name if available, otherwise fallback to the tournament team name.
+    const teamName = team.name || playerTournamentStat?.team_name;
+
+    // Fetch recent fixtures (h2h) using the team name.
+    const matchesRes = await fetch(`${backendUrl}/api/fixtures/h2h?team=${teamName}`);
+    const matchesData = await matchesRes.json();
+
+    // Fetch upcoming fixtures using the team id.
+    let upcomingFixtures = [];
+    if (team._id) {
+        const fixturesRes = await fetch(`${backendUrl}/api/fixtures/upcoming?team=${encodeURIComponent(team._id)}`);
+        const fixturesData = await fixturesRes.json();
+        upcomingFixtures = fixturesData.data ? fixturesData.data : [];
+    }
 
     return {
         props: {
-            player: player.data,
+            player: player,
             team: team,
-            recentMatches: recentMatches.data.slice(0, 5) || []
+            recentMatches: (matchesData.matches || []).slice(0, 5),
+            upcomingFixtures: upcomingFixtures
         }
     };
 }

@@ -3,15 +3,20 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { FiArrowLeft, FiClock, FiCalendar, FiMapPin, FiUsers, FiActivity } from 'react-icons/fi';
 
-const ResultDetails = ({ result, fixture, team1, team2 }) => {
+const ResultDetails = ({ fixture, homeTeam, awayTeam }) => {
     const router = useRouter();
-    const matchTime = `${fixture.date} • ${fixture.time}`;
+    const matchDate = new Date(fixture.matchDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    const matchTime = `${matchDate} • ${fixture.time}`;
 
     // Dynamically select Player of the Match
-    const allPlayers = [...(team1?.playerList || []), ...(team2?.playerList || [])];
+    const allPlayers = [...(homeTeam?.playerList || []), ...(awayTeam?.playerList || [])];
     const playerOfTheMatch = allPlayers.reduce((bestPlayer, player) => {
-        const playerStats = player.tournament[0];
-        const bestStats = bestPlayer.tournament[0];
+        const playerStats = player.tournament;
+        const bestStats = bestPlayer.tournament;
         return (playerStats.goals_scored + playerStats.assists) > (bestStats.goals_scored + bestStats.assists) ? player : bestPlayer;
     }, allPlayers[0]);
 
@@ -32,11 +37,11 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                     {/* Tournament Title */}
                     <div className="text-center mb-8">
                         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 text-transparent bg-clip-text">
-                            {result.tournament_title}
+                            {fixture.tournament.title}
                         </h1>
                         <div className="mt-2 flex items-center justify-center gap-4 text-gray-300">
                             <FiCalendar className="inline-block" />
-                            <span>{fixture.date}</span>
+                            <span>{matchDate}</span>
                             <FiClock className="inline-block ml-4" />
                             <span>{fixture.time}</span>
                         </div>
@@ -44,52 +49,52 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
 
                     {/* Teams & Score Display */}
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
-                        {/* Team 1 */}
+                        {/* Home Team */}
                         <div className="flex-1 text-center">
                             <img
-                                src={`/logo/${team1?.logo || 'logo.png'}`}
-                                alt={team1?.name}
+                                src={`/logo/${homeTeam?.logo || 'logo.png'}`}
+                                alt={homeTeam?.name}
                                 className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 hover:scale-105 transition-transform"
-                                onError={(e) => { e.target.src = 'logo.png'; }}
+                                onError={(e) => { e.target.src = '/logo/logo.png'; }}
                             />
                             <h3 className="text-2xl md:text-3xl font-bold text-white">
-                                <Link href={`/teams/${encodeURIComponent(team1?.name)}`}>
-                                    {team1?.name}
+                                <Link href={`/teams/${encodeURIComponent(homeTeam?.name)}`}>
+                                    {homeTeam?.name}
                                 </Link>
                             </h3>
                             <p className="text-gray-400 mt-2">
                                 <FiMapPin className="inline-block mr-2" />
-                                {team1?.location || 'Unknown Location'}
+                                {homeTeam?.location || 'Unknown Location'}
                             </p>
                         </div>
 
                         {/* Score Center */}
                         <div className="flex flex-col items-center">
                             <div className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 text-transparent bg-clip-text">
-                                {result.score[0]} - {result.score[1]}
+                                {fixture.score.home} - {fixture.score.away}
                             </div>
                             <div className="mt-4 px-6 py-2 bg-gray-800/50 rounded-full flex items-center gap-2">
                                 <FiActivity className="text-purple-400" />
-                                <span className="text-sm text-gray-300">Full Time</span>
+                                <span className="text-sm text-gray-300">{fixture.status}</span>
                             </div>
                         </div>
 
-                        {/* Team 2 */}
+                        {/* Away Team */}
                         <div className="flex-1 text-center">
                             <img
-                                src={`/logo/${team2?.logo || 'logo.png'}`}
-                                alt={team2?.name}
+                                src={`/logo/${awayTeam?.logo || 'logo.png'}`}
+                                alt={awayTeam?.name}
                                 className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 hover:scale-105 transition-transform"
-                                onError={(e) => { e.target.src = 'logo.png'; }}
+                                onError={(e) => { e.target.src = '/logo/logo.png'; }}
                             />
                             <h3 className="text-2xl md:text-3xl font-bold text-white">
-                                <Link href={`/teams/${encodeURIComponent(team2?.name)}`}>
-                                    {team2?.name}
+                                <Link href={`/teams/${encodeURIComponent(awayTeam?.name)}`}>
+                                    {awayTeam?.name}
                                 </Link>
                             </h3>
                             <p className="text-gray-400 mt-2">
                                 <FiMapPin className="inline-block mr-2" />
-                                {team2?.location || 'Unknown Location'}
+                                {awayTeam?.location || 'Unknown Location'}
                             </p>
                         </div>
                     </div>
@@ -112,12 +117,36 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                             Match Statistics
                         </h2>
                         <div className="space-y-4">
-                            <StatProgress title="Possession" team1="52%" team2="48%" />
-                            <StatItem title="Shots" team1={result.shots[0]} team2={result.shots[1]} />
-                            <StatItem title="Shots on Target" team1={result.shots[0] - 2} team2={result.shots[1] - 1} />
-                            <StatItem title="Corners" team1={result.corners[0]} team2={result.corners[1]} />
-                            <StatItem title="Fouls" team1={result.fouls[0]} team2={result.fouls[1]} />
-                            <StatItem title="Offsides" team1={result.offsides[0]} team2={result.offsides[1]} />
+                            <StatProgress
+                                title="Possession"
+                                team1={`${fixture.stats.home.possession}%`}
+                                team2={`${fixture.stats.away.possession}%`}
+                            />
+                            <StatItem
+                                title="Shots"
+                                team1={fixture.stats.home.shots}
+                                team2={fixture.stats.away.shots}
+                            />
+                            <StatItem
+                                title="Shots on Target"
+                                team1={fixture.stats.home.shots_on_target}
+                                team2={fixture.stats.away.shots_on_target}
+                            />
+                            <StatItem
+                                title="Corners"
+                                team1={fixture.stats.home.corners}
+                                team2={fixture.stats.away.corners}
+                            />
+                            <StatItem
+                                title="Fouls"
+                                team1={fixture.stats.home.fouls}
+                                team2={fixture.stats.away.fouls}
+                            />
+                            <StatItem
+                                title="Offsides"
+                                team1={fixture.stats.home.offsides}
+                                team2={fixture.stats.away.offsides}
+                            />
                         </div>
                     </div>
 
@@ -129,13 +158,13 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
                         </h2>
                         <div className="space-y-6">
                             <ManagerCard
-                                manager={team1?.manager || 'Unknown Manager'}
-                                team={team1?.name}
+                                manager={homeTeam?.manager || 'Unknown Manager'}
+                                team={homeTeam?.name}
                                 color="from-purple-400/20 to-purple-600/20"
                             />
                             <ManagerCard
-                                manager={team2?.manager || 'Unknown Manager'}
-                                team={team2?.name}
+                                manager={awayTeam?.manager || 'Unknown Manager'}
+                                team={awayTeam?.name}
                                 color="from-blue-400/20 to-cyan-600/20"
                             />
                         </div>
@@ -172,8 +201,8 @@ const ResultDetails = ({ result, fixture, team1, team2 }) => {
 
                 {/* Lineups Section */}
                 <div className="grid md:grid-cols-2 gap-6 mt-12">
-                    <TeamLineup team={team1} color="purple" />
-                    <TeamLineup team={team2} color="blue" />
+                    <TeamLineup team={homeTeam} color="purple" />
+                    <TeamLineup team={awayTeam} color="blue" />
                 </div>
             </div>
         </div>
@@ -230,36 +259,40 @@ const TeamLineup = ({ team, color }) => (
             {team?.name} Lineup
         </h2>
         <div className="grid gap-4">
-            {team?.playerList?.map((player) => (
-                <div key={player._id} className="flex items-center justify-between p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors group">
-                    <div className="flex items-center gap-4">
-                        <div className={`w-8 h-8 rounded-full bg-${color}-400/10 flex items-center justify-center`}>
-                            <span className={`text-${color}-400 font-medium`}>{player.tournament[0].jersey_no}</span>
+            {team?.playerList?.map((player) => {
+                // Assumes performance details for the relevant tournament use the first element
+                const stats = player.tournament[0] || {};
+                return (
+                    <div key={player._id} className="flex items-center justify-between p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors group">
+                        <div className="flex items-center gap-4">
+                            <div className={`w-8 h-8 rounded-full bg-${color}-400/10 flex items-center justify-center`}>
+                                <span className={`text-${color}-400 font-medium`}>{stats.jersey_no}</span>
+                            </div>
+                            <div>
+                                <Link href={`/players/${player._id}`} passHref>
+                                    <div className="font-medium text-white group-hover:text-${color}-300 transition-colors">
+                                        {player.fname} {player.lname}
+                                    </div>
+                                </Link>
+                                <p className="text-sm text-gray-400">{player.position}</p>
+                            </div>
                         </div>
-                        <div>
-                            <Link href={`/players/${player._id}`} passHref>
-                                <div className="font-medium text-white group-hover:text-${color}-300 transition-colors">
-                                    {player.fname} {player.lname}
+                        <div className="text-right">
+                            <div className="flex gap-4">
+                                <div className="text-sm">
+                                    <span className="text-green-400">{stats.goals_scored}</span> G
                                 </div>
-                            </Link>
-                            <p className="text-sm text-gray-400">{player.position}</p>
+                                <div className="text-sm">
+                                    <span className="text-blue-400">{stats.assists}</span> A
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-1">
+                                {stats.match_played} apps
+                            </p>
                         </div>
                     </div>
-                    <div className="text-right">
-                        <div className="flex gap-4">
-                            <div className="text-sm">
-                                <span className="text-green-400">{player.tournament[0].goals_scored}</span> G
-                            </div>
-                            <div className="text-sm">
-                                <span className="text-blue-400">{player.tournament[0].assists}</span> A
-                            </div>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1">
-                            {player.tournament[0].match_played} apps
-                        </p>
-                    </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     </div>
 );
@@ -268,65 +301,96 @@ export async function getServerSideProps(context) {
     const { id } = context.params;
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-    // Fetch result data and extract the actual result
-    const resResult = await fetch(`${backendUrl}/api/results/${id}`);
-    const resultResponse = await resResult.json();
-    const result = resultResponse.data || resultResponse;
-
-    console.log("yo aayo result", result);
-
-    // Split fixtureResult into team names
-    const [team1Query, team2Query] = result?.fixtureResult?.split(' vs ') || [null, null];
-    console.log("yo aayo team1Query", team1Query);
-
-    // Fetch fixture data using the search endpoint
-    const resFixture = await fetch(
-        `${backendUrl}/api/fixtures/search?team1=${encodeURIComponent(team1Query)}&team2=${encodeURIComponent(team2Query)}`
-    );
-    if (!resFixture.ok) {
-        const errorText = await resFixture.text();
-        console.error("Fixture fetch error:", errorText);
-        throw new Error("Failed to fetch fixture data");
-    }
-    const fixtureData = await resFixture.json();
-    const fixture = fixtureData.data[0]; // use the first fixture found
-
-    let team1, team2;
-
-    // Fetch team1 data
-    if (fixture.team1Object && fixture.team1Object.length > 0) {
-        const team1Res = await fetch(`${backendUrl}/api/teams/${fixture.team1Object[0]._id}`);
-        const team1Json = await team1Res.json();
-        team1 = team1Json.data; // unwrap data
-    } else {
-        // Fallback: search by team name
-        const team1Res = await fetch(`${backendUrl}/api/teams/search/${encodeURIComponent(fixture.team1)}`);
-        const team1Json = await team1Res.json();
-        team1 = team1Json.data?.[0];
-    }
-    console.log("yo aayo team1Res", team1);
-
-    // Fetch team2 data
-    if (fixture.team2Object && fixture.team2Object.length > 0) {
-        const team2Res = await fetch(`${backendUrl}/api/teams/${fixture.team2Object[0]._id}`);
-        const team2Json = await team2Res.json();
-        team2 = team2Json.data; // unwrap data
-    } else {
-        // Fallback: search by team name
-        const team2Res = await fetch(`${backendUrl}/api/teams/search/${encodeURIComponent(fixture.team2)}`);
-        const team2Json = await team2Res.json();
-        team2 = team2Json.data?.[0];
-    }
-    console.log("yo aayo team2Res", team2);
-
-    return {
-        props: {
-            result,
-            fixture,
-            team1,
-            team2
+    try {
+        // Fetch fixture data with response validation
+        const resFixture = await fetch(`${backendUrl}/api/fixtures/${id}`);
+        if (!resFixture.ok) throw new Error(`Request failed with status ${resFixture.status}`);
+        let fixtureData;
+        try {
+            fixtureData = await resFixture.json();
+        } catch (jsonError) {
+            console.error("Failed to parse fixture JSON:", jsonError);
+            throw jsonError;
         }
-    };
+        const fixture = fixtureData.data || fixtureData;
+
+        // Ensure stats exist
+        if (!fixture.stats) {
+            fixture.stats = {
+                home: { possession: 0, shots: 0, shots_on_target: 0, corners: 0, fouls: 0, offsides: 0 },
+                away: { possession: 0, shots: 0, shots_on_target: 0, corners: 0, fouls: 0, offsides: 0 }
+            };
+        }
+
+        // Fetch player details for home team
+        const homeTeamPlayers = await Promise.all(
+            fixture.homeTeam.playerList.map(async (playerId) => {
+                try {
+                    const res = await fetch(`${backendUrl}/api/players/${playerId}`);
+                    if (!res.ok) {
+                        // If not found, skip this player (returns null)
+                        console.warn(`Player ${playerId} not found (status ${res.status}). Skipping.`);
+                        return null;
+                    }
+                    const playerData = await res.json();
+                    return playerData.data || playerData;
+                } catch (error) {
+                    console.error(`Error fetching player ${playerId}:`, error);
+                    return null;
+                }
+            })
+        );
+        // Filter out any null values
+        const filteredHomeTeamPlayers = homeTeamPlayers.filter(Boolean);
+
+        // Fetch player details for away team
+        const awayTeamPlayers = await Promise.all(
+            fixture.awayTeam.playerList.map(async (playerId) => {
+                try {
+                    const res = await fetch(`${backendUrl}/api/players/${playerId}`);
+                    if (!res.ok) {
+                        console.warn(`Player ${playerId} not found (status ${res.status}). Skipping.`);
+                        return null;
+                    }
+                    const playerData = await res.json();
+                    return playerData.data || playerData;
+                } catch (error) {
+                    console.error(`Error fetching player ${playerId}:`, error);
+                    return null;
+                }
+            })
+        );
+        const filteredAwayTeamPlayers = awayTeamPlayers.filter(Boolean);
+
+        return {
+            props: {
+                fixture: {
+                    ...fixture,
+                    homeTeam: {
+                        ...fixture.homeTeam,
+                        playerList: filteredHomeTeamPlayers
+                    },
+                    awayTeam: {
+                        ...fixture.awayTeam,
+                        playerList: filteredAwayTeamPlayers
+                    }
+                },
+                homeTeam: {
+                    ...fixture.homeTeam,
+                    playerList: filteredHomeTeamPlayers
+                },
+                awayTeam: {
+                    ...fixture.awayTeam,
+                    playerList: filteredAwayTeamPlayers
+                }
+            }
+        };
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return {
+            notFound: true
+        };
+    }
 }
 
 export default ResultDetails;

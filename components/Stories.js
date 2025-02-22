@@ -14,7 +14,7 @@ function Stories() {
     useEffect(() => {
         const fetchStories = async () => {
             try {
-                const response = await axios.get(`${backendUrl}/api/admin/stories`);
+                const response = await axios.get(`${backendUrl}/api/stories`);
                 // Temporarily remove the filter for debugging
                 setStories(response.data.data || []);
             } catch (err) {

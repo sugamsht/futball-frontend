@@ -61,7 +61,7 @@ function League() {
     useEffect(() => {
         const fetchLeagues = async () => {
             try {
-                const response = await axios.get(`${backendUrl}/api/admin/leagues`);
+                const response = await axios.get(`${backendUrl}/api/leagues`);
                 setLeagues(response.data.data);
             } catch (err) {
                 setError(err.message);

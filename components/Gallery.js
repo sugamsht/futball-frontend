@@ -13,7 +13,7 @@ function Gallery() {
     useEffect(() => {
         const fetchGallery = async () => {
             try {
-                const response = await axios.get(`${backendUrl}/api/admin/gallery`);
+                const response = await axios.get(`${backendUrl}/api/gallery`);
                 setGalleryItems(response.data.data);
             } catch (err) {
                 setError(err.message);

@@ -3,35 +3,31 @@ import axios from 'axios';
 
 const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
 
-// Configuration for Fixtures, Results, Teams, Players, and Scoreboard
 const config = {
   fixtures: {
     endpoint: '/fixtures',
-    updateEndpoint: '/editFixtures/',
     fields: [
-      { name: 'tournament_title', label: 'Tournament Title', type: 'text' },
-      { name: 'team1', label: 'Team 1', type: 'text' },
-      { name: 'team2', label: 'Team 2', type: 'text' },
+      { name: 'tournament', label: 'Tournament', type: 'text' },
+      { name: 'homeTeam', label: 'Home Team', type: 'text' },
+      { name: 'awayTeam', label: 'Away Team', type: 'text' },
       { name: 'stadium', label: 'Stadium', type: 'text' },
-      { name: 'date', label: 'Date', type: 'date' },
+      { name: 'matchDate', label: 'Date', type: 'date' },
       { name: 'time', label: 'Time', type: 'time' }
     ]
   },
   results: {
-    endpoint: '/results',
+    // Using the fixtures endpoint with status "Completed"
+    endpoint: '/fixtures',
     fields: [
-      { name: 'tournament_title', label: 'Tournament Title', type: 'text' },
-      { name: 'fixtureResult', label: 'Fixture Result', type: 'text' },
-      { name: 'score1', label: 'Score 1', type: 'number' },
-      { name: 'score2', label: 'Score 2', type: 'number' },
-      { name: 'fouls1', label: 'Fouls 1', type: 'number' },
-      { name: 'fouls2', label: 'Fouls 2', type: 'number' },
-      { name: 'offsides1', label: 'Offsides 1', type: 'number' },
-      { name: 'offsides2', label: 'Offsides 2', type: 'number' },
-      { name: 'corners1', label: 'Corners 1', type: 'number' },
-      { name: 'corners2', label: 'Corners 2', type: 'number' },
-      { name: 'shots1', label: 'Shots 1', type: 'number' },
-      { name: 'shots2', label: 'Shots 2', type: 'number' }
+      { name: 'tournament', label: 'Tournament', type: 'text' },
+      { name: 'homeTeam', label: 'Home Team', type: 'text' },
+      { name: 'awayTeam', label: 'Away Team', type: 'text' },
+      { name: 'stadium', label: 'Stadium', type: 'text' },
+      { name: 'matchDate', label: 'Date', type: 'date' },
+      { name: 'time', label: 'Time', type: 'time' },
+      // Instead of score1/score2, use homeScore and awayScore for both tabs
+      { name: 'homeScore', label: 'Home Score', type: 'number' },
+      { name: 'awayScore', label: 'Away Score', type: 'number' }
     ]
   },
   teams: {
@@ -56,12 +52,12 @@ const config = {
   },
   scoreboard: {
     endpoint: '/scoreboard',
-    updateEndpoint: '/editScoreboard/',
     fields: [
-      { name: 'score1', label: 'Score 1', type: 'number' },
-      { name: 'score2', label: 'Score 2', type: 'number' },
+      // Now using homeScore and awayScore directly.
+      { name: 'homeScore', label: 'Home Score', type: 'number' },
+      { name: 'awayScore', label: 'Away Score', type: 'number' },
       { name: 'timer', label: 'Timer', type: 'text' },
-      { name: 'fixname', label: 'Fixture Name', type: 'text' },
+      { name: 'fixture', label: 'Fixture', type: 'text' },
       { name: 'referee', label: 'Referee', type: 'text' },
       { name: 'lineup', label: 'Lineup (comma separated)', type: 'text' }
     ]
@@ -85,7 +81,14 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(baseUrl + config[activeTab].endpoint);
+      // Append a query parameter based on selected tab
+      let url = baseUrl + config[activeTab].endpoint;
+      if (activeTab === 'fixtures') {
+        url += '?status=Scheduled';
+      } else if (activeTab === 'results') {
+        url += '?status=Completed';
+      }
+      const res = await axios.get(url);
       const items = res.data.data || res.data || [];
       setData(items);
     } catch (error) {
@@ -99,37 +102,49 @@ export default function Dashboard() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Prepare payload for submission, merging separate inputs for array fields (results tab)
+  // Prepare payload for submission, setting status based on activeTab
   const handleSubmit = async (e) => {
     e.preventDefault();
     let payload = { ...formData };
-    if (activeTab === 'results') {
-      payload.score = [Number(formData.score1), Number(formData.score2)];
-      payload.fouls = [Number(formData.fouls1), Number(formData.fouls2)];
-      payload.offsides = [Number(formData.offsides1), Number(formData.offsides2)];
-      payload.corners = [Number(formData.corners1), Number(formData.corners2)];
-      payload.shots = [Number(formData.shots1), Number(formData.shots2)];
-      delete payload.score1;
-      delete payload.score2;
-      delete payload.fouls1;
-      delete payload.fouls2;
-      delete payload.offsides1;
-      delete payload.offsides2;
-      delete payload.corners1;
-      delete payload.corners2;
-      delete payload.shots1;
-      delete payload.shots2;
+    let endpoint = config[activeTab].endpoint;
+
+    if (activeTab === 'scoreboard') {
+      // Only include score, timer and referee for scoreboard.
+      payload = {
+        score: {
+          home: Number(formData.homeScore),
+          away: Number(formData.awayScore)
+        },
+        timer: formData.timer,
+        referee: formData.referee
+      };
+    } else if (activeTab === 'results') {
+      // Merge the two score fields into an object for results.
+      payload.score = {
+        home: Number(formData.homeScore),
+        away: Number(formData.awayScore)
+      };
+      delete payload.homeScore;
+      delete payload.awayScore;
+      delete payload.fixture;
+      delete payload.events;
+      payload.status = "Completed";
+    } else if (activeTab === 'fixtures') {
+      payload.status = "Scheduled";
     }
+
     try {
       if (editingId) {
-        if (config[activeTab].updateEndpoint) {
-          await axios.post(baseUrl + config[activeTab].updateEndpoint, payload);
+        if (activeTab === 'scoreboard') {
+          // For scoreboard, use PATCH for updates.
+          await axios.patch(`${baseUrl}${endpoint}/${editingId}`, payload);
         } else {
-          await axios.put(`${baseUrl + config[activeTab].endpoint}/${editingId}`, payload);
+          // For results and fixtures, use PUT for updates.
+          await axios.put(`${baseUrl}${endpoint}/${editingId}`, payload);
         }
         setMessage('Updated successfully!');
       } else {
-        await axios.post(baseUrl + config[activeTab].endpoint, payload);
+        await axios.post(baseUrl + endpoint, payload);
         setMessage('Added successfully!');
       }
       fetchData();
@@ -141,31 +156,23 @@ export default function Dashboard() {
     }
   };
 
-  // Prepopulate form data when editing, handling arrays for results
+  // Prepopulate form data when editing—now both results and scoreboard use homeScore/awayScore.
   const handleEdit = (item) => {
     setEditingId(item._id);
-    if (activeTab === 'results') {
-      setFormData({
-        ...item,
-        score1: Array.isArray(item.score) ? item.score[0] : '',
-        score2: Array.isArray(item.score) ? item.score[1] : '',
-        fouls1: Array.isArray(item.fouls) ? item.fouls[0] : '',
-        fouls2: Array.isArray(item.fouls) ? item.fouls[1] : '',
-        offsides1: Array.isArray(item.offsides) ? item.offsides[0] : '',
-        offsides2: Array.isArray(item.offsides) ? item.offsides[1] : '',
-        corners1: Array.isArray(item.corners) ? item.corners[0] : '',
-        corners2: Array.isArray(item.corners) ? item.corners[1] : '',
-        shots1: Array.isArray(item.shots) ? item.shots[0] : '',
-        shots2: Array.isArray(item.shots) ? item.shots[1] : ''
-      });
-    } else {
-      setFormData({ ...item });
-    }
+    setFormData(
+      (activeTab === 'results' || activeTab === 'scoreboard')
+        ? {
+          ...item,
+          homeScore: item.score ? item.score.home : '',
+          awayScore: item.score ? item.score.away : ''
+        }
+        : { ...item }
+    );
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${baseUrl + config[activeTab].endpoint}/${id}`);
+      await axios.delete(`${baseUrl}${config[activeTab].endpoint}/${id}`);
       setMessage('Deleted successfully!');
       fetchData();
     } catch (error) {
@@ -187,7 +194,7 @@ export default function Dashboard() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`w-full text-left px-6 py-3 transition 
-          ${activeTab === tab
+                ${activeTab === tab
                   ? 'bg-gray-600 font-bold text-white border-l-4 border-blue-500'
                   : 'hover:bg-gray-700 text-gray-300'
                 }`}
@@ -215,55 +222,80 @@ export default function Dashboard() {
             <table className="min-w-full bg-gray-800 shadow rounded-lg">
               <thead>
                 <tr>
-                  {config[activeTab].fields.map((field) => (
-                    <th
-                      key={field.name}
-                      className="px-4 py-2 border-b text-left text-gray-300"
-                    >
-                      {field.label}
-                    </th>
-                  ))}
+                  {config[activeTab].fields.map((field) => {
+                    // In Results, skip showing the second score field if needed.
+                    if (activeTab === 'results' && field.name === 'awayScore') return null;
+                    return (
+                      <th key={field.name} className="px-4 py-2 border-b text-left text-gray-300">
+                        {field.label}
+                      </th>
+                    );
+                  })}
                   <th className="px-4 py-2 border-b text-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
                   <tr key={item._id} className="hover:bg-gray-700">
-                    {config[activeTab].fields.map((field) => (
-                      <td key={field.name} className="px-4 py-2 border-b text-gray-300">
-                        {(() => {
-                          if (activeTab === 'results') {
-                            if (
-                              ['score1', 'fouls1', 'offsides1', 'corners1', 'shots1'].includes(
-                                field.name
-                              )
-                            ) {
-                              const base = field.name.slice(0, -1);
-                              const value1 = Array.isArray(item[base]) ? item[base][0] : '';
-                              const value2 = Array.isArray(item[base]) ? item[base][1] : '';
-                              return `${value1} / ${value2}`;
+                    {config[activeTab].fields.map((field) => {
+                      // In Results, skip rendering the awayScore column.
+                      if (activeTab === 'results' && field.name === 'awayScore') return null;
+                      return (
+                        <td key={field.name} className="px-4 py-2 border-b text-gray-300">
+                          {(() => {
+                            if (activeTab === 'scoreboard') {
+                              if (field.name === 'homeScore') {
+                                return item.score ? item.score.home : '';
+                              }
+                              if (field.name === 'awayScore') {
+                                return item.score ? item.score.away : '';
+                              }
+                              if (field.name === 'fixture') {
+                                if (item.fixture) {
+                                  const tournament = item.fixture.tournament ? item.fixture.tournament.title : '';
+                                  const homeTeam = item.fixture.homeTeam ? item.fixture.homeTeam.name : '';
+                                  const awayTeam = item.fixture.awayTeam ? item.fixture.awayTeam.name : '';
+                                  const date = item.fixture.matchDate ? new Date(item.fixture.matchDate).toLocaleDateString() : '';
+                                  const stadium = item.fixture.stadium || '';
+                                  const time = item.fixture.time || '';
+                                  return `${tournament}: ${homeTeam} vs ${awayTeam} at ${stadium} on ${date} @ ${time}`;
+                                }
+                                return '';
+                              }
+                              return item[field.name] ? item[field.name].toString() : '';
                             }
-                          }
-                          if (activeTab === 'players' && field.name === 'team_name') {
-                            return item.tournament && item.tournament.length > 0
-                              ? item.tournament[0].team_name
-                              : '';
-                          }
-                          return item[field.name] ? item[field.name].toString() : '';
-                        })()}
-                      </td>
-                    ))}
+                            if (activeTab === 'players' && field.name === 'team_name') {
+                              return item.tournament && item.tournament.length > 0
+                                ? item.tournament[0].team_name
+                                : '';
+                            }
+                            if (activeTab === 'results' && field.name === 'homeScore') {
+                              const homeVal = item.score ? item.score.home : '';
+                              const awayVal = item.score ? item.score.away : '';
+                              return `${homeVal} - ${awayVal}`;
+                            }
+                            if (field.name === 'tournament' && item.tournament) {
+                              return item.tournament.title;
+                            }
+                            if (field.name === 'homeTeam' && item.homeTeam) {
+                              return item.homeTeam.name;
+                            }
+                            if (field.name === 'awayTeam' && item.awayTeam) {
+                              return item.awayTeam.name;
+                            }
+                            if (field.name === 'matchDate' && item.matchDate) {
+                              return new Date(item.matchDate).toLocaleDateString();
+                            }
+                            return item[field.name] ? item[field.name].toString() : '';
+                          })()}
+                        </td>
+                      );
+                    })}
                     <td className="px-4 py-2 border-b">
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="text-blue-400 hover:underline mr-2"
-                      >
+                      <button onClick={() => handleEdit(item)} className="text-blue-400 hover:underline mr-2">
                         Edit
                       </button>
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="text-red-400 hover:underline"
-                      >
+                      <button onClick={() => handleDelete(item._id)} className="text-red-400 hover:underline">
                         Delete
                       </button>
                     </td>
@@ -284,9 +316,7 @@ export default function Dashboard() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {config[activeTab].fields.map((field) => (
               <div key={field.name} className="flex flex-col">
-                <label className="mb-1 font-medium text-gray-300">
-                  {field.label}
-                </label>
+                <label className="mb-1 font-medium text-gray-300">{field.label}</label>
                 <input
                   type={field.type}
                   name={field.name}
@@ -301,10 +331,7 @@ export default function Dashboard() {
               </div>
             ))}
             <div className="md:col-span-2 flex space-x-4 mt-4">
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-              >
+              <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
                 {editingId ? 'Update' : 'Add'}
               </button>
               {editingId && (

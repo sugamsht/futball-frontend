@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { FiArrowLeft, FiMapPin, FiUsers, FiCalendar, FiAward, FiBarChart2 } from 'react-icons/fi';
+import Link from 'next/link';
 
 const TeamPage = ({ team, results, fixtures }) => {
     const router = useRouter();
@@ -8,8 +9,10 @@ const TeamPage = ({ team, results, fixtures }) => {
     // Calculate team statistics
     const stats = {
         winRate: ((team.win / team.played) * 100).toFixed(1),
-        avgGoals: (team.playerList.reduce((acc, player) =>
-            acc + player.tournament[0].goals_scored, 0) / team.played).toFixed(1)
+        avgGoals: (team.playerList.reduce(
+            (acc, player) => acc + player.tournament[0].goals_scored,
+            0
+        ) / team.played).toFixed(1)
     };
 
     return (
@@ -133,35 +136,37 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 const ResultItem = ({ result, teamName }) => {
-    // Split the fixtureResult string to extract team names
-    const [homeTeam, awayTeam] = result.fixtureResult.split(' vs ');
-    // Compare with the team name from props to decide if it's home or away
+    // Retrieve the home and away team names from the result's teams object
+    const teamNames = Object.keys(result.teams);
+    const homeTeam = teamNames[0];
+    const awayTeam = teamNames[1];
+    const score = [result.teams[homeTeam], result.teams[awayTeam]];
     const isHome = homeTeam === teamName;
-    const score = isHome ? result.score : [result.score[1], result.score[0]];
 
     return (
         <div className="p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors">
             <div className="flex justify-between items-center">
-                <span className="text-gray-400 text-sm">{new Date(result.createdAt).toLocaleDateString()}</span>
+                <span className="text-gray-400 text-sm">{new Date(result.date).toLocaleDateString()}</span>
                 <span className="text-sm text-gray-400">{isHome ? 'Home' : 'Away'}</span>
             </div>
             <div className="mt-2 flex justify-between items-center">
-                <span className="text-white">{isHome ? homeTeam : awayTeam}</span>
+                <span className="text-white">{homeTeam}</span>
                 <span className="text-xl font-bold text-yellow-400">{score[0]} - {score[1]}</span>
-                <span className="text-white">{isHome ? awayTeam : homeTeam}</span>
+                <span className="text-white">{awayTeam}</span>
             </div>
+            <div className="mt-1 text-gray-400 text-sm">Tournament: {result.tournament}</div>
         </div>
     );
 };
 
 const FixtureItem = ({ fixture, teamId }) => {
-    const isHome = fixture.team1Object[0]._id === teamId;
-    const opponent = isHome ? fixture.team2 : fixture.team1;
+    const isHome = fixture.homeTeam._id === teamId;
+    const opponent = isHome ? fixture.awayTeam.name : fixture.homeTeam.name;
 
     return (
         <div className="p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors">
             <div className="flex justify-between items-center text-gray-400 text-sm">
-                <span>{new Date(fixture.date).toLocaleDateString()}</span>
+                <span>{new Date(fixture.matchDate).toLocaleDateString()}</span>
                 <span>{fixture.time}</span>
             </div>
             <div className="mt-2 flex items-center justify-between">
@@ -178,22 +183,26 @@ const FixtureItem = ({ fixture, teamId }) => {
 };
 
 const PlayerCard = ({ player }) => (
-    <div className="p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors">
-        <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-purple-400/10 flex items-center justify-center">
-                <span className="text-purple-400 font-bold">{player.tournament[0].jersey_no}</span>
+    <Link href={`/players/${player._id}`}>
+        <div className="p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors">
+            <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-purple-400/10 flex items-center justify-center">
+                    <span className="text-purple-400 font-bold">{player.tournament[0].jersey_no}</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-white">
+                        {player.fname} {player.lname}
+                    </h3>
+                    <p className="text-sm text-gray-400">{player.position}</p>
+                </div>
             </div>
-            <div>
-                <h3 className="font-semibold text-white">{player.fname} {player.lname}</h3>
-                <p className="text-sm text-gray-400">{player.position}</p>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <StatBadge title="Goals" value={player.tournament[0].goals_scored} />
+                <StatBadge title="Assists" value={player.tournament[0].assists} />
+                <StatBadge title="Apps" value={player.tournament[0].match_played} />
             </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-            <StatBadge title="Goals" value={player.tournament[0].goals_scored} />
-            <StatBadge title="Assists" value={player.tournament[0].assists} />
-            <StatBadge title="Apps" value={player.tournament[0].match_played} />
-        </div>
-    </div>
+    </Link>
 );
 
 const StatBadge = ({ title, value }) => (
@@ -208,7 +217,7 @@ export async function getServerSideProps(context) {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     // Fetch team data using team name search endpoint
-    const teamRes = await fetch(`${backendUrl}/api/teams/search/${encodeURIComponent(id)}`);
+    const teamRes = await fetch(`${backendUrl}/api/teams?q=${encodeURIComponent(id)}`);
     const teamResult = await teamRes.json();
 
     if (!teamResult.data || teamResult.data.length < 1) {
@@ -217,18 +226,18 @@ export async function getServerSideProps(context) {
     // Use the first matching team
     const team = teamResult.data[0];
 
-    // Fetch team's results using team name
-    const resultsRes = await fetch(`${backendUrl}/api/results/search?team=${encodeURIComponent(team.name)}`);
+    // Fetch team's recent results using team name
+    const resultsRes = await fetch(`${backendUrl}/api/fixtures/h2h?team=${encodeURIComponent(team.name)}`);
     const results = await resultsRes.json();
 
-    // Fetch team's fixtures using team name
-    const fixturesRes = await fetch(`${backendUrl}/api/fixtures/search?team=${encodeURIComponent(team.name)}`);
+    // Fetch team's upcoming fixtures using team id
+    const fixturesRes = await fetch(`${backendUrl}/api/fixtures/upcoming?team=${encodeURIComponent(team._id)}`);
     const fixturesData = await fixturesRes.json();
 
     return {
         props: {
             team,
-            results: results.data || [],
+            results: results.matches || [],
             fixtures: fixturesData.data || []
         }
     };
