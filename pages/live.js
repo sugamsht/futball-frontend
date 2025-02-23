@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import Link from 'next/link';
 import { FiSquare, FiClock } from 'react-icons/fi';
-import { FaRegDotCircle, FaRegHandPaper, FaUsers } from 'react-icons/fa';
-import { MdEmojiPeople, MdEventNote } from 'react-icons/md';
+import { FaRegDotCircle, FaRecycle, FaUsers } from 'react-icons/fa';
+import { MdEmojiPeople } from 'react-icons/md';
 import { GiCheckeredFlag, GiSoccerBall } from 'react-icons/gi';
+import { TbRectangleVerticalFilled } from "react-icons/tb";
 import LiveScore from '../components/LiveScore';
 
 // Fetch live scoreboard data from the API
@@ -38,7 +39,9 @@ function LiveEvents() {
 
     const live = data?.data?.[0];
     // Create a shallow copy before reversing to avoid modifying original data
-    const events = Array.isArray(live?.events) ? [...live.events].reverse() : [];
+    const events = Array.isArray(live?.events)
+        ? [...live.events].sort((a, b) => b.minute - a.minute)
+        : [];
 
     // Use event filtering only if the event.team is populated as an ObjectId and teams are populated
     const homeTeamId = live?.fixture?.homeTeam?._id || live?.fixture?.homeTeam?.name;
@@ -61,8 +64,12 @@ function LiveEvents() {
                         <div className="text-cyan-400">
                             {eventItem.type === 'Goal' ? (
                                 <GiSoccerBall className="text-xl" />
-                            ) : eventItem.type === 'YellowCard' || eventItem.type === 'RedCard' ? (
-                                <MdEventNote className="text-xl" />
+                            ) : eventItem.type === 'YellowCard' ? (
+                                <TbRectangleVerticalFilled className="text-xl" style={{ color: 'yellow' }} />
+                            ) : eventItem.type === 'RedCard' ? (
+                                <TbRectangleVerticalFilled className="text-xl" style={{ color: 'red' }} />
+                            ) : eventItem.type === 'Substitution' ? (
+                                <FaRecycle className="text-xl" />
                             ) : (
                                 <FiClock className="text-xl" />
                             )}
@@ -89,8 +96,12 @@ function LiveEvents() {
                         <div className="text-cyan-400">
                             {eventItem.type === 'Goal' ? (
                                 <GiSoccerBall className="text-xl" />
-                            ) : eventItem.type === 'YellowCard' || eventItem.type === 'RedCard' ? (
-                                <MdEventNote className="text-xl" />
+                            ) : eventItem.type === 'YellowCard' ? (
+                                <TbRectangleVerticalFilled className="text-xl" style={{ color: 'yellow' }} />
+                            ) : eventItem.type === 'RedCard' ? (
+                                <TbRectangleVerticalFilled className="text-xl" style={{ color: 'red' }} />
+                            ) : eventItem.type === 'Substitution' ? (
+                                <FaRecycle className="text-xl" />
                             ) : (
                                 <FiClock className="text-xl" />
                             )}
