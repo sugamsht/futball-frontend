@@ -9,6 +9,15 @@ import { GiCheckeredFlag, GiSoccerBall } from 'react-icons/gi';
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import LiveScore from '../components/LiveScore';
 
+// Add these above your component definitions (e.g., after your imports)
+const YellowCardIcon = () => (
+    <TbRectangleVerticalFilled className="text-2xl" style={{ color: 'yellow' }} />
+);
+const RedCardIcon = () => (
+    <TbRectangleVerticalFilled className="text-2xl" style={{ color: 'red' }} />
+);
+
+
 // Fetch live scoreboard data from the API
 const fetchLiveScore = async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard`);
@@ -97,9 +106,9 @@ function LiveEvents() {
                             {eventItem.type === 'Goal' ? (
                                 <GiSoccerBall className="text-xl" />
                             ) : eventItem.type === 'YellowCard' ? (
-                                <TbRectangleVerticalFilled className="text-xl" style={{ color: 'yellow' }} />
+                                <YellowCardIcon />
                             ) : eventItem.type === 'RedCard' ? (
-                                <TbRectangleVerticalFilled className="text-xl" style={{ color: 'red' }} />
+                                <RedCardIcon />
                             ) : eventItem.type === 'Substitution' ? (
                                 <FaRecycle className="text-xl" />
                             ) : (
@@ -178,10 +187,6 @@ function Statistics() {
         );
     }
 
-    // Calculate shots off target for each team
-    const homeShotsOffTarget = stats.home.shots - stats.home.shots_on_target;
-    const awayShotsOffTarget = stats.away.shots - stats.away.shots_on_target;
-
     return (
         <div className="grid grid-cols-1 gap-4 p-4 bg-gray-800/50 rounded-xl backdrop-blur-sm">
             <StatisticRow
@@ -192,9 +197,9 @@ function Statistics() {
             />
             <StatisticRow
                 icon={FiSquare}
-                label="Shots Off Target"
-                home={homeShotsOffTarget}
-                away={awayShotsOffTarget}
+                label="Total Shots"
+                home={stats.home.shots}
+                away={stats.away.shots}
             />
             <StatisticRow
                 icon={GiCheckeredFlag}
@@ -214,6 +219,24 @@ function Statistics() {
                 home={stats.home.possession}
                 away={stats.away.possession}
                 isProgress
+            />
+            <StatisticRow
+                icon={FaRecycle}
+                label="Corners"
+                home={stats.home.corners}
+                away={stats.away.corners}
+            />
+            <StatisticRow
+                icon={YellowCardIcon}
+                label="Yellow Cards"
+                home={stats.home.yellowCards}
+                away={stats.away.yellowCards}
+            />
+            <StatisticRow
+                icon={RedCardIcon}
+                label="Red Cards"
+                home={stats.home.redCards}
+                away={stats.away.redCards}
             />
         </div>
     );

@@ -1,6 +1,7 @@
 // LiveForm.js
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import React from 'react';
 
 const LiveForm = () => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -19,6 +20,28 @@ const LiveForm = () => {
         qtr: '1st Half',
         team1Id: null,
         team2Id: null,
+        stats: {
+            home: {
+                shots: 0,
+                shots_on_target: 0,
+                possession: 50,
+                corners: 0,
+                fouls: 0,
+                offsides: 0,
+                yellowCards: 0,
+                redCards: 0
+            },
+            away: {
+                shots: 0,
+                shots_on_target: 0,
+                possession: 50,
+                corners: 0,
+                fouls: 0,
+                offsides: 0,
+                yellowCards: 0,
+                redCards: 0
+            }
+        }
     });
     const [playerLists, setPlayerLists] = useState({ team1: [], team2: [] });
     const [selectedLineup, setSelectedLineup] = useState({ team1: [], team2: [] });
@@ -35,7 +58,8 @@ const LiveForm = () => {
 
     // Helper to update scoreboard state from API response data
     const updateScoreboardState = (data) => {
-        setScoreboard({
+        setScoreboard(prev => ({
+            ...prev,
             id: data._id,
             team1: data.fixture.homeTeam.name,
             team2: data.fixture.awayTeam.name,
@@ -45,7 +69,8 @@ const LiveForm = () => {
             score2: Number(data.score.away),
             timer: Number(data.timer),
             qtr: data.qtr || '1st Half',
-        });
+            stats: data.stats || prev.stats
+        }));
         setPlayerLists({
             team1: data.fixture.homeTeam.playerList || [],
             team2: data.fixture.awayTeam.playerList || []
@@ -107,6 +132,28 @@ const LiveForm = () => {
                 qtr: '1st Half',
                 team1Id: null,
                 team2Id: null,
+                stats: {
+                    home: {
+                        shots: 0,
+                        shots_on_target: 0,
+                        possession: 50,
+                        corners: 0,
+                        fouls: 0,
+                        offsides: 0,
+                        yellowCards: 0,
+                        redCards: 0
+                    },
+                    away: {
+                        shots: 0,
+                        shots_on_target: 0,
+                        possession: 50,
+                        corners: 0,
+                        fouls: 0,
+                        offsides: 0,
+                        yellowCards: 0,
+                        redCards: 0
+                    }
+                }
             });
             setSelectedLineup({ team1: [], team2: [] });
             setEvents([]);
@@ -131,7 +178,8 @@ const LiveForm = () => {
                     score: { home: 0, away: 0 },
                     timer: "1",
                     referee,
-                    lineup: ""
+                    lineup: "",
+                    stats: scoreboard.stats
                 });
                 res = await axios.get(`${backendUrl}/api/scoreboard?limit=1`);
                 data = res.data.data ? res.data.data[0] : res.data[0];
@@ -273,6 +321,91 @@ const LiveForm = () => {
             handleAxiosError(err, 'Error submitting result');
         }
     };
+
+    // New function: updateStat for updating a stat value
+    const updateStat = async (team, stat, value) => {
+        const newValue = Math.max(Number(value), 0);
+        const newStats = {
+            ...scoreboard.stats,
+            [team]: {
+                ...scoreboard.stats[team],
+                [stat]: newValue
+            }
+        };
+
+        setScoreboard(prev => ({
+            ...prev,
+            stats: newStats
+        }));
+
+        if (scoreboard.id) {
+            try {
+                await axios.patch(`${backendUrl}/api/scoreboard/${scoreboard.id}`, { stats: newStats });
+            } catch (err) {
+                handleAxiosError(err, 'Failed to update stats');
+            }
+        }
+    };
+
+    // New component: StatsControls to render stat update buttons and inputs
+    const StatsControls = () => (
+        <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-emerald-400">Match Statistics</h3>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="font-medium">Stat</div>
+                <div className="text-center">{scoreboard.team1}</div>
+                <div className="text-center">{scoreboard.team2}</div>
+
+                {Object.keys(scoreboard.stats.home).map(stat => (
+                    <React.Fragment key={stat}>
+                        <div className="flex items-center font-medium">
+                            {stat.replace(/_/g, ' ').toUpperCase()}
+                        </div>
+                        <div className="flex items-center gap-2 justify-center">
+                            <button
+                                onClick={() => updateStat('home', stat, scoreboard.stats.home[stat] - 1)}
+                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                            >
+                                -
+                            </button>
+                            <input
+                                type="number"
+                                value={scoreboard.stats.home[stat]}
+                                onChange={(e) => updateStat('home', stat, e.target.value)}
+                                className="w-16 text-center bg-gray-800 rounded p-1"
+                            />
+                            <button
+                                onClick={() => updateStat('home', stat, scoreboard.stats.home[stat] + 1)}
+                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                            >
+                                +
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-2 justify-center">
+                            <button
+                                onClick={() => updateStat('away', stat, scoreboard.stats.away[stat] - 1)}
+                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                            >
+                                -
+                            </button>
+                            <input
+                                type="number"
+                                value={scoreboard.stats.away[stat]}
+                                onChange={(e) => updateStat('away', stat, e.target.value)}
+                                className="w-16 text-center bg-gray-800 rounded p-1"
+                            />
+                            <button
+                                onClick={() => updateStat('away', stat, scoreboard.stats.away[stat] + 1)}
+                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </React.Fragment>
+                ))}
+            </div>
+        </div>
+    );
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-800 rounded-xl shadow-lg text-white space-y-8">
@@ -461,6 +594,9 @@ const LiveForm = () => {
                         Final Score to Fixture
                     </button>
                 </div>
+
+                {/* Stats Controls */}
+                <StatsControls />
             </div>
         </div>
     );
