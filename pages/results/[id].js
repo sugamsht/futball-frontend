@@ -2,6 +2,10 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { FiArrowLeft, FiClock, FiCalendar, FiMapPin, FiUsers, FiActivity } from 'react-icons/fi';
+import { FaRecycle } from 'react-icons/fa';
+import { GiSoccerBall } from 'react-icons/gi';
+import { TbRectangleVerticalFilled } from "react-icons/tb";
+
 
 const ResultDetails = ({ fixture, homeTeam, awayTeam }) => {
     const router = useRouter();
@@ -14,11 +18,40 @@ const ResultDetails = ({ fixture, homeTeam, awayTeam }) => {
 
     // Dynamically select Player of the Match
     const allPlayers = [...(homeTeam?.playerList || []), ...(awayTeam?.playerList || [])];
-    const playerOfTheMatch = allPlayers.reduce((bestPlayer, player) => {
-        const playerStats = player.tournament;
-        const bestStats = bestPlayer.tournament;
-        return (playerStats.goals_scored + playerStats.assists) > (bestStats.goals_scored + bestStats.assists) ? player : bestPlayer;
-    }, allPlayers[0]);
+
+    // Compute performance
+    const playerPerformance = {};
+    fixture.events.forEach(event => {
+        if (event.player && event.player !== 'Unknown Player') {
+            let points = 0;
+            if (event.type === 'Goal') {
+                points = 3;
+            } else if (event.type === 'YellowCard') {
+                points = -1;
+            } else if (event.type === 'RedCard') {
+                points = -3;
+            }
+            // You can add more conditions here
+            playerPerformance[event.player] = (playerPerformance[event.player] || 0) + points;
+        }
+    });
+
+    // Determine the best performing player by points
+    const bestPlayerEntry = Object.entries(playerPerformance).reduce(
+        (best, entry) => entry[1] > best[1] ? entry : best,
+        ['', -Infinity]
+    );
+    const bestPlayerName = bestPlayerEntry[0] || 'TBD';
+
+    // Calculate goals scored by the player of the match from events
+    const playerGoals = fixture.events.filter(
+        e => e.player === bestPlayerName && e.type === 'Goal'
+    ).length;
+
+    // Find the full player object from the available roster
+    const computedPlayerOfTheMatch = allPlayers.find(
+        p => `${p.fname} ${p.lname}` === bestPlayerName
+    ) || bestPlayerName;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 md:p-8">
@@ -165,7 +198,7 @@ const ResultDetails = ({ fixture, homeTeam, awayTeam }) => {
                             <ManagerCard
                                 manager={awayTeam?.manager || 'Unknown Manager'}
                                 team={awayTeam?.name}
-                                color="from-blue-400/20 to-cyan-600/20"
+                                color="from-purple-400/20 to-purple-600/20"
                             />
                         </div>
                     </div>
@@ -183,20 +216,27 @@ const ResultDetails = ({ fixture, homeTeam, awayTeam }) => {
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white">
-                                        {playerOfTheMatch?.fname} {playerOfTheMatch?.lname}
-                                    </h3>
-                                    <p className="text-gray-400">
-                                        {playerOfTheMatch?.position} • {playerOfTheMatch?.tournament[0]?.team_name}
-                                    </p>
+                                    {typeof computedPlayerOfTheMatch === 'object' ? (
+                                        <>
+                                            <h3 className="text-xl font-bold text-white">
+                                                {computedPlayerOfTheMatch.fname} {computedPlayerOfTheMatch.lname}
+                                            </h3>
+                                            <p className="text-gray-400">
+                                                {computedPlayerOfTheMatch.position} • {computedPlayerOfTheMatch.tournament?.[0]?.team_name}
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <h3 className="text-xl font-bold text-white">{computedPlayerOfTheMatch}</h3>
+                                    )}
                                     <div className="flex gap-4 mt-2">
-                                        <StatBadge title="Goals" value={playerOfTheMatch?.tournament[0]?.goals_scored} />
-                                        <StatBadge title="Assists" value={playerOfTheMatch?.tournament[0]?.assists} />
+                                        <StatBadge title="Goals" value={playerGoals} />
+                                        {/* <StatBadge title="Assists" value={playerOfTheMatch?.tournament[0]?.assists} /> */}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 {/* Lineups Section */}
@@ -204,6 +244,84 @@ const ResultDetails = ({ fixture, homeTeam, awayTeam }) => {
                     <TeamLineup team={homeTeam} color="purple" />
                     <TeamLineup team={awayTeam} color="blue" />
                 </div>
+
+                {/* Match Events Section */}
+                <div className="mt-6">
+                    <h2 className="flex items-center text-2xl font-bold mb-4 text-gray-300">
+                        <FiActivity className="mr-2 text-gray-400" /> Match Events
+                    </h2>
+                    {fixture.events && fixture.events.length ? (  /* Added check for fixture.events being defined */
+                        <div className="space-y-2">
+                            {[...fixture.events].reverse().map((event, index) => {
+                                let eventStyles = {
+                                    borderColor: 'border-gray-700',
+                                    gradient: 'from-gray-800/50 to-gray-900/50',
+                                    badgeGradient: 'from-gray-700 to-gray-700',
+                                    icon: <FiClock className="text-gray-400" />
+                                };
+
+                                switch (event.type) {
+                                    case 'Goal':
+                                        eventStyles = {
+                                            borderColor: 'border-green-500',
+                                            gradient: 'from-gray-800/50 to-gray-900/50',
+                                            badgeGradient: 'from-green-500 to-green-600',
+                                            icon: <GiSoccerBall className="text-green-400" />,
+                                        };
+                                        break;
+                                    case 'YellowCard':
+                                        eventStyles = {
+                                            borderColor: 'border-amber-500',
+                                            gradient: 'from-gray-800/50 to-gray-900/50',
+                                            badgeGradient: 'from-amber-500 to-amber-600',
+                                            icon: <TbRectangleVerticalFilled className="text-amber-400" />,
+                                        };
+                                        break;
+                                    case 'RedCard':
+                                        eventStyles = {
+                                            borderColor: 'border-red-500',
+                                            gradient: 'from-gray-800/50 to-gray-900/50',
+                                            badgeGradient: 'from-red-500 to-red-600',
+                                            icon: <TbRectangleVerticalFilled className="text-red-400" />,
+                                        };
+                                        break;
+                                    case 'Substitution':
+                                        eventStyles = {
+                                            borderColor: 'border-blue-500',
+                                            gradient: 'from-gray-800/50 to-gray-900/50',
+                                            badgeGradient: 'from-blue-500 to-blue-600',
+                                            icon: <FaRecycle className="text-blue-400" />,
+                                        };
+                                }
+
+                                return (
+                                    <div
+                                        key={event._id || index}
+                                        className={`group flex items-center p-2 rounded-md border-l-2 ${eventStyles.borderColor} bg-gradient-to-r ${eventStyles.gradient} hover:bg-gray-800 transition-colors duration-200`}
+                                    >
+                                        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-black/30 flex items-center justify-center mr-2">
+                                            {eventStyles.icon}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex justify-between items-center gap-1">
+                                                <span className="text-sm font-medium text-gray-100">Min {event.minute}'</span>
+                                                <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full bg-gradient-to-r ${eventStyles.badgeGradient} text-gray-900`}>
+                                                    {event.type}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-gray-300 truncate">
+                                                <span className="text-gray-200 group-hover:text-white transition-colors">{event.player}</span> • {event.team}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 italic text-sm">No events recorded for this match.</p>
+                    )}
+                </div>
+
             </div>
         </div>
     );
@@ -253,20 +371,29 @@ const StatBadge = ({ title, value }) => (
     </div>
 );
 
-const TeamLineup = ({ team, color }) => (
-    <div className={`bg-gray-800/50 p-6 rounded-2xl border border-${color}-400/20 backdrop-blur-sm`}>
-        <h2 className={`text-2xl font-bold mb-6 bg-gradient-to-r from-${color}-400 to-${color}-600 text-transparent bg-clip-text`}>
-            {team?.name} Lineup
-        </h2>
-        <div className="grid gap-4">
-            {team?.playerList?.map((player) => {
-                // Assumes performance details for the relevant tournament use the first element
-                const stats = player.tournament[0] || {};
-                return (
+const TeamLineup = ({ team, color }) => {
+    // Find the relevant tournament stats for each player
+    const playersWithStats = team.playerList.map(player => {
+        const tournamentStats = player.tournament?.[0] || {};
+        return {
+            ...player,
+            tournamentStats
+        };
+    });
+
+    return (
+        <div className={`bg-gray-800/50 p-6 rounded-2xl border border-${color}-400/20 backdrop-blur-sm`}>
+            <h2 className={`text-2xl font-bold mb-6 bg-gradient-to-r from-${color}-400 to-${color}-600 text-transparent bg-clip-text`}>
+                {team.name} Lineup
+            </h2>
+            <div className="grid gap-4">
+                {playersWithStats.map((player) => (
                     <div key={player._id} className="flex items-center justify-between p-4 bg-gray-700/10 rounded-xl hover:bg-gray-700/20 transition-colors group">
                         <div className="flex items-center gap-4">
                             <div className={`w-8 h-8 rounded-full bg-${color}-400/10 flex items-center justify-center`}>
-                                <span className={`text-${color}-400 font-medium`}>{stats.jersey_no}</span>
+                                <span className={`text-${color}-400 font-medium`}>
+                                    {player.tournamentStats.jersey_no}
+                                </span>
                             </div>
                             <div>
                                 <Link href={`/players/${player._id}`} passHref>
@@ -280,116 +407,97 @@ const TeamLineup = ({ team, color }) => (
                         <div className="text-right">
                             <div className="flex gap-4">
                                 <div className="text-sm">
-                                    <span className="text-green-400">{stats.goals_scored}</span> G
+                                    <span className="text-green-400">
+                                        {player.tournamentStats.goals_scored}
+                                    </span> G
                                 </div>
                                 <div className="text-sm">
-                                    <span className="text-blue-400">{stats.assists}</span> A
+                                    <span className="text-blue-400">
+                                        {player.tournamentStats.assists}
+                                    </span> A
                                 </div>
                             </div>
                             <p className="text-xs text-gray-400 mt-1">
-                                {stats.match_played} apps
+                                {player.tournamentStats.match_played} apps
                             </p>
                         </div>
                     </div>
-                );
-            })}
+                ))}
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export async function getServerSideProps(context) {
     const { id } = context.params;
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     try {
-        // Fetch fixture data with response validation
+        // Fetch fixture data
         const resFixture = await fetch(`${backendUrl}/api/fixtures/${id}`);
-        if (!resFixture.ok) throw new Error(`Request failed with status ${resFixture.status}`);
-        let fixtureData;
-        try {
-            fixtureData = await resFixture.json();
-        } catch (jsonError) {
-            console.error("Failed to parse fixture JSON:", jsonError);
-            throw jsonError;
-        }
+        if (!resFixture.ok) throw new Error(`Fixture request failed with status ${resFixture.status}`);
+        const fixtureData = await resFixture.json();
         const fixture = fixtureData.data || fixtureData;
 
-        // Ensure stats exist
-        if (!fixture.stats) {
-            fixture.stats = {
-                home: { possession: 0, shots: 0, shots_on_target: 0, corners: 0, fouls: 0, offsides: 0 },
-                away: { possession: 0, shots: 0, shots_on_target: 0, corners: 0, fouls: 0, offsides: 0 }
-            };
+        // Fetch team data in parallel
+        const [homeRes, awayRes] = await Promise.all([
+            fetch(`${backendUrl}/api/teams/${fixture.homeTeam._id || fixture.homeTeam}`),
+            fetch(`${backendUrl}/api/teams/${fixture.awayTeam._id || fixture.awayTeam}`)
+        ]);
+
+        if (!homeRes.ok || !awayRes.ok) {
+            throw new Error('Failed to fetch team data');
         }
 
-        // Fetch player details for home team
-        const homeTeamPlayers = await Promise.all(
-            fixture.homeTeam.playerList.map(async (playerId) => {
-                try {
-                    const res = await fetch(`${backendUrl}/api/players/${playerId}`);
-                    if (!res.ok) {
-                        // If not found, skip this player (returns null)
-                        console.warn(`Player ${playerId} not found (status ${res.status}). Skipping.`);
-                        return null;
-                    }
-                    const playerData = await res.json();
-                    return playerData.data || playerData;
-                } catch (error) {
-                    console.error(`Error fetching player ${playerId}:`, error);
-                    return null;
-                }
-            })
-        );
-        // Filter out any null values
-        const filteredHomeTeamPlayers = homeTeamPlayers.filter(Boolean);
+        const homeTeam = await homeRes.json();
+        const awayTeam = await awayRes.json();
 
-        // Fetch player details for away team
-        const awayTeamPlayers = await Promise.all(
-            fixture.awayTeam.playerList.map(async (playerId) => {
-                try {
-                    const res = await fetch(`${backendUrl}/api/players/${playerId}`);
-                    if (!res.ok) {
-                        console.warn(`Player ${playerId} not found (status ${res.status}). Skipping.`);
-                        return null;
-                    }
-                    const playerData = await res.json();
-                    return playerData.data || playerData;
-                } catch (error) {
-                    console.error(`Error fetching player ${playerId}:`, error);
-                    return null;
-                }
-            })
-        );
-        const filteredAwayTeamPlayers = awayTeamPlayers.filter(Boolean);
+        // Process events using team data
+        if (fixture.events?.length) {
+            fixture.events = fixture.events.map(event => {
+                const team = [homeTeam, awayTeam].find(t =>
+                    t._id === event.team || t.playerList.some(p => p._id === event.player)
+                );
+                const player = team?.playerList.find(p => p._id === event.player);
+
+                return {
+                    ...event,
+                    team: team?.name || 'Unknown Team',
+                    player: player ? `${player.fname} ${player.lname}` : 'Unknown Player'
+                };
+            });
+            // Sort events in descending order by minute
+            fixture.events.sort((a, b) => a.minute - b.minute);
+        }
+
+        // Prepare final data structure
+        const processedFixture = {
+            ...fixture,
+            homeTeam: {
+                ...fixture.homeTeam,
+                playerList: homeTeam.playerList || []
+            },
+            awayTeam: {
+                ...fixture.awayTeam,
+                playerList: awayTeam.playerList || []
+            },
+            stats: fixture.stats || {
+                home: { possession: 50, shots: 0, shots_on_target: 0, corners: 0, fouls: 0, offsides: 0 },
+                away: { possession: 50, shots: 0, shots_on_target: 0, corners: 0, fouls: 0, offsides: 0 }
+            },
+            events: fixture.events || []
+        };
 
         return {
             props: {
-                fixture: {
-                    ...fixture,
-                    homeTeam: {
-                        ...fixture.homeTeam,
-                        playerList: filteredHomeTeamPlayers
-                    },
-                    awayTeam: {
-                        ...fixture.awayTeam,
-                        playerList: filteredAwayTeamPlayers
-                    }
-                },
-                homeTeam: {
-                    ...fixture.homeTeam,
-                    playerList: filteredHomeTeamPlayers
-                },
-                awayTeam: {
-                    ...fixture.awayTeam,
-                    playerList: filteredAwayTeamPlayers
-                }
+                fixture: processedFixture,
+                homeTeam: processedFixture.homeTeam,
+                awayTeam: processedFixture.awayTeam
             }
         };
     } catch (error) {
         console.error("Error fetching data:", error);
-        return {
-            notFound: true
-        };
+        return { notFound: true };
     }
 }
 

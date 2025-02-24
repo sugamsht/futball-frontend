@@ -297,7 +297,7 @@ function Lineups() {
                             <Link href={`/players/${player._id}`}>
                                 <div className="text-gray-300">
                                     {typeof player === 'object'
-                                        ? player.fullName || `${player.fname} ${player.lname}`
+                                        ? `${player.tournament?.[0]?.jersey_no || '---'}. ${player.fullName || `${player.fname} ${player.lname}`}`
                                         : player}
                                 </div>
                             </Link>

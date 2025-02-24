@@ -315,7 +315,16 @@ const LiveForm = () => {
     const handleResults = async () => {
         if (!selectedFixture) return alert('Please select a fixture first.');
         try {
-            await axios.patch(`${backendUrl}/api/fixtures/${selectedFixture._id}/complete`);
+            const payload = {
+                score: {
+                    home: scoreboard.score1,
+                    away: scoreboard.score2
+                },
+                stats: scoreboard.stats,
+                events: events,
+                status: "Completed"
+            };
+            await axios.patch(`${backendUrl}/api/fixtures/${selectedFixture._id}/complete`, payload);
             alert("Result submitted successfully.");
         } catch (err) {
             handleAxiosError(err, 'Error submitting result');
@@ -408,195 +417,262 @@ const LiveForm = () => {
     );
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-800 rounded-xl shadow-lg text-white space-y-8">
+        <div className="max-w-7xl mx-auto p-6 bg-gray-900 min-h-screen text-gray-100 space-y-8">
             {/* Header */}
-            <div className="border-b border-gray-700 pb-4">
-                <h2 className="text-3xl font-bold">Live Score Management</h2>
-            </div>
+            <header className="pb-6 border-b border-gray-700">
+                <h1 className="text-3xl font-bold text-emerald-400">Live Match Controller</h1>
+                <p className="text-gray-400 mt-2">Manage live match data in real-time</p>
+            </header>
 
-            {/* Fixture & Referee Card */}
-            <div className="bg-gray-900 p-4 rounded-lg shadow-md">
-                <form onSubmit={handleFixtureSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                        <label className="mb-1">Fixture</label>
-                        <select id="selectFixture" name="fixture" onChange={handleFixtureChange}
-                            className="p-2 rounded bg-gray-700 border border-gray-600">
-                            <option value="">Choose Fixture</option>
-                            {fixtures.map(fix => {
-                                const fixtureName = `${fix.homeTeam.name} vs ${fix.awayTeam.name}`;
-                                return (
-                                    <option key={fix._id} value={fix._id}>
-                                        {fixtureName}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                    <div className="flex flex-col">
-                        <label className="mb-1">Match Referee</label>
-                        <input type="text" name="referee" value={referee} onChange={e => setReferee(e.target.value)}
-                            className="p-2 rounded bg-gray-700 border border-gray-600" />
-                    </div>
-                    <div className="sm:col-span-2 text-right">
-                        <button type="submit" id="fixButton" className="px-4 py-2 bg-green-500 rounded hover:bg-green-600 transition"
-                            disabled={isLoading}>
-                            {isLoading ? 'Submitting...' : 'Submit Fixture'}
+            {/* Main Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column */}
+                <div className="lg:col-span-1 space-y-8">
+                    {/* Fixture Card */}
+                    <section className="bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h2 className="text-xl font-semibold mb-4 text-emerald-400">Match Setup</h2>
+                        <form onSubmit={handleFixtureSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium">Select Fixture</label>
+                                <select
+                                    onChange={handleFixtureChange}
+                                    className="w-full p-2 bg-gray-700 rounded-lg border border-gray-600 focus:ring-2 focus:ring-emerald-400"
+                                >
+                                    <option value="">Choose Fixture...</option>
+                                    {fixtures.map(fix => (
+                                        <option key={fix._id} value={fix._id}>
+                                            {`${fix.homeTeam.name} vs ${fix.awayTeam.name}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium">Referee</label>
+                                <input
+                                    type="text"
+                                    value={referee}
+                                    onChange={e => setReferee(e.target.value)}
+                                    className="w-full p-2 bg-gray-700 rounded-lg border border-gray-600 focus:ring-2 focus:ring-emerald-400"
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full py-2 px-4 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-medium transition-colors"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Initializing...' : 'Start Match Session'}
+                            </button>
+                        </form>
+                    </section>
+
+                    {/* Lineups Card */}
+                    <section className="bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold text-emerald-400">Team Lineups</h2>
+                            <button
+                                onClick={() => setShowLineups(!showLineups)}
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                            >
+                                {showLineups ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
+
+                        {showLineups && (
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <h3 className="text-lg font-semibold">{scoreboard.team1} Lineup</h3>
+                                        <div id="lineup_div" className="pl-4 space-y-1">
+                                            {playerLists.team1.map(player => (
+                                                <label key={player._id} className="block">
+                                                    <input type="checkbox" onChange={() => togglePlayerSelection('team1', player)}
+                                                        checked={selectedLineup.team1?.some(p => p._id === player._id) || false} className="mr-2" />
+                                                    {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-semibold">{scoreboard.team2} Lineup</h3>
+                                        <div id="lineup_div1" className="pl-4 space-y-1">
+                                            {playerLists.team2.map(player => (
+                                                <label key={player._id} className="block">
+                                                    <input type="checkbox" onChange={() => togglePlayerSelection('team2', player)}
+                                                        checked={selectedLineup.team2?.some(p => p._id === player._id) || false} className="mr-2" />
+                                                    {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={finalizeLineups}
+                                    className="w-full py-2 px-4 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-medium transition-colors"
+                                >
+                                    Finalize Lineups
+                                </button>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* Final Score Section moved below Team Lineups */}
+                    <div id="result" className="mt-4 space-y-4">
+                        <input
+                            type="text"
+                            id="resultTitle"
+                            name="tournament_title"
+                            value={tournamentTitle}
+                            readOnly
+                            className="p-2 bg-gray-700 border border-gray-600 rounded w-full"
+                        />
+                        <button
+                            onClick={handleResults}
+                            id="gotoresults"
+                            className="px-4 py-2 bg-purple-500 rounded hover:bg-purple-600 transition"
+                        >
+                            Final Score to Fixture
                         </button>
                     </div>
-                </form>
-            </div>
-
-            {/* Scoreboard Display */}
-            <div id="scoreboard" className="bg-gradient-to-r from-gray-700 to-gray-600 p-6 rounded-lg shadow-md">
-                <div className="flex justify-between items-center">
-                    <div id="team1" className="flex flex-col items-start">
-                        <span className="font-semibold text-xl">{scoreboard.team1}</span>
-                        <span id="team1_score" className="text-5xl font-bold">{scoreboard.score1}</span>
-                    </div>
-                    <div id="clock" className="text-center">
-                        <span id="clock_min" className="text-3xl">{scoreboard.timer} min</span>
-                        <div className="text-sm">{scoreboard.qtr}</div>
-                    </div>
-                    <div id="team2" className="flex flex-col items-end">
-                        <span className="font-semibold text-xl">{scoreboard.team2}</span>
-                        <span id="team2_score" className="text-5xl font-bold">{scoreboard.score2}</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Control Area Card */}
-            <div id="control_area" className="bg-gray-900 p-6 rounded-lg shadow-md space-y-6">
-                {/* Score Controls */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex items-center space-x-2">
-                        <span>Team1 Score:</span>
-                        <input type="number" id="team1_score_input" name="score1" value={scoreboard.score1}
-                            onChange={e => updateScore('score1', e.target.value)}
-                            className="p-2 rounded bg-gray-700 border border-gray-600 w-20" />
-                        <button onClick={() => handleIncrementScore('score1')}
-                            id="team1_plus1" className="px-3 py-1 bg-cyan-500 rounded hover:bg-cyan-600 transition">
-                            +1
-                        </button>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <span>Team2 Score:</span>
-                        <input type="number" id="team2_score_input" name="score2" value={scoreboard.score2}
-                            onChange={e => updateScore('score2', e.target.value)}
-                            className="p-2 rounded bg-gray-700 border border-gray-600 w-20" />
-                        <button onClick={() => handleIncrementScore('score2')}
-                            id="team2_plus1" className="px-3 py-1 bg-cyan-500 rounded hover:bg-cyan-600 transition">
-                            +1
-                        </button>
-                    </div>
                 </div>
 
-                {/* Clock Controls */}
-                <div className="flex items-center space-x-4">
-                    <span>Clock:</span>
-                    <button onClick={startStopClock} id="clock_start" className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600 transition">
-                        {clockRunning ? 'Stop Clock' : 'Start Clock'}
-                    </button>
-                    <button onClick={incrementTimer} id="clock_plus" className="px-4 py-2 bg-green-500 rounded hover:bg-green-600 transition">+</button>
-                    <button onClick={decrementTimer} id="clock_minus" className="px-4 py-2 bg-red-500 rounded hover:bg-red-600 transition">-</button>
-                    <button onClick={resetClock} id="reset_clock" className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600 transition">Reset Clock</button>
-                </div>
+                {/* Main Column */}
+                <div className="lg:col-span-2 space-y-8">
+                    {/* Scoreboard Card */}
+                    <section className="bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-semibold text-emerald-400">Live Scoreboard</h2>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-400">{scoreboard.qtr}</span>
+                                <div className="px-3 py-1 bg-gray-700 rounded-full">
+                                    {scoreboard.timer}'
+                                </div>
+                            </div>
+                        </div>
 
-                {/* Event & Player Selection */}
-                <div id="event" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="flex flex-col space-y-2">
-                        <label>Team1 Player</label>
-                        <select id="selectPlayer1" className="p-2 bg-gray-700 border border-gray-600 rounded"
-                            value={selectedPlayerTeam1} onChange={e => setSelectedPlayerTeam1(e.target.value)}>
-                            <option value="">Choose Player</option>
-                            {(startingLineups.team1.length > 0 ? startingLineups.team1 : []).map(player => (
-                                <option key={player._id} value={player._id}>
-                                    {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <label>Team2 Player</label>
-                        <select id="selectPlayer2" className="p-2 bg-gray-700 border border-gray-600 rounded"
-                            value={selectedPlayerTeam2} onChange={e => setSelectedPlayerTeam2(e.target.value)}>
-                            <option value="">Choose Player</option>
-                            {(startingLineups.team2.length > 0 ? startingLineups.team2 : []).map(player => (
-                                <option key={player._id} value={player._id}>
-                                    {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <label>Event Type</label>
-                        <select id="selectEvent" className="p-2 bg-gray-700 border border-gray-600 rounded"
-                            value={eventType} onChange={e => setEventType(e.target.value)}>
-                            <option value="goal">Goal</option>
-                            <option value="yellow">Yellow Card</option>
-                            <option value="red">Red Card</option>
-                            <option value="sub">Substitution</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <button onClick={handlePostEvent} id="postEvent" className="px-4 py-2 bg-purple-500 rounded hover:bg-purple-600 transition">
-                        Post Event
-                    </button>
-                </div>
+                        <div className="grid grid-cols-3 gap-4 text-center mb-8">
+                            <div className="space-y-2">
+                                <div className="text-2xl font-bold">{scoreboard.team1}</div>
+                                <div className="text-5xl font-mono">{scoreboard.score1}</div>
+                            </div>
+                            <div className="text-gray-400 text-4xl self-center">-</div>
+                            <div className="space-y-2">
+                                <div className="text-2xl font-bold">{scoreboard.team2}</div>
+                                <div className="text-5xl font-mono">{scoreboard.score2}</div>
+                            </div>
+                        </div>
 
-                {/* Lineup Toggle & Selection */}
-                <div className="text-right">
-                    <button onClick={() => setShowLineups(prev => !prev)}
-                        className="px-4 py-2 bg-indigo-500 rounded hover:bg-indigo-600 transition">
-                        {showLineups ? 'Hide Lineups' : 'Show Lineups'}
-                    </button>
-                </div>
-                {showLineups && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <h3 className="text-lg font-semibold">{scoreboard.team1} Lineup</h3>
-                            <div id="lineup_div" className="pl-4 space-y-1">
-                                {playerLists.team1.map(player => (
-                                    <label key={player._id} className="block">
-                                        <input type="checkbox" onChange={() => togglePlayerSelection('team1', player)}
-                                            checked={selectedLineup.team1?.some(p => p._id === player._id) || false} className="mr-2" />
-                                        {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
-                                    </label>
-                                ))}
+                        {/* Clock Controls */}
+                        <div className="flex justify-center gap-3 mb-8">
+                            <button
+                                onClick={startStopClock}
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                            >
+                                {clockRunning ? '⏸ Pause' : '▶ Start'}
+                            </button>
+                            <button
+                                onClick={incrementTimer}
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg"
+                            >
+                                +1 Min
+                            </button>
+                            <button
+                                onClick={decrementTimer}
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg"
+                            >
+                                -1 Min
+                            </button>
+                        </div>
+
+                        {/* Score Controls */}
+                        <div className="grid grid-cols-2 gap-4 mb-8">
+                            <div className="flex flex-col items-center space-y-2">
+                                <div className="text-sm font-medium">{scoreboard.team1}</div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleIncrementScore('score1')}
+                                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
+                                    >
+                                        + Goal
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={scoreboard.score1}
+                                        onChange={e => updateScore('score1', e.target.value)}
+                                        className="w-20 px-2 py-1 bg-gray-700 rounded text-center"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-col items-center space-y-2">
+                                <div className="text-sm font-medium">{scoreboard.team2}</div>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        value={scoreboard.score2}
+                                        onChange={e => updateScore('score2', e.target.value)}
+                                        className="w-20 px-2 py-1 bg-gray-700 rounded text-center"
+                                    />
+                                    <button
+                                        onClick={() => handleIncrementScore('score2')}
+                                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
+                                    >
+                                        + Goal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Stats Section */}
+                        <StatsControls />
+                    </section>
+
+                    {/* Events Card */}
+                    <section className="bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h2 className="text-xl font-semibold mb-4 text-emerald-400">Match Events</h2>
+                        <div id="event" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="flex flex-col space-y-2">
+                                <label>Team1 Player</label>
+                                <select id="selectPlayer1" className="p-2 bg-gray-700 border border-gray-600 rounded"
+                                    value={selectedPlayerTeam1} onChange={e => setSelectedPlayerTeam1(e.target.value)}>
+                                    <option value="">Choose Player</option>
+                                    {(startingLineups.team1.length > 0 ? startingLineups.team1 : []).map(player => (
+                                        <option key={player._id} value={player._id}>
+                                            {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col space-y-2">
+                                <label>Team2 Player</label>
+                                <select id="selectPlayer2" className="p-2 bg-gray-700 border border-gray-600 rounded"
+                                    value={selectedPlayerTeam2} onChange={e => setSelectedPlayerTeam2(e.target.value)}>
+                                    <option value="">Choose Player</option>
+                                    {(startingLineups.team2.length > 0 ? startingLineups.team2 : []).map(player => (
+                                        <option key={player._id} value={player._id}>
+                                            {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col space-y-2">
+                                <label>Event Type</label>
+                                <select id="selectEvent" className="p-2 bg-gray-700 border border-gray-600 rounded"
+                                    value={eventType} onChange={e => setEventType(e.target.value)}>
+                                    <option value="goal">Goal</option>
+                                    <option value="yellow">Yellow Card</option>
+                                    <option value="red">Red Card</option>
+                                    <option value="sub">Substitution</option>
+                                </select>
                             </div>
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold">{scoreboard.team2} Lineup</h3>
-                            <div id="lineup_div1" className="pl-4 space-y-1">
-                                {playerLists.team2.map(player => (
-                                    <label key={player._id} className="block">
-                                        <input type="checkbox" onChange={() => togglePlayerSelection('team2', player)}
-                                            checked={selectedLineup.team2?.some(p => p._id === player._id) || false} className="mr-2" />
-                                        {player.tournament?.[0]?.jersey_no || '---'}. {player.fname} {player.lname}
-                                    </label>
-                                ))}
-                            </div>
+                            <button onClick={handlePostEvent} id="postEvent" className="px-4 py-2 bg-purple-500 rounded hover:bg-purple-600 transition">
+                                Post Event
+                            </button>
                         </div>
-                    </div>
-                )}
-
-                <button onClick={finalizeLineups} id="finalizeLineupsButton"
-                    className="px-4 py-2 bg-green-500 rounded hover:bg-green-600 transition mt-4">
-                    Finalize Lineups
-                </button>
-
-                {/* Result Section */}
-                <div id="result" className="mt-4 space-y-4">
-                    <input type="text" id="resultTitle" name="tournament_title" value={tournamentTitle} readOnly
-                        className="p-2 bg-gray-700 border border-gray-600 rounded w-full" />
-                    <button onClick={handleResults} id="gotoresults"
-                        className="px-4 py-2 bg-purple-500 rounded hover:bg-purple-600 transition">
-                        Final Score to Fixture
-                    </button>
+                    </section>
                 </div>
-
-                {/* Stats Controls */}
-                <StatsControls />
             </div>
         </div>
     );
