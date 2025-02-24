@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import Link from 'next/link';
 import { FiSquare, FiClock } from 'react-icons/fi';
 import { FaRegDotCircle, FaRecycle, FaUsers } from 'react-icons/fa';
 import { MdEmojiPeople } from 'react-icons/md';
 import { GiCheckeredFlag, GiSoccerBall } from 'react-icons/gi';
 import { TbRectangleVerticalFilled } from "react-icons/tb";
+import { io } from 'socket.io-client';
 import LiveScore from '../components/LiveScore';
 
-// Add these above your component definitions (e.g., after your imports)
 const YellowCardIcon = () => (
     <TbRectangleVerticalFilled className="text-2xl" style={{ color: 'yellow' }} />
 );
@@ -17,33 +17,59 @@ const RedCardIcon = () => (
     <TbRectangleVerticalFilled className="text-2xl" style={{ color: 'red' }} />
 );
 
-
-// Fetch live scoreboard data from the API
 const fetchLiveScore = async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard`);
     return response.data;
 };
 
 function LiveEvents() {
-    const { data, isLoading, isError, error } = useQuery('liveScore', fetchLiveScore, {
+    const [data, setData] = useState(null);
+    const { isLoading, isError, error, refetch } = useQuery('liveScore', fetchLiveScore, {
         refetchInterval: 30000,
         refetchOnWindowFocus: false,
+        onSuccess: (data) => setData(data),
     });
 
-    if (isLoading) {
-        return (
-            <div className="text-cyan-400 animate-pulse text-center p-6">
-                Loading live events...
-            </div>
-        );
+    useEffect(() => {
+        if (!data) return;
+
+        const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
+
+        socket.on('scoreUpdate', (updatedScore) => {
+            setData(prevData => {
+                const newData = { ...prevData };
+                if (!newData || !newData.data || !newData.data[0] || !updatedScore?.fixture?.id) return prevData;
+
+                const liveMatchIndex = newData.data.findIndex(match => match.fixture?.id === updatedScore.fixture.id);
+
+                if (liveMatchIndex !== -1) {
+                    const updatedEvents = updatedScore.events || [];
+                    newData.data[liveMatchIndex].events = updatedEvents.sort((a, b) => b.minute - a.minute);
+                }
+                return newData;
+            });
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to the server!');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from the server!');
+            refetch(); // Refetch data on disconnect as a fallback
+        });
+
+
+        return () => socket.disconnect();
+    }, [data, setData, refetch]);
+
+
+    if (isLoading && !data) {
+        return <div className="text-cyan-400 animate-pulse text-center p-6">Loading live events...</div>;
     }
 
     if (isError) {
-        return (
-            <div className="text-red-400 text-center p-6">
-                Error loading events: {error.message}
-            </div>
-        );
+        return <div className="text-red-400 text-center p-6">Error loading events: {error?.message}</div>;
     }
 
     const live = data?.data?.[0];
@@ -321,6 +347,16 @@ function Lineups() {
 
 function Live() {
     const [activeTab, setActiveTab] = useState('live');
+    const queryClient = useQueryClient(); // Initialize React Query client
+
+    useEffect(() => {
+        const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
+        socket.on('scoreUpdate', (updatedScore) => {
+            // Invalidate the liveScore query so that all components refetch updated data
+            queryClient.invalidateQueries('liveScore');
+        });
+        return () => socket.disconnect();
+    }, [queryClient]);
 
     return (
         <div className="min-h-screen bg-gray-900">

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react'; // Import useState
 import axios from 'axios';
 import { useQuery } from "react-query";
 import Link from 'next/link';
+import { io } from 'socket.io-client';
+import { useEffect } from 'react';
 
 const fetchLiveScore = async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard`);
@@ -9,13 +11,45 @@ const fetchLiveScore = async () => {
 };
 
 export default function LiveScore() {
-    const { data, isLoading, isError, error } = useQuery('scoreboard', fetchLiveScore, {
-        refetchInterval: 30000, // refetch every 30 seconds
+    const [data, setData] = useState(null); // Initialize state for direct updates
+    const { isLoading, isError, error, refetch } = useQuery('scoreboard', fetchLiveScore, {
+        refetchInterval: 30000,
         refetchOnWindowFocus: false,
         keepPreviousData: true,
+        onSuccess: (data) => setData(data), // Set initial data
     });
 
-    if (isLoading) {
+    useEffect(() => {
+        if (!data) return; // Don't try to connect if data isn't loaded yet
+
+        const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
+
+        socket.on('scoreUpdate', (updatedScore) => {
+            setData(prevData => {
+                const newData = { ...prevData };
+                if (!newData || !newData.data) return prevData; // Handle cases where data is not yet available.
+                const matchIndex = newData.data.findIndex(match => match.fixture?.id === updatedScore.fixture?.id);
+                if (matchIndex !== -1) {
+                    newData.data[matchIndex] = { ...newData.data[matchIndex], ...updatedScore };
+                }
+                return newData;
+            });
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to the server!');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from the server!');
+            refetch(); // Refetch data on disconnect as a fallback
+        });
+
+
+        return () => socket.disconnect();
+    }, [data, setData, refetch]); // Add data, setData, and refetch to dependency array
+
+    if (isLoading && !data) { // Only show loading if no data has been fetched yet.
         return (
             <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 text-center">
                 <div className="text-cyan-400 animate-pulse">
@@ -28,16 +62,12 @@ export default function LiveScore() {
     if (isError) {
         return (
             <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 text-center text-red-400">
-                Error loading scores: {error.message}
+                Error loading scores: {error?.message} {/* Safe navigation */}
             </div>
         );
     }
 
-    // Use the first element of data as the live match, if any.
-    const live = data.data[0]
-
-    // If there is no live match, show a fallback message.
-    if (!live) {
+    if (!data || !data.data || data.data.length === 0) { // Check if data and data.data exist
         return (
             <div className="w-full bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 text-center">
                 <div className="text-gray-300 font-medium">
@@ -47,7 +77,7 @@ export default function LiveScore() {
         );
     }
 
-    // Compute tournament logo filename based on tournament title.
+    const live = data.data[0];
     const tournamentLogoFile = live?.fixture?.tournament?.logo || "logo.png";
 
     return (
