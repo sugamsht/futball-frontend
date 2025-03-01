@@ -1,4 +1,5 @@
-// admin/index.js
+//// filepath: /D:/apps/Nepscore/futball-frontend/pages/admin/index.js
+import { parse } from 'cookie';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import StoryForm from '../../components/admin/StoryForm';
@@ -7,7 +8,49 @@ import LeagueForm from '../../components/admin/LeagueForm';
 import LiveForm from '../../components/admin/LiveForm';
 import MainForm from '../../components/admin/MainForm';
 
-const AdminDashboard = () => {
+export async function getServerSideProps({ req }) {
+    const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
+    if (!cookies.sessionId) {
+        return {
+            props: {
+                error: 'Login first to view this page',
+            },
+        };
+    }
+    // Verify that the session id matches a valid session on the backend
+    try {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        // Pass along the cookie header for session verification
+        const verifyRes = await fetch(`${backendUrl}/api/verify-session`, {
+            headers: { cookie: req.headers.cookie }
+        });
+        if (verifyRes.status !== 200) {
+            return {
+                props: {
+                    error: 'Invalid session. Login first to view this page',
+                },
+            };
+        }
+    } catch (error) {
+        console.error('Error verifying session:', error);
+        return {
+            props: {
+                error: 'Error verifying session. Login first to view this page',
+            },
+        };
+    }
+    return { props: {} };
+}
+
+const AdminDashboard = ({ error }) => {
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                <h1 className="text-2xl text-white">{error}</h1>
+            </div>
+        );
+    }
+
     const [activeTab, setActiveTab] = useState('stories');
     const [stories, setStories] = useState([]);
     const [galleryItems, setGalleryItems] = useState([]);
