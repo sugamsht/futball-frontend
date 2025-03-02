@@ -213,24 +213,37 @@ const StatBadge = ({ title, value }) => (
 );
 
 export async function getServerSideProps(context) {
-    const { id } = context.params; // id is now the team name
+    const { id } = context.params;
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-    // Fetch team data using team name search endpoint
-    const teamRes = await fetch(`${backendUrl}/api/teams?q=${encodeURIComponent(id)}`);
-    const teamResult = await teamRes.json();
+    let team;
+    // Check if id is a valid MongoDB ObjectId (24 hex characters)
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
 
-    if (!teamResult.data || teamResult.data.length < 1) {
+    if (isObjectId) {
+        // Fetch team by ID
+        const teamRes = await fetch(`${backendUrl}/api/teams/${id}`);
+        const teamData = await teamRes.json();
+        team = teamData.data || teamData;
+    } else {
+        // Fetch team by name search
+        const teamRes = await fetch(`${backendUrl}/api/teams?q=${encodeURIComponent(id)}`);
+        const teamResult = await teamRes.json();
+        if (!teamResult.data || teamResult.data.length < 1) {
+            return { notFound: true };
+        }
+        team = teamResult.data[0];
+    }
+
+    if (!team) {
         return { notFound: true };
     }
-    // Use the first matching team
-    const team = teamResult.data[0];
 
-    // Fetch team's recent results using team name
+    // Fetch team's recent results using the team name
     const resultsRes = await fetch(`${backendUrl}/api/fixtures/h2h?team=${encodeURIComponent(team.name)}`);
     const results = await resultsRes.json();
 
-    // Fetch team's upcoming fixtures using team id
+    // Fetch team's upcoming fixtures using the team id
     const fixturesRes = await fetch(`${backendUrl}/api/fixtures/upcoming?team=${encodeURIComponent(team._id)}`);
     const fixturesData = await fixturesRes.json();
 

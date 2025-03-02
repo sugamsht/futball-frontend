@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import axios from 'axios';
+import Link from 'next/link';
 
 const settings = {
     dots: true,
@@ -99,9 +100,11 @@ function League() {
                         <div key={league._id} className='px-4 md:px-8 py-8 h-full'>
                             <div className='flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0 md:space-x-8'>
                                 <div className='md:w-1/2 space-y-6'>
-                                    <h2 className='text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 text-3xl md:text-4xl font-bold'>
-                                        {league.title}
-                                    </h2>
+                                    <Link href={{ pathname: '/tournaments', query: { leagueTitle: league.title } }}>
+                                        <h2 className="cursor-pointer text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 text-3xl md:text-4xl font-bold">
+                                            {league.title}
+                                        </h2>
+                                    </Link>
                                     <p className='text-gray-300 text-sm md:text-base leading-relaxed'>
                                         {league.description}
                                     </p>
