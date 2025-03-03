@@ -225,10 +225,11 @@ export default function Dashboard({ error }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex">
+    // Outer container: stack vertically on mobile, horizontally on md and up.
+    <div className="min-h-screen bg-gray-900 flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 shadow-lg">
-        <div className="p-6 text-2xl font-bold text-white border-b border-gray-600">
+      <aside className="w-full md:w-64 bg-gray-800 shadow-lg">
+        <div className="p-6 text-2xl font-bold text-white border-b border-gray-600 text-center md:text-left">
           Dashboard
         </div>
         <nav className="mt-4">

@@ -118,7 +118,7 @@ const AdminDashboard = ({ error }) => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-900 p-8">
+        <div className="min-h-screen bg-gray-900 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-8">
                     Admin Dashboard

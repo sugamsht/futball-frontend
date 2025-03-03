@@ -135,7 +135,7 @@ const MainForm = () => {
             </div>
 
             {/* Tab Navigation */}
-            <ul className="flex space-x-4 border-b border-gray-600 mb-4">
+            <ul className="flex flex-wrap justify-center space-x-4 border-b border-gray-600 mb-4">
                 {tabs.map(tab => (
                     <li key={tab.key} onClick={() => setActiveTab(tab.key)}
                         className={`cursor-pointer px-4 py-2 ${activeTab === tab.key ? "border-b-2 border-green-500" : ""}`}>

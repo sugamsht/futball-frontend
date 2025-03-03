@@ -360,20 +360,21 @@ const LiveForm = () => {
     const StatsControls = () => (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold text-emerald-400">Match Statistics</h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            {/* Adjusted grid layout for better mobile responsiveness */}
+            <div className="grid grid-cols-3 gap-2 text-sm">
                 <div className="font-medium">Stat</div>
                 <div className="text-center">{scoreboard.team1}</div>
                 <div className="text-center">{scoreboard.team2}</div>
 
                 {Object.keys(scoreboard.stats.home).map(stat => (
                     <React.Fragment key={stat}>
-                        <div className="flex items-center font-medium">
+                        <div className="flex items-center font-medium w-20 text-xs md:text-lg">
                             {stat.replace(/_/g, ' ').toUpperCase()}
                         </div>
-                        <div className="flex items-center gap-2 justify-center">
+                        <div className="flex items-center gap-1 justify-center">
                             <button
                                 onClick={() => updateStat('home', stat, scoreboard.stats.home[stat] - 1)}
-                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                                className="px-1 md: py-0.5 md:px-4 md:py-2 bg-gray-700 rounded hover:bg-gray-600 text-xs md:text-sm"
                             >
                                 -
                             </button>
@@ -381,19 +382,19 @@ const LiveForm = () => {
                                 type="number"
                                 value={scoreboard.stats.home[stat]}
                                 onChange={(e) => updateStat('home', stat, e.target.value)}
-                                className="w-16 text-center bg-gray-800 rounded p-1"
+                                className="w-6 md:w-14 text-center bg-gray-800 rounded p-0.5 text-xs md:text-sm"
                             />
                             <button
                                 onClick={() => updateStat('home', stat, scoreboard.stats.home[stat] + 1)}
-                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                                className="px-1 md: py-0.5 md:px-4 md:py-2 bg-gray-700 rounded hover:bg-gray-600 text-xs md:text-sm"
                             >
                                 +
                             </button>
                         </div>
-                        <div className="flex items-center gap-2 justify-center">
+                        <div className="flex items-center gap-1 justify-center">
                             <button
                                 onClick={() => updateStat('away', stat, scoreboard.stats.away[stat] - 1)}
-                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                                className="px-1 md: py-0.5 md:px-4 md:py-2 bg-gray-700 rounded hover:bg-gray-600 text-xs md:text-sm"
                             >
                                 -
                             </button>
@@ -401,11 +402,11 @@ const LiveForm = () => {
                                 type="number"
                                 value={scoreboard.stats.away[stat]}
                                 onChange={(e) => updateStat('away', stat, e.target.value)}
-                                className="w-16 text-center bg-gray-800 rounded p-1"
+                                className="w-6 md:w-14 text-center bg-gray-800 rounded p-0.5 text-xs md:text-sm"
                             />
                             <button
                                 onClick={() => updateStat('away', stat, scoreboard.stats.away[stat] + 1)}
-                                className="px-2 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                                className="px-1 md: py-0.5 md:px-4 md:py-2 bg-gray-700 rounded hover:bg-gray-600 text-xs md:text-sm"
                             >
                                 +
                             </button>
@@ -551,7 +552,8 @@ const LiveForm = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4 text-center mb-8">
+                        {/* Updated grid: stacks into a single column on small screens */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mb-8">
                             <div className="space-y-2">
                                 <div className="text-2xl font-bold">{scoreboard.team1}</div>
                                 <div className="text-5xl font-mono">{scoreboard.score1}</div>
@@ -592,7 +594,7 @@ const LiveForm = () => {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => handleIncrementScore('score1')}
-                                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
+                                        className="px-2 py-1 sm:px-4 sm:py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
                                     >
                                         + Goal
                                     </button>
@@ -600,7 +602,7 @@ const LiveForm = () => {
                                         type="number"
                                         value={scoreboard.score1}
                                         onChange={e => updateScore('score1', e.target.value)}
-                                        className="w-20 px-2 py-1 bg-gray-700 rounded text-center"
+                                        className="w-16 sm:w-20 px-1 py-1 bg-gray-700 rounded text-center"
                                     />
                                 </div>
                             </div>
@@ -611,11 +613,11 @@ const LiveForm = () => {
                                         type="number"
                                         value={scoreboard.score2}
                                         onChange={e => updateScore('score2', e.target.value)}
-                                        className="w-20 px-2 py-1 bg-gray-700 rounded text-center"
+                                        className="w-16 sm:w-20 px-1 py-1 bg-gray-700 rounded text-center"
                                     />
                                     <button
                                         onClick={() => handleIncrementScore('score2')}
-                                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
+                                        className="px-2 py-1 sm:px-4 sm:py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg"
                                     >
                                         + Goal
                                     </button>
@@ -630,6 +632,7 @@ const LiveForm = () => {
                     {/* Events Card */}
                     <section className="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h2 className="text-xl font-semibold mb-4 text-emerald-400">Match Events</h2>
+                        {/* Updated events grid for mobile */}
                         <div id="event" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="flex flex-col space-y-2">
                                 <label>Team1 Player</label>
